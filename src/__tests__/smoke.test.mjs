@@ -115,6 +115,7 @@ test("Slice 1 DPP concept demo data and safety invariants", () => {
   assert.ok(landingSources.includes("Completeness check"));
   assert.ok(landingSources.includes("Sample output – illustrative"));
   assert.ok(landingSources.includes("Free pilot for the first few brands."));
+  assert.ok(landingSources.includes("WORKING_FIELD_LIST_NOTICE"));
   assert.ok(
     landingSources.includes(
       "Not legal advice. We provide technical hosting infrastructure, not compliance certification.",

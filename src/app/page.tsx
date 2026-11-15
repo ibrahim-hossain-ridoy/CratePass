@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { WORKING_FIELD_LIST_NOTICE } from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
 import { BrandMark } from "@/components/Icons";
 import { PassportPreview } from "@/components/landing/PassportPreview";
@@ -65,7 +66,7 @@ export default function LandingPage() {
             <BrandMark className="h-8 w-8 shrink-0" />
             <div className="leading-tight">
               <span className="block text-[16px] font-semibold tracking-tight text-[var(--ink)]">
-                {siteConfig.brandName}
+                {siteConfig.siteName}
               </span>
               <span className="block text-[13px] text-[var(--muted)]">
                 Technical DPP hosting
@@ -209,11 +210,16 @@ export default function LandingPage() {
               ))}
             </dl>
 
-            <div className="flex items-center justify-between border-t border-[var(--border)] bg-[var(--well-soft)] px-4 py-2.5 text-[13px]">
-              <span className="text-[var(--muted)]">Field status summary</span>
-              <span className="num font-semibold text-[var(--ink)]">
-                2 populated · 2 flagged
-              </span>
+            <div className="space-y-1 border-t border-[var(--border)] bg-[var(--well-soft)] px-4 py-2.5 text-[13px]">
+              <div className="flex items-center justify-between">
+                <span className="text-[var(--muted)]">Field status summary</span>
+                <span className="num font-semibold text-[var(--ink)]">
+                  2 populated · 2 flagged
+                </span>
+              </div>
+              <p className="text-[12px] text-[var(--muted)]">
+                {WORKING_FIELD_LIST_NOTICE}
+              </p>
             </div>
           </aside>
         </section>
