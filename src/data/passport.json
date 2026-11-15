@@ -1,0 +1,250 @@
+{
+  "meta": {
+    "brand": "Demo Brand",
+    "product": "DB-36V Battery Pack",
+    "modelCode": "DB-36V-522WH",
+    "badgeText": "Concept demo – fictional data",
+    "disclaimer": "Concept demonstration with fictional product, facility, and record values. Not a legal conformity declaration or certification."
+  },
+  "passportData": {
+    "identity": {
+      "title": "Identity",
+      "accessTier": "Public",
+      "data": {
+        "passportId": "DPP-DEMO-DB36V-00419",
+        "serialNumber": "DB36V-2610-00842",
+        "batchCode": "BATCH-2026-W41",
+        "manufacturedDate": "2026-10-12",
+        "nominalVoltage": "36 V",
+        "ratedCapacity": "14.5 Ah",
+        "energyCapacity": "522 Wh",
+        "configuration": "10S4P cylindrical",
+        "weight": "3.15 kg",
+        "manufacturer": {
+          "name": "Demo Brand Assembly GmbH (Fictional)",
+          "address": "Industriepark Nord 14, 90411 Nuremberg, Germany"
+        },
+        "euResponsiblePerson": {
+          "name": "Meridian Compliance Rep B.V. (Fictional)",
+          "address": "Kanaalweg 24, 3044 Rotterdam, Netherlands",
+          "contact": "dpp-demo@demobrand-demo.invalid"
+        }
+      }
+    },
+    "integrity": {
+      "title": "Integrity",
+      "accessTier": "Restricted (authorities/repairers)",
+      "data": {
+        "stateOfHealthPct": 98.4,
+        "ratedCycleLife": "800 cycles to 80% capacity",
+        "enclosureRating": "IP65 dust & water jet sealed",
+        "operatingTempRange": "-10 °C to +45 °C (discharge)",
+        "tamperSealState": "Factory housing intact (fictional record)",
+        "bmsFirmwareVersion": "v2.4.1-demo"
+      }
+    },
+    "careRepair": {
+      "title": "Care & Repair",
+      "accessTier": "Public",
+      "data": {
+        "chargingWindow": "0 °C to +40 °C with 42.0 V DB-CHG-4A charger",
+        "storageGuidance": "Store at 40%–60% state of charge in a dry room (10 °C – 25 °C)",
+        "inspectionInterval": "Every 12 months or 3,000 km",
+        "serviceabilityLevel": "External fuse & latch user-serviceable; internal cells sealed",
+        "safetyNotes": [
+          "Use only the matched 36 V / 42.0 V charger model DB-CHG-4A.",
+          "Never open, puncture, crush, or submerge the sealed battery enclosure.",
+          "Stop charging immediately if casing cracks, swelling, or unusual heat appear."
+        ]
+      }
+    },
+    "impact": {
+      "title": "Impact",
+      "accessTier": "Public",
+      "data": {
+        "batteryChemistry": "Lithium-ion NMC 811 (Nickel Manganese Cobalt)",
+        "carbonFootprintTotalKg": 68.4,
+        "carbonPerKwhKg": 131.0,
+        "carbonLifecycleBreakdown": [
+          {
+            "stage": "Raw material extraction & refining",
+            "sharePct": 44,
+            "kgCo2e": 30.1
+          },
+          {
+            "stage": "Cell & module manufacturing",
+            "sharePct": 36,
+            "kgCo2e": 24.6
+          },
+          {
+            "stage": "Pack assembly & housing",
+            "sharePct": 11,
+            "kgCo2e": 7.5
+          },
+          {
+            "stage": "Transport & EU distribution",
+            "sharePct": 5,
+            "kgCo2e": 3.4
+          },
+          {
+            "stage": "End-of-life recycling allowance",
+            "sharePct": 4,
+            "kgCo2e": 2.8
+          }
+        ],
+        "materials": [
+          {
+            "material": "Active cells (NMC 811 cathode / graphite anode)",
+            "massSharePct": 58,
+            "recycledSharePct": 12
+          },
+          {
+            "material": "Extruded aluminum housing & internal rails",
+            "massSharePct": 22,
+            "recycledSharePct": 68
+          },
+          {
+            "material": "Polyamide PA6-GF30 end caps & frame latch",
+            "massSharePct": 11,
+            "recycledSharePct": 25
+          },
+          {
+            "material": "Copper busbars, harnesses & BMS board",
+            "massSharePct": 9,
+            "recycledSharePct": 40
+          }
+        ]
+      }
+    }
+  },
+  "repairView": {
+    "safetySummary": "Only external parts (Fuse and Latch) are user-serviceable. Internal lithium cell and BMS components require an authorised workshop.",
+    "hotspots": [
+      {
+        "id": "fuse",
+        "label": "External Discharge Fuse",
+        "shortLabel": "Fuse",
+        "serviceability": "user",
+        "safetyTag": "User-serviceable",
+        "estimatedMinutes": 5,
+        "toolRequired": "Insulated tweezers & plastic pry tool",
+        "svgCoords": { "x": 146, "y": 196 },
+        "repairSteps": [
+          "Switch off the e-bike and remove the battery pack from the downtube.",
+          "Lift the recessed rubber service flap beside the lower discharge connector.",
+          "Pull the 30 A mini-blade fuse straight out using insulated tweezers.",
+          "Seat the new fuse until flush and press the IP65 rubber flap firmly closed."
+        ],
+        "sparePart": {
+          "partNumber": "DB-SP-FUSE-30A",
+          "name": "30 A Mini-Blade Discharge Fuse",
+          "placeholderNote": "Placeholder spare-part SKU for concept demo only"
+        }
+      },
+      {
+        "id": "latch",
+        "label": "Frame Lock & Latch",
+        "shortLabel": "Latch",
+        "serviceability": "user",
+        "safetyTag": "User-serviceable",
+        "estimatedMinutes": 10,
+        "toolRequired": "3 mm hex key",
+        "svgCoords": { "x": 356, "y": 112 },
+        "repairSteps": [
+          "Place the detached pack on a clean padded surface with the lock nose accessible.",
+          "Unscrew the two external M4 bracket bolts holding the worn latch carrier.",
+          "Fit the replacement latch assembly without loosening any main housing seam bolts.",
+          "Tighten both M4 bolts to 2.5 Nm and check spring return before mounting."
+        ],
+        "sparePart": {
+          "partNumber": "DB-SP-LATCH-04",
+          "name": "External Frame Latch Assembly",
+          "placeholderNote": "Placeholder spare-part SKU for concept demo only"
+        }
+      },
+      {
+        "id": "cell-pack",
+        "label": "10S4P Lithium Cell Pack",
+        "shortLabel": "Cell Pack",
+        "serviceability": "authorised-only",
+        "safetyTag": "Authorised service only – do not open the pack",
+        "safetyNotice": "Authorised service only – do not open the pack. High-energy 36 V lithium-ion modules carry live electrical and thermal hazards and must only be opened inside an equipped service facility.",
+        "svgCoords": { "x": 222, "y": 148 },
+        "sparePart": {
+          "partNumber": "DB-SP-CELL-10S4P",
+          "name": "Sealed 10S4P Cell Core (Workshop Exchange)",
+          "placeholderNote": "Placeholder spare-part SKU — authorised workshop exchange only"
+        }
+      },
+      {
+        "id": "bms-board",
+        "label": "BMS Control Board",
+        "shortLabel": "BMS Board",
+        "serviceability": "authorised-only",
+        "safetyTag": "Authorised service only – do not open the pack",
+        "safetyNotice": "Authorised service only – do not open the pack. Replacing or calibrating the Battery Management System exposes un-fused internal cell taps and breaks factory enclosure sealing.",
+        "svgCoords": { "x": 286, "y": 134 },
+        "sparePart": {
+          "partNumber": "DB-SP-BMS-V2",
+          "name": "DB-36V BMS Protection PCB",
+          "placeholderNote": "Placeholder spare-part SKU — authorised workshop replacement only"
+        }
+      }
+    ]
+  },
+  "supplyJourney": [
+    {
+      "step": 1,
+      "stage": "Raw Material Origin",
+      "facility": "Atacama Mineral & Brine Co-op (Fictional)",
+      "location": "Antofagasta Region, Chile",
+      "dateWindow": "2026-06-10 to 2026-06-28",
+      "transportMode": "Sea freight to EU port",
+      "detail": "Fictional precursor lithium carbonate lot #DEMO-RM-088 refined for cathode production."
+    },
+    {
+      "step": 2,
+      "stage": "Cell Factory",
+      "facility": "Baltic Cell Foundry UAB (Fictional)",
+      "location": "Kaunas Industrial Zone, Lithuania",
+      "dateWindow": "2026-07-14 to 2026-08-19",
+      "transportMode": "Electric rail freight",
+      "detail": "Fictional 21700 NMC 811 cylindrical cell winding, electrolyte fill, and capacity grading."
+    },
+    {
+      "step": 3,
+      "stage": "Assembly",
+      "facility": "Demo Brand Assembly GmbH (Fictional)",
+      "location": "Nuremberg, Germany",
+      "dateWindow": "2026-09-28 to 2026-10-12",
+      "transportMode": "Regional pallet shuttle",
+      "detail": "Fictional 10S4P busbar welding, BMS pairing, IP65 enclosure sealing, and QR laser marking."
+    },
+    {
+      "step": 4,
+      "stage": "EU Warehouse",
+      "facility": "RheinLogistik Depot 7 (Fictional)",
+      "location": "Duisburg, Germany",
+      "dateWindow": "2026-10-16 onwards",
+      "transportMode": "EU regional distribution",
+      "detail": "Fictional regional fulfillment depot staging serialized packs for dealer dispatch."
+    }
+  ],
+  "authenticity": {
+    "certificateId": "CERT-DEMO-DB36V-00419",
+    "statusValue": "Static demo record (DEMO – no real verification performed)",
+    "timestampValue": "2026-10-16T11:20:00Z (DEMO – no real verification performed)",
+    "digestValue": "sha256:4e9c7a1bf3048a21d0c952b6e3c88f2d0a3 (DEMO – no real verification performed)",
+    "demoNote": "DEMO – no real verification performed. Record status, timestamp, and digest shown here are static fictional strings for interface testing only.",
+    "recycling": {
+      "schemeTitle": "End-of-life battery disposal & take-back",
+      "takeBackInstruction": "Never place e-bike batteries in household trash or curbside bins. Return spent DB-36V packs free of charge to any participating Demo Brand bicycle dealer or municipal lithium-battery collection point.",
+      "collectionCode": "Li-ion (UN 3480) · Separate Collection",
+      "prepSteps": [
+        "Cover exposed discharge terminals with insulating electrical tape before transport.",
+        "Keep the outer casing intact — do not crush, incinerate, or open the battery pack.",
+        "If the casing is dented, leaking, or warm, place it in a non-conductive container and alert drop-off staff."
+      ]
+    }
+  }
+}

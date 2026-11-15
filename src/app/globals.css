@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  --ground: #F5F4F0;
+  --surface: #FFFFFF;
+  --well: #ECEAE3;
+  --well-soft: #F0EFEA;
+  --border: #DDD9CE;
+  --border-strong: #C6C1B4;
+  --rule: #E8E5DC;
+  --ink: #141413;
+  --muted: #57534E;
+  --accent: #EA580C;
+  --accent-ink: #B43D06;
+  --accent-soft: #FFF1EA;
+  --accent-border: #F5C3A8;
+  --positive: #15803D;
+  --positive-bg: #ECFDF3;
+  --positive-border: #B8E6C8;
+  --notice-bg: #FEF7E6;
+  --notice-border: #EED28A;
+  --notice-ink: #7C4A03;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@theme inline {
+  --color-background: var(--ground);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  background-color: var(--ground);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tactile button press and crisp CSS-only tab transitions */
+.pressable {
+  transition:
+    transform 150ms var(--ease-out),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.pressable:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tab-panel-enter {
+    animation: panelEnter 220ms var(--ease-out) both;
+  }
+
+  .hotspot-card-enter {
+    animation: cardReveal 200ms var(--ease-out) both;
+  }
+}
+
+@keyframes panelEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .tab-panel-enter,
+  .hotspot-card-enter {
+    animation: none !important;
+    transition: none !important;
+  }
+  .pressable:active {
+    transform: none;
+  }
+}
