@@ -18,9 +18,9 @@
   - Email + password and Magic Link authentication via `@supabase/ssr`, automatic 1-org onboarding, mobile-first `/app` dashboard with empty/loading/error states.
 - **M4 — PDF Upload, Extractor & Completeness Check (`/app/new`) *(Done)***
   - Server-side `%PDF-` + 10 MB validation, private storage upload, prompt-injection-hardened Anthropic extractor (`ANTHROPIC_MODEL`, mock fallback when unset) validated with `zod`, per-org daily cap (`5/day`), per-user rate limit, token usage audit log, and red missing/uncertain inline boxes.
-- **M5 — Review, Publish, QR & Public `/p/[slug]` *(Next · Checkpoint Stop)***
+- **M5 — Review, Publish, QR & Public `/p/[slug]` *(Done · Checkpoint)***
   - Accuracy declaration checkbox, immutable `passport_versions`, SVG + PNG QR downloads, unpublish + new-version flow, and public `/p/[slug]` without fictional demo SVGs/hotspots (`Repair` and `Supply` tabs conditional, `Provenance & recycling` disclaimer).
-- **M6 — Billing Adapter (`BILLING_ENABLED` + Paddle Sandbox)** *(After checkpoint)*
+- **M6 — Billing Adapter (`BILLING_ENABLED` + Paddle Sandbox) *(Next after "continue")***
   - `BillingProvider` interface, Paddle sandbox checkout + HMAC webhook handler, per-org `comp_enabled` override.
 - **M7 — Draft Legal Pages (`/terms`, `/privacy`, `/disclaimer`)** *(After checkpoint)*
   - Clearly marked `TODO: lawyer review` draft documents with EU customer data-processing notes.
