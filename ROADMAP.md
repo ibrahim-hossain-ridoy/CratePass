@@ -12,9 +12,9 @@
   - Repository configuration, `.gitignore` + `.env.example`, centralized [src/config/site.ts](src/config/site.ts) (`siteName`, contact placeholders, `BILLING_ENABLED=false` flag, cost/rate caps), and editable ~30-field [src/config/battery-fields.ts](src/config/battery-fields.ts).
 - **M1 — Public Site & Fictional Concept Demo *(Done)***
   - `/` Direction A landing page (`EU Battery Passport from your spec PDF`, 3-step workflow, completeness check card, live `/demo` preview, `#contact`, disclaimer footer) and `/demo` static fictional 4-tab demo.
-- **M2 — Supabase Schema & Row Level Security *(Next)***
+- **M2 — Supabase Schema & Row Level Security *(Done)***
   - SQL migrations in `/supabase/migrations` for `organizations`, `members`, `products`, `passports`, `passport_versions` (immutable snapshots), `uploads`, `audit_log`, `rate_limits`, private `spec-pdfs` bucket, and public-tier RPC for `/p/[slug]`.
-- **M3 — Auth + `/app` Brand Workspace**
+- **M3 — Auth + `/app` Brand Workspace *(Next)***
   - Email + password and Magic Link authentication via `@supabase/ssr`, automatic 1-org onboarding, mobile-first `/app` dashboard with empty/loading/error states.
 - **M4 — PDF Upload, Extractor & Completeness Check (`/app/new`)**
   - Server-side `%PDF-` + 10 MB validation, private storage upload, prompt-injection-hardened Anthropic extractor (`ANTHROPIC_MODEL`, mock fallback when unset) validated with `zod`, per-org daily cap (`5/day`), per-user rate limit, token usage audit log, and red missing/uncertain inline boxes.
