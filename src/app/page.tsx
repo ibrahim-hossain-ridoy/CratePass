@@ -97,6 +97,12 @@ export default function LandingPage() {
               Contact
             </a>
             <Link
+              href="/app"
+              className="text-[14px] font-medium text-[var(--muted)] transition-colors hover:text-[var(--ink)] sm:text-[15px]"
+            >
+              Sign in
+            </Link>
+            <Link
               href="/demo"
               className="pressable inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--border-strong)] bg-[var(--well-soft)] px-3.5 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--well)] focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:px-4 sm:text-[15px]"
             >
