@@ -16,9 +16,9 @@
   - SQL migrations in `/supabase/migrations` for `organizations`, `members`, `products`, `passports`, `passport_versions` (immutable snapshots), `uploads`, `audit_log`, `rate_limits`, private `spec-pdfs` bucket, and public-tier RPC for `/p/[slug]`.
 - **M3 — Auth + `/app` Brand Workspace *(Done)***
   - Email + password and Magic Link authentication via `@supabase/ssr`, automatic 1-org onboarding, mobile-first `/app` dashboard with empty/loading/error states.
-- **M4 — PDF Upload, Extractor & Completeness Check (`/app/new`) *(Next)***
+- **M4 — PDF Upload, Extractor & Completeness Check (`/app/new`) *(Done)***
   - Server-side `%PDF-` + 10 MB validation, private storage upload, prompt-injection-hardened Anthropic extractor (`ANTHROPIC_MODEL`, mock fallback when unset) validated with `zod`, per-org daily cap (`5/day`), per-user rate limit, token usage audit log, and red missing/uncertain inline boxes.
-- **M5 — Review, Publish, QR & Public `/p/[slug]` *(Checkpoint Stop)***
+- **M5 — Review, Publish, QR & Public `/p/[slug]` *(Next · Checkpoint Stop)***
   - Accuracy declaration checkbox, immutable `passport_versions`, SVG + PNG QR downloads, unpublish + new-version flow, and public `/p/[slug]` without fictional demo SVGs/hotspots (`Repair` and `Supply` tabs conditional, `Provenance & recycling` disclaimer).
 - **M6 — Billing Adapter (`BILLING_ENABLED` + Paddle Sandbox)** *(After checkpoint)*
   - `BillingProvider` interface, Paddle sandbox checkout + HMAC webhook handler, per-org `comp_enabled` override.
