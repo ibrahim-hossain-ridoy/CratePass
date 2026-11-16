@@ -28,7 +28,8 @@ interface ExtractApiSuccess {
   characterCount: number;
   truncated: boolean;
   lowTextWarning: boolean;
-  dailyExtractionsUsed: number;
+  blankDraft?: boolean;
+  dailyExtractionsUsed?: number;
   extraction: {
     fields: ExtractionResultMap;
     summary: { found: number; missing: number; uncertain: number; total: number };
@@ -45,9 +46,11 @@ export function NewPassportFlow({
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [productName, setProductName] = useState("");
+  const [modelCode, setModelCode] = useState("");
   const [batteryCategory, setBatteryCategory] = useState<BatteryCategory>("LMT");
   const [usedCount, setUsedCount] = useState(dailyUsed);
   const [uploading, setUploading] = useState(false);
+  const [creatingBlank, setCreatingBlank] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<ExtractApiSuccess | null>(null);
 
@@ -118,6 +121,39 @@ export function NewPassportFlow({
       );
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleStartBlankDraft() {
+    setErrorMsg(null);
+    setCreatingBlank(true);
+    try {
+      const res = await fetch("/api/passports/blank", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          batteryCategory,
+          productName: productName.trim() || undefined,
+          modelCode: modelCode.trim() || undefined,
+        }),
+      });
+      const json = (await res.json()) as Partial<ExtractApiSuccess> & {
+        error?: string;
+      };
+
+      if (!res.ok || !json.passportId) {
+        setErrorMsg(json.error || "Could not create blank passport draft.");
+        return;
+      }
+
+      // Blank drafts make 0 LLM calls and do not consume the org daily extraction cap
+      setResult(json as ExtractApiSuccess);
+    } catch {
+      setErrorMsg(
+        "Could not start blank passport draft. Check your connection and try again.",
+      );
+    } finally {
+      setCreatingBlank(false);
     }
   }
 
@@ -205,21 +241,40 @@ export function NewPassportFlow({
             </p>
           </div>
 
-          <div>
-            <label
-              htmlFor="new-product-name"
-              className="block text-[13px] font-semibold text-[var(--ink)]"
-            >
-              Product name (optional override)
-            </label>
-            <input
-              id="new-product-name"
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              placeholder="e.g. Alpine 36V-504 Downtube Pack"
-              className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
-            />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="new-product-name"
+                className="block text-[13px] font-semibold text-[var(--ink)]"
+              >
+                Product name (optional override)
+              </label>
+              <input
+                id="new-product-name"
+                type="text"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                placeholder="e.g. Alpine 36V-504 Downtube Pack"
+                className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="new-model-code"
+                className="block text-[13px] font-semibold text-[var(--ink)]"
+              >
+                Model / SKU code (optional)
+              </label>
+              <input
+                id="new-model-code"
+                type="text"
+                value={modelCode}
+                onChange={(e) => setModelCode(e.target.value)}
+                placeholder="e.g. LMT-48V-14AH-PRO"
+                className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 font-mono text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
+              />
+            </div>
           </div>
 
           <div>
@@ -256,17 +311,35 @@ export function NewPassportFlow({
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={uploading || usedCount >= dailyLimit}
-            className="pressable chamfer-sm inline-flex min-h-[46px] items-center justify-center bg-[var(--accent)] px-6 py-2.5 text-[14.5px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
-          >
-            {uploading
-              ? "Extracting datasheet fields..."
-              : usedCount >= dailyLimit
-                ? `Daily limit reached (${dailyLimit}/day)`
-                : "Upload PDF & run completeness check"}
-          </button>
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <button
+              type="submit"
+              disabled={uploading || creatingBlank || usedCount >= dailyLimit}
+              className="pressable chamfer-sm inline-flex min-h-[46px] items-center justify-center bg-[var(--accent)] px-6 py-2.5 text-[14.5px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            >
+              {uploading
+                ? "Extracting datasheet fields..."
+                : usedCount >= dailyLimit
+                  ? `Daily limit reached (${dailyLimit}/day)`
+                  : "Upload PDF & run completeness check"}
+            </button>
+
+            <button
+              type="button"
+              disabled={uploading || creatingBlank}
+              onClick={handleStartBlankDraft}
+              className="pressable inline-flex min-h-[46px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-5 py-2.5 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--well)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            >
+              {creatingBlank
+                ? "Creating blank draft..."
+                : "No PDF? Start blank passport draft"}
+            </button>
+          </div>
+          <p className="text-[12px] text-[var(--muted)]">
+            Starting a blank passport draft makes zero LLM calls, does not count
+            against your daily PDF extraction cap, and opens the same completeness
+            check and field editor.
+          </p>
         </form>
       )}
 
@@ -275,9 +348,18 @@ export function NewPassportFlow({
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]">
             <div>
               <p className="font-semibold">
-                Draft created ({result.batteryCategory}) · {result.totalPages}{" "}
-                page(s), <span className="num">{result.characterCount}</span>{" "}
-                extracted characters
+                {result.blankDraft ? (
+                  <>
+                    Blank draft created ({result.batteryCategory}) · Ready for
+                    manual entry (0 PDF cap used)
+                  </>
+                ) : (
+                  <>
+                    Draft created ({result.batteryCategory}) · {result.totalPages}{" "}
+                    page(s), <span className="num">{result.characterCount}</span>{" "}
+                    extracted characters
+                  </>
+                )}
               </p>
               <p className="text-[12.5px]">
                 Extractor mode:{" "}
