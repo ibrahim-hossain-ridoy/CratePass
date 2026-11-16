@@ -7,6 +7,7 @@ import { getWorkspaceContext } from "@/lib/workspace/context";
 const PatchPassportSchema = z.object({
   productName: z.string().trim().min(1).max(160).optional(),
   modelCode: z.string().trim().max(80).optional(),
+  batteryCategory: z.enum(["LMT", "EV", "industrial"]).optional(),
   workingFields: z.record(z.string(), z.unknown()),
 });
 
@@ -62,14 +63,30 @@ export async function PATCH(
   }
 
   const cleanFields = normalizeFieldValues(parsed.data.workingFields);
+  if (parsed.data.batteryCategory && !cleanFields.battery_category) {
+    cleanFields.battery_category = parsed.data.batteryCategory;
+  }
 
-  const { error: updatePassportErr } = await supabase
+  let updateRes = await supabase
     .from("passports")
-    .update({ working_fields: cleanFields })
+    .update({
+      working_fields: cleanFields,
+      ...(parsed.data.batteryCategory
+        ? { battery_category: parsed.data.batteryCategory }
+        : {}),
+    })
     .eq("id", id)
     .eq("org_id", ctx.org.orgId);
 
-  if (updatePassportErr) {
+  if (updateRes.error && parsed.data.batteryCategory) {
+    updateRes = await supabase
+      .from("passports")
+      .update({ working_fields: cleanFields })
+      .eq("id", id)
+      .eq("org_id", ctx.org.orgId);
+  }
+
+  if (updateRes.error) {
     return NextResponse.json({ error: "Could not save passport fields." }, { status: 500 });
   }
 

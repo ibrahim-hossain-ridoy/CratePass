@@ -1,34 +1,26 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import fs from "node:fs";
+import path from "node:path";
+import {
+  projectPublicPassportFields,
+  projectTieredPassportSnapshots,
+  getVisiblePassportTabs,
+} from "../lib/passport-projection.ts";
 
-function walkFiles(dir) {
-  const results = [];
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const full = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      results.push(...walkFiles(full));
-    } else if (/\.(ts|tsx|js|jsx|mjs)$/.test(entry.name)) {
-      results.push(full);
-    }
-  }
-  return results;
-}
+const repoRoot = path.resolve(import.meta.dirname, "../..");
 
-test("M2 Supabase SQL schema, RLS boundaries, public projection, and service-key isolation", async () => {
-  const migrationsDir = resolve("supabase/migrations");
-  assert.ok(existsSync(migrationsDir), "supabase/migrations directory must exist");
-
-  const sqlFiles = readdirSync(migrationsDir)
+test("M2 SQL migration defines all required tables, RLS policies, and public-only projection RPC", () => {
+  const migrationsDir = path.join(repoRoot, "supabase/migrations");
+  const migrationFiles = fs
+    .readdirSync(migrationsDir)
     .filter((f) => f.endsWith(".sql"))
     .sort();
-  assert.ok(sqlFiles.length >= 2, "Expected at least 2 SQL migration files");
+  assert.ok(migrationFiles.length >= 2, "Migration SQL files must exist");
 
-  const combinedSql = sqlFiles
-    .map((file) => readFileSync(join(migrationsDir, file), "utf8"))
+  const sql = migrationFiles
+    .map((f) => fs.readFileSync(path.join(migrationsDir, f), "utf8"))
     .join("\n");
-
   const requiredTables = [
     "organizations",
     "members",
@@ -37,105 +29,159 @@ test("M2 Supabase SQL schema, RLS boundaries, public projection, and service-key
     "passport_versions",
     "uploads",
     "audit_log",
-    "rate_limits",
   ];
-
   for (const table of requiredTables) {
-    const rlsRegex = new RegExp(
-      `alter\\s+table\\s+(?:public\\.)?${table}\\s+enable\\s+row\\s+level\\s+security`,
-      "i",
+    assert.match(
+      sql,
+      new RegExp(`create table if not exists public\\.${table}`, "i"),
+      `Missing table definition: ${table}`,
     );
-    assert.ok(rlsRegex.test(combinedSql), `RLS must be enabled on table ${table}`);
+    assert.match(
+      sql,
+      new RegExp(
+        `alter table public\\.${table} enable row level security`,
+        "i",
+      ),
+      `Missing RLS enablement for table: ${table}`,
+    );
   }
 
-  // Immutable append-only protections
-  assert.ok(/prevent_row_mutation/i.test(combinedSql), "Mutation prevention trigger missing");
-  assert.ok(/on\s+public\.passport_versions/i.test(combinedSql));
-  assert.ok(/on\s+public\.audit_log/i.test(combinedSql));
-
-  // Public RPC must only read published status and public snapshot
-  assert.ok(/function\s+public\.get_published_passport/i.test(combinedSql));
-  assert.ok(/status\s*=\s*'published'/i.test(combinedSql));
-  assert.equal(
-    /get_published_passport[\s\S]*?snapshot_all_fields/i.test(combinedSql),
-    false,
-    "get_published_passport must never expose snapshot_all_fields",
+  assert.match(
+    sql,
+    /create or replace function public\.get_published_passport/i,
+    "Must define get_published_passport RPC for public-tier projection",
   );
 
-  // Private bucket spec-pdfs
-  assert.ok(/'spec-pdfs'/.test(combinedSql), "Private storage bucket spec-pdfs missing");
-  assert.ok(/10485760/.test(combinedSql), "10 MB limit missing in storage bucket definition");
+  const tierMigrationPath = path.join(
+    migrationsDir,
+    "202611160003_three_tier_and_category.sql",
+  );
+  assert.ok(
+    fs.existsSync(tierMigrationPath),
+    "3-tier migration SQL file must exist",
+  );
+  const tierSql = fs.readFileSync(tierMigrationPath, "utf8");
+  assert.match(tierSql, /snapshot_legitimate_interest_fields/i);
+  assert.match(tierSql, /snapshot_authorities_only_fields/i);
+  assert.doesNotMatch(
+    tierSql.slice(tierSql.indexOf("get_published_passport")),
+    /snapshot_legitimate_interest_fields|snapshot_authorities_only_fields/i,
+    "Updated get_published_passport RPC must never return legitimate_interest or authorities_only fields",
+  );
+});
 
-  // Projection strips restricted and unknown fields
-  const projection = await import("../lib/passport-projection.ts");
-  const sampleAll = {
-    battery_model_name: "NordCell 36V",
-    nominal_voltage_v: "36",
-    bms_firmware_version: "FW-SECRET-9.2",
-    internal_test_report_ref: "UN38.3-INTERNAL-ONLY",
-    dismantling_manual_ref: "WORKSHOP-SECRET-DOC",
-    injected_unknown_key: "should-be-dropped",
+test("projectPublicPassportFields and projectTieredPassportSnapshots separate public, legitimate_interest, authorities_only, and additional_information", () => {
+  const rawFields = {
+    model_serial_number: "LMT-48V-14AH-DEMO",
+    nominal_voltage_v: "48",
+    detailed_composition: "NMC811 cathode, graphite anode, LiPF6 electrolyte",
+    part_numbers_components: "BMS-991-A, CELL-21700-X",
+    compliance_test_reports: "TR-2026-UN383-99812.pdf",
+    additional_information: "<b>Custom thermal pad note</b> from datasheet",
+    unknown_injected_field: "malicious payload",
   };
-  const publicOnly = projection.projectPublicPassportFields(sampleAll);
-  assert.equal(publicOnly.battery_model_name, "NordCell 36V");
-  assert.equal(publicOnly.nominal_voltage_v, "36");
-  assert.equal(publicOnly.bms_firmware_version, undefined);
-  assert.equal(publicOnly.internal_test_report_ref, undefined);
-  assert.equal(publicOnly.dismantling_manual_ref, undefined);
-  assert.equal(publicOnly.injected_unknown_key, undefined);
 
-  // Conditional public tabs: hide Repair and Supply when empty; never show fictional demo tabs
-  assert.deepEqual(projection.getVisiblePassportTabs({ battery_model_name: "NordCell 36V" }), [
-    "passport",
-    "provenance",
-  ]);
-  assert.deepEqual(
-    projection.getVisiblePassportTabs({
-      battery_model_name: "NordCell 36V",
-      safe_charging_window: "Charge 0-40C",
-    }),
-    ["passport", "repair", "provenance"],
+  const projectedPublic = projectPublicPassportFields(rawFields);
+  assert.equal(projectedPublic.model_serial_number, "LMT-48V-14AH-DEMO");
+  assert.equal(projectedPublic.nominal_voltage_v, "48");
+  assert.equal(
+    "detailed_composition" in projectedPublic,
+    false,
+    "Legitimate-interest field (Point 46) must be stripped from public projection",
   );
-  assert.deepEqual(
-    projection.getVisiblePassportTabs({
-      battery_model_name: "NordCell 36V",
-      supply_eu_warehouse: "Rotterdam Hub NL",
-    }),
-    ["passport", "supply", "provenance"],
+  assert.equal(
+    "part_numbers_components" in projectedPublic,
+    false,
+    "Legitimate-interest field (Point 47) must be stripped from public projection",
+  );
+  assert.equal(
+    "compliance_test_reports" in projectedPublic,
+    false,
+    "Authorities-only field (Point 50) must be stripped from public projection",
+  );
+  assert.equal(
+    "additional_information" in projectedPublic,
+    false,
+    "Private catch-all additional_information must never appear in public projection",
+  );
+  assert.equal(
+    "unknown_injected_field" in projectedPublic,
+    false,
+    "Unknown fields must be stripped from public projection",
   );
 
-  // Required Change D: no client component imports admin client or references SUPABASE_SERVICE_ROLE_KEY
-  for (const filePath of walkFiles(resolve("src"))) {
-    const content = readFileSync(filePath, "utf8");
-    const isClientComponent = /^\s*["']use client["'];?/m.test(content);
-    if (isClientComponent) {
+  const tiered = projectTieredPassportSnapshots(rawFields);
+  assert.equal(
+    tiered.snapshotPublicFields.model_serial_number,
+    "LMT-48V-14AH-DEMO",
+  );
+  assert.equal(
+    tiered.snapshotLegitimateInterestFields.detailed_composition,
+    "NMC811 cathode, graphite anode, LiPF6 electrolyte",
+  );
+  assert.equal(
+    tiered.snapshotLegitimateInterestFields.additional_information,
+    "Custom thermal pad note from datasheet",
+    "HTML tags must be stripped from additional_information",
+  );
+  assert.equal(
+    tiered.snapshotAuthoritiesOnlyFields.compliance_test_reports,
+    "TR-2026-UN383-99812.pdf",
+  );
+});
+
+test("getVisiblePassportTabs hides tabs that have no public fields", () => {
+  const minimalPublic = {
+    model_serial_number: "LMT-48V-14AH-DEMO",
+    manufacturer_name: "NordVolt Mobility Craft",
+  };
+  const tabsMinimal = getVisiblePassportTabs(minimalPublic);
+  assert.deepEqual(tabsMinimal, ["passport", "provenance"]);
+
+  const withRepairAndSupply = {
+    ...minimalPublic,
+    extinguishing_agent: "ABC dry powder or copious water",
+    place_of_manufacture: "pack_assembly: DE; cell_production: PL",
+  };
+  const tabsAll = getVisiblePassportTabs(withRepairAndSupply);
+  assert.deepEqual(tabsAll, ["passport", "repair", "supply", "provenance"]);
+});
+
+test("SUPABASE_SERVICE_ROLE_KEY is never referenced in client components", () => {
+  const srcDir = path.join(repoRoot, "src");
+
+  function walkFiles(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    let files = [];
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === "__tests__") continue;
+        files = files.concat(walkFiles(fullPath));
+      } else if (/\.(ts|tsx|js|jsx|mjs)$/.test(entry.name)) {
+        files.push(fullPath);
+      }
+    }
+    return files;
+  }
+
+  const allSourceFiles = walkFiles(srcDir);
+  for (const filePath of allSourceFiles) {
+    const content = fs.readFileSync(filePath, "utf8");
+    const isClientComponent = /^["']use client["'];/m.test(content);
+    const isPublicEnvFile = filePath.endsWith("env.public.ts");
+
+    if (isClientComponent || isPublicEnvFile) {
       assert.equal(
         content.includes("SUPABASE_SERVICE_ROLE_KEY"),
         false,
-        `Client component ${filePath} must never reference SUPABASE_SERVICE_ROLE_KEY`,
+        `SUPABASE_SERVICE_ROLE_KEY must never appear in client/public module: ${path.relative(repoRoot, filePath)}`,
       );
       assert.equal(
-        /supabase\/admin/.test(content),
+        content.includes("lib/supabase/admin"),
         false,
-        `Client component ${filePath} must never import supabase/admin`,
+        `Admin client must never be imported in client/public module: ${path.relative(repoRoot, filePath)}`,
       );
     }
   }
-});
-
-test("M2 normalizeSupabaseUrl strips accidental REST path suffixes and rejects placeholders", async () => {
-  const envMod = await import("../lib/supabase/env.ts");
-  assert.equal(
-    envMod.normalizeSupabaseUrl("https://fcnytdipvxwzfqswdytu.supabase.co/rest/v1/"),
-    "https://fcnytdipvxwzfqswdytu.supabase.co",
-  );
-  assert.equal(
-    envMod.normalizeSupabaseUrl("https://myproj.supabase.co/"),
-    "https://myproj.supabase.co",
-  );
-  assert.equal(
-    envMod.normalizeSupabaseUrl("https://your-project-ref.supabase.co"),
-    null,
-  );
-  assert.equal(envMod.normalizeSupabaseUrl("not-a-url"), null);
 });

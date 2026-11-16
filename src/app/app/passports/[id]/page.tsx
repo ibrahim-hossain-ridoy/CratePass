@@ -7,6 +7,7 @@ import {
 } from "@/components/workspace/PassportReviewWorkspace";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
+import { normalizeBatteryCategory } from "@/config/battery-fields";
 import type { ExtractionResultMap } from "@/types/database";
 import WorkspaceLoading from "../../loading";
 
@@ -107,6 +108,9 @@ async function PassportReviewLoader({
         initialStatus={
           passportRes.data.status === "published" ? "published" : "draft"
         }
+        initialBatteryCategory={normalizeBatteryCategory(
+          workingFields.battery_category,
+        )}
         initialProductName={
           productRel?.name ? String(productRel.name) : "Untitled Battery Pack"
         }

@@ -8,7 +8,12 @@ import { PassportFieldEditor } from "./PassportFieldEditor";
 import { ACCURACY_DECLARATION_TEXT } from "@/lib/publish";
 import { buildPublicPassportUrl, generateQrAssets, type QrAssets } from "@/lib/qr";
 import { formatShortUtcDate } from "@/lib/workspace/helpers";
-import type { ExtractionResultMap, PassportStatus } from "@/types/database";
+import { normalizeBatteryCategory } from "@/config/battery-fields";
+import type {
+  BatteryCategory,
+  ExtractionResultMap,
+  PassportStatus,
+} from "@/types/database";
 
 export interface VersionHistoryItem {
   id: string;
@@ -21,6 +26,7 @@ interface PassportReviewWorkspaceProps {
   passportId: string;
   slug: string;
   initialStatus: PassportStatus;
+  initialBatteryCategory?: BatteryCategory;
   initialProductName: string;
   initialModelCode: string;
   initialFields: Record<string, string>;
@@ -33,6 +39,7 @@ export function PassportReviewWorkspace({
   passportId,
   slug,
   initialStatus,
+  initialBatteryCategory,
   initialProductName,
   initialModelCode,
   initialFields,
@@ -42,6 +49,11 @@ export function PassportReviewWorkspace({
 }: PassportReviewWorkspaceProps) {
   const router = useRouter();
   const [status, setStatus] = useState<PassportStatus>(initialStatus);
+  const [batteryCategory, setBatteryCategory] = useState<BatteryCategory>(() =>
+    normalizeBatteryCategory(
+      initialBatteryCategory ?? initialFields.battery_category,
+    ),
+  );
   const [productName, setProductName] = useState(initialProductName);
   const [modelCode, setModelCode] = useState(initialModelCode);
   const [workingFields, setWorkingFields] = useState<Record<string, string>>(initialFields);
@@ -108,6 +120,7 @@ export function PassportReviewWorkspace({
         body: JSON.stringify({
           action,
           declarationAccepted: action === "unpublish" ? false : declarationChecked,
+          batteryCategory,
           workingFields,
         }),
       });
@@ -399,12 +412,14 @@ export function PassportReviewWorkspace({
       {/* Full editable fields grid */}
       <PassportFieldEditor
         passportId={passportId}
+        initialBatteryCategory={batteryCategory}
         initialProductName={productName}
         initialModelCode={modelCode}
         initialFields={workingFields}
         extractionFields={extractionFields}
         primarySaveLabel="Save field changes"
         onSaved={(updated) => {
+          setBatteryCategory(updated.batteryCategory);
           setProductName(updated.productName);
           setModelCode(updated.modelCode);
           setWorkingFields(updated.workingFields);

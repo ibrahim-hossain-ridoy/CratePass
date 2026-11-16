@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PassportFieldEditor } from "./PassportFieldEditor";
-import { WORKING_FIELD_LIST_NOTICE } from "@/config/battery-fields";
+import {
+  BATTERY_CATEGORIES,
+  OFFICIAL_71_FIELDS,
+  WORKING_FIELD_LIST_NOTICE,
+  isFieldRequiredForCategory,
+  type BatteryCategory,
+} from "@/config/battery-fields";
 import type { ExtractionResultMap } from "@/types/database";
 
 interface NewPassportFlowProps {
@@ -15,6 +21,7 @@ interface NewPassportFlowProps {
 interface ExtractApiSuccess {
   passportId: string;
   slug: string;
+  batteryCategory: BatteryCategory;
   productName: string;
   modelCode: string;
   totalPages: number;
@@ -38,10 +45,28 @@ export function NewPassportFlow({
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [productName, setProductName] = useState("");
+  const [batteryCategory, setBatteryCategory] = useState<BatteryCategory>("LMT");
   const [usedCount, setUsedCount] = useState(dailyUsed);
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<ExtractApiSuccess | null>(null);
+
+  const categoryStats = useMemo(() => {
+    const reqAll = OFFICIAL_71_FIELDS.filter((f) =>
+      isFieldRequiredForCategory(f, batteryCategory),
+    );
+    const reqPublic = reqAll.filter((f) => f.tier === "public").length;
+    const reqLegit = reqAll.filter(
+      (f) => f.tier === "legitimate_interest",
+    ).length;
+    const reqAuth = reqAll.filter((f) => f.tier === "authorities_only").length;
+    return {
+      totalMandatory: reqAll.length,
+      reqPublic,
+      reqLegit,
+      reqAuth,
+    };
+  }, [batteryCategory]);
 
   async function handleUpload(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,6 +92,7 @@ export function NewPassportFlow({
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("batteryCategory", batteryCategory);
       if (productName.trim()) {
         formData.append("productName", productName.trim());
       }
@@ -75,7 +101,9 @@ export function NewPassportFlow({
         method: "POST",
         body: formData,
       });
-      const json = (await res.json()) as Partial<ExtractApiSuccess> & { error?: string };
+      const json = (await res.json()) as Partial<ExtractApiSuccess> & {
+        error?: string;
+      };
 
       if (!res.ok || !json.passportId) {
         setErrorMsg(json.error || "PDF upload or extraction failed.");
@@ -85,7 +113,9 @@ export function NewPassportFlow({
       setUsedCount(json.dailyExtractionsUsed ?? usedCount + 1);
       setResult(json as ExtractApiSuccess);
     } catch {
-      setErrorMsg("Upload failed before finishing. Check your connection and try again.");
+      setErrorMsg(
+        "Upload failed before finishing. Check your connection and try again.",
+      );
     } finally {
       setUploading(false);
     }
@@ -98,7 +128,7 @@ export function NewPassportFlow({
           <p className="text-[12.5px] font-medium text-[var(--muted)]">
             Step 1 of 2 · PDF Spec Intake
           </p>
-          <h1 className="mt-0.5 text-[24px] font-semibold tracking-[-0.02em] text-[var(--ink)]">
+          <h1 className="mt-0.5 text-[24px] font-bold tracking-[-0.02em] text-[var(--ink)]">
             New Battery Passport
           </h1>
           <p className="mt-1 text-[13.5px] text-[var(--muted)]">
@@ -117,8 +147,64 @@ export function NewPassportFlow({
       {!result && (
         <form
           onSubmit={handleUpload}
-          className="space-y-5 rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)] p-5 sm:p-6"
+          className="space-y-5 rounded-[12px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-5 sm:p-6"
         >
+          {/* Battery Category Selector (LMT default) */}
+          <div>
+            <label className="block text-[13px] font-bold text-[var(--ink)]">
+              Battery category (Regulation (EU) 2023/1542 Annex XIII)
+            </label>
+            <div
+              role="radiogroup"
+              aria-label="Battery category"
+              className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3"
+            >
+              {BATTERY_CATEGORIES.map((cat) => {
+                const selected = batteryCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => setBatteryCategory(cat.id)}
+                    className={`flex flex-col items-start rounded-[10px] border p-3.5 text-left transition-colors cursor-pointer ${
+                      selected
+                        ? "border-[var(--accent)] bg-[var(--surface)] ring-2 ring-[var(--accent)]/20"
+                        : "border-[var(--border-strong)] bg-[var(--surface)]/70 hover:border-[var(--ink)]"
+                    }`}
+                  >
+                    <div className="flex w-full items-center justify-between">
+                      <span className="text-[14px] font-bold text-[var(--ink)]">
+                        {cat.label}
+                      </span>
+                      {cat.id === "LMT" && (
+                        <span className="rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10.5px] font-bold text-[var(--accent)]">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                    <span className="mt-1 text-[12px] leading-snug text-[var(--muted)]">
+                      {cat.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-[12.5px] text-[var(--muted)]">
+              Selected <strong className="text-[var(--ink)]">{batteryCategory}</strong>:{" "}
+              <span className="num font-semibold text-[var(--ink)]">
+                {categoryStats.totalMandatory}
+              </span>{" "}
+              mandatory Annex XIII points (
+              <span className="num">{categoryStats.reqPublic}</span> public ·{" "}
+              <span className="num">{categoryStats.reqLegit}</span> legitimate
+              interest · <span className="num">{categoryStats.reqAuth}</span>{" "}
+              authorities only). Dynamic BMS telemetry (Points 51–71) is excluded
+              from PDF extraction.
+            </p>
+          </div>
+
           <div>
             <label
               htmlFor="new-product-name"
@@ -155,8 +241,9 @@ export function NewPassportFlow({
               className="mt-1.5 block w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-3 text-[14px] text-[var(--ink)] file:mr-3 file:rounded-[6px] file:border file:border-[var(--border-strong)] file:bg-[var(--well)] file:px-3 file:py-1.5 file:text-[13px] file:font-semibold file:text-[var(--ink)] cursor-pointer"
             />
             <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--muted)]">
-              Stored privately in your organization bucket. Text is extracted and parsed
-              strictly as untrusted datasheet data; no compliance verification is implied.
+              Stored privately in your organization bucket. Text is extracted and
+              parsed strictly as untrusted datasheet data; no compliance
+              verification is implied.
             </p>
           </div>
 
@@ -188,12 +275,15 @@ export function NewPassportFlow({
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]">
             <div>
               <p className="font-semibold">
-                Draft created · {result.totalPages} page(s),{" "}
-                <span className="num">{result.characterCount}</span> extracted characters
+                Draft created ({result.batteryCategory}) · {result.totalPages}{" "}
+                page(s), <span className="num">{result.characterCount}</span>{" "}
+                extracted characters
               </p>
               <p className="text-[12.5px]">
-                Extractor mode: <code className="font-mono">{result.extraction.usage.model}</code> ·
-                Red boxes below mark missing or uncertain fields for manual input.
+                Extractor mode:{" "}
+                <code className="font-mono">{result.extraction.usage.model}</code>{" "}
+                · Red boxes below mark missing required or uncertain static fields
+                for manual input.
               </p>
             </div>
             <button
@@ -210,8 +300,8 @@ export function NewPassportFlow({
               role="status"
               className="rounded-[8px] border border-red-400 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
             >
-              Very little selectable text was found in this PDF (it may be scanned images).
-              Fill in the red boxes manually below before publishing.
+              Very little selectable text was found in this PDF (it may be scanned
+              images). Fill in the red boxes manually below before publishing.
             </div>
           )}
 
@@ -219,6 +309,7 @@ export function NewPassportFlow({
             passportId={result.passportId}
             initialProductName={result.productName}
             initialModelCode={result.modelCode}
+            initialBatteryCategory={result.batteryCategory}
             initialFields={result.workingFields}
             extractionFields={result.extraction.fields}
             primarySaveLabel="Save fields & open Review / Publish"

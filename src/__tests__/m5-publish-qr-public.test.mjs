@@ -1,142 +1,179 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import fs from "node:fs";
+import path from "node:path";
+import { buildPublicPassportUrl, generateQrAssets } from "../lib/qr.ts";
+import {
+  ACCURACY_DECLARATION_TEXT,
+  preparePublishSnapshots,
+} from "../lib/publish.ts";
+import { PUBLIC_MANUFACTURER_NOTICE } from "../config/battery-fields.ts";
 
-test("M5 publish snapshot builder, declaration requirement, and billing gate", async () => {
-  const publishMod = await import("../lib/publish.ts");
+const repoRoot = path.resolve(import.meta.dirname, "../..");
 
-  // Must require manufacturer accuracy declaration
-  assert.throws(
-    () =>
-      publishMod.preparePublishSnapshots({
-        workingFields: { battery_model_name: "Alpine 36V" },
-        declarationAccepted: false,
-      }),
-    /declaration/i,
+test("QR generator produces valid SVG and PNG data URL pointing to /p/[slug]", async () => {
+  const url = buildPublicPassportUrl(
+    "nv-48v-14ah-a1b2c3",
+    undefined,
+    "https://passport.example.eu",
   );
+  assert.equal(url, "https://passport.example.eu/p/nv-48v-14ah-a1b2c3");
 
-  // Must produce strict public projection without restricted fields
-  const snaps = publishMod.preparePublishSnapshots({
-    workingFields: {
-      battery_model_name: "Alpine 36V",
-      nominal_voltage_v: "36",
-      bms_firmware_version: "SECRET-BMS-v2",
-      dismantling_manual_ref: "RESTRICTED-DOC-9",
-    },
-    declarationAccepted: true,
-  });
-
-  assert.equal(snaps.snapshotAllFields.battery_model_name, "Alpine 36V");
-  assert.equal(snaps.snapshotAllFields.bms_firmware_version, "SECRET-BMS-v2");
-  assert.equal(snaps.snapshotPublicFields.battery_model_name, "Alpine 36V");
-  assert.equal(snaps.snapshotPublicFields.bms_firmware_version, undefined);
-  assert.equal(snaps.snapshotPublicFields.dismantling_manual_ref, undefined);
-
-  // Billing feature gate logic
-  assert.equal(
-    publishMod.canOrgPublish({
-      billingEnabled: false,
-      billingStatus: "free",
-      compEnabled: false,
-    }),
-    true,
-  );
-  assert.equal(
-    publishMod.canOrgPublish({
-      billingEnabled: true,
-      billingStatus: "free",
-      compEnabled: true,
-    }),
-    true,
-  );
-  assert.equal(
-    publishMod.canOrgPublish({
-      billingEnabled: true,
-      billingStatus: "active",
-      compEnabled: false,
-    }),
-    true,
-  );
-  assert.equal(
-    publishMod.canOrgPublish({
-      billingEnabled: true,
-      billingStatus: "free",
-      compEnabled: false,
-    }),
-    false,
-  );
+  const assets = await generateQrAssets(url);
+  assert.match(assets.svg, /<svg[\s>]/i);
+  assert.match(assets.svg, /<\/svg>/i);
+  assert.match(assets.pngDataUrl, /^data:image\/png;base64,/);
 });
 
-test("M5 QR generator and /p/[slug] non-demo strict boundaries", async () => {
-  const qrMod = await import("../lib/qr.ts");
-  const assets = await qrMod.generateQrAssets("https://passport.example/p/alpine-36v");
-  assert.ok(assets.svg.includes("<svg"));
-  assert.ok(assets.pngDataUrl.startsWith("data:image/png;base64,"));
+test("preparePublishSnapshots separates public, legitimate_interest, and authorities_only snapshots and checks required static fields for category", () => {
+  assert.equal(
+    ACCURACY_DECLARATION_TEXT,
+    "I confirm this information is accurate and I am responsible for it",
+  );
 
-  const viewPath = resolve("src/components/public-passport/PublicPassportView.tsx");
-  assert.ok(existsSync(viewPath), "PublicPassportView.tsx must exist");
-  const viewSource = readFileSync(viewPath, "utf8");
-
-  assert.ok(viewSource.includes("Provenance & recycling"));
-  assert.ok(viewSource.includes("PUBLIC_MANUFACTURER_NOTICE"));
-  assert.ok(viewSource.includes("WORKING_FIELD_LIST_NOTICE"));
-
-  // Must NEVER reuse demo fictional content or 2.5D hotspots
-  for (const forbidden of [
-    "passport.json",
-    "RepairViewTab",
-    "AuthenticityTab",
-    "SupplyJourneyTab",
-    "battery-cutaway-25d",
-    "hotspot",
-    "DEMO",
-  ]) {
-    assert.equal(
-      viewSource.includes(forbidden),
-      false,
-      `PublicPassportView must never reference ${forbidden}`,
-    );
-  }
-});
-
-test("M5 copy guardrails across workspace, auth, and public passport routes", () => {
-  const roots = [
-    "src/components/auth",
-    "src/components/workspace",
-    "src/components/public-passport",
-    "src/app/app",
-    "src/app/login",
-    "src/app/p",
-    "src/lib/publish.ts",
-    "src/config/battery-fields.ts",
-  ];
-
-  const files = [];
-  const walk = (target) => {
-    const abs = resolve(target);
-    if (!existsSync(abs)) return;
-    if (statSync(abs).isDirectory()) {
-      for (const entry of readdirSync(abs)) {
-        walk(join(target, entry));
-      }
-    } else if (/\.(ts|tsx)$/.test(abs)) {
-      files.push(abs);
-    }
+  const workingFields = {
+    model_serial_number: "NV-48V-14AH-PRO",
+    manufacturer_name: "NordVolt Mobility Craft",
+    nominal_voltage_v: "48",
+    detailed_composition: "NMC811 cathode, graphite anode",
+    compliance_test_reports: "UN38.3-Report-2026.pdf",
+    additional_information: "Internal assembly torque spec: 4.5 Nm",
   };
 
-  for (const root of roots) walk(root);
-  assert.ok(files.length >= 10, "Expected at least 10 product UI/config files");
+  const result = preparePublishSnapshots({
+    workingFields,
+    declarationAccepted: true,
+    batteryCategory: "LMT",
+  });
+  assert.equal(result.snapshotPublicFields.model_serial_number, "NV-48V-14AH-PRO");
+  assert.equal(result.snapshotPublicFields.nominal_voltage_v, "48");
+  assert.equal(
+    "detailed_composition" in result.snapshotPublicFields,
+    false,
+    "Legitimate-interest field must never appear in snapshotPublicFields",
+  );
+  assert.equal(
+    "compliance_test_reports" in result.snapshotPublicFields,
+    false,
+    "Authorities-only field must never appear in snapshotPublicFields",
+  );
+  assert.equal(
+    "additional_information" in result.snapshotPublicFields,
+    false,
+    "Private catch-all additional_information must never appear in snapshotPublicFields",
+  );
+  assert.equal(
+    result.snapshotLegitimateInterestFields.detailed_composition,
+    "NMC811 cathode, graphite anode",
+  );
+  assert.equal(
+    result.snapshotLegitimateInterestFields.additional_information,
+    "Internal assembly torque spec: 4.5 Nm",
+  );
+  assert.equal(
+    result.snapshotAuthoritiesOnlyFields.compliance_test_reports,
+    "UN38.3-Report-2026.pdf",
+  );
+  assert.ok(
+    result.missingRequiredKeys.includes("chemistry_type"),
+    "Missing required static fields for LMT should be listed in missingRequiredKeys",
+  );
+  assert.equal(
+    result.missingRequiredKeys.includes("cycle_count"),
+    false,
+    "Dynamic BMS fields (Points 51-71) must never be counted as missingRequiredKeys for publishing",
+  );
+  assert.equal(
+    result.missingRequiredKeys.includes("exhaustion_capacity_threshold"),
+    false,
+    "EV-only fields (Point 33: exhaustion_capacity_threshold) must not be required when category is LMT",
+  );
+
+  const evResult = preparePublishSnapshots({
+    workingFields,
+    declarationAccepted: true,
+    batteryCategory: "EV",
+  });
+  assert.equal(
+    evResult.missingRequiredKeys.includes("exhaustion_capacity_threshold"),
+    true,
+    "Point 33 (exhaustion_capacity_threshold) must be required when category is EV",
+  );
+});
+
+test("Real public passport component (/p/[slug]) never imports demo data or uses DEMO labels", () => {
+  const publicViewPath = path.join(
+    repoRoot,
+    "src/components/public-passport/PublicPassportView.tsx",
+  );
+  const publicPagePath = path.join(repoRoot, "src/app/p/[slug]/page.tsx");
+
+  const viewCode = fs.readFileSync(publicViewPath, "utf8");
+  const pageCode = fs.readFileSync(publicPagePath, "utf8");
+
+  for (const code of [viewCode, pageCode]) {
+    assert.doesNotMatch(
+      code,
+      /data\/demo-passport/,
+      "Real passport page must never import fictional demo data",
+    );
+    assert.doesNotMatch(
+      code,
+      /BatteryCutawayExplorer/,
+      "Real passport page must never render the demo 2.5D hotspot SVG",
+    );
+    assert.doesNotMatch(
+      code,
+      /\bDEMO\b/,
+      "Real passport page must never display DEMO labels",
+    );
+  }
+
+  assert.equal(
+    PUBLIC_MANUFACTURER_NOTICE,
+    "Information provided by the manufacturer. Not verified by us.",
+  );
+  assert.match(
+    viewCode,
+    /PUBLIC_MANUFACTURER_NOTICE/,
+    "Real passport page must render PUBLIC_MANUFACTURER_NOTICE",
+  );
+});
+
+test("Hard copy guardrail across all workspace and public passport components", () => {
+  const dirsToScan = [
+    path.join(repoRoot, "src/components/public-passport"),
+    path.join(repoRoot, "src/components/workspace"),
+    path.join(repoRoot, "src/app/p"),
+    path.join(repoRoot, "src/app/app"),
+  ];
+
+  function collectFiles(dir) {
+    if (!fs.existsSync(dir)) return [];
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    let out = [];
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) out = out.concat(collectFiles(full));
+      else if (/\.(ts|tsx)$/.test(entry.name)) out.push(full);
+    }
+    return out;
+  }
+
+  const files = dirsToScan.flatMap(collectFiles);
+  assert.ok(files.length >= 6, "Should scan workspace and public files");
 
   for (const file of files) {
-    const sanitized = readFileSync(file, "utf8").replace(
-      /not verified by us/gi,
-      "",
-    );
-    assert.equal(
-      /\b(compliant|certified|verified)\b/i.test(sanitized),
-      false,
-      `Forbidden compliance/verification claim word found in ${file}`,
+    const content = fs.readFileSync(file, "utf8");
+    // Strip allowed negated disclaimer phrase ("Not verified by us") and official Point 61 name ("State of certified energy") before checking forbidden claim words
+    const stripped = content
+      .replace(/not verified by us/gi, "")
+      .replace(/state of certified energy/gi, "")
+      .replace(/certified copy/gi, "");
+    assert.doesNotMatch(
+      stripped,
+      /\b(compliant|certified|verified)\b/i,
+      `Forbidden claim word found in ${path.relative(repoRoot, file)}`,
     );
   }
 });

@@ -6,7 +6,7 @@ import {
   PassportDashboard,
   type DashboardPassportItem,
 } from "@/components/workspace/PassportDashboard";
-import { BATTERY_FIELDS } from "@/config/battery-fields";
+import { STATIC_BATTERY_FIELDS } from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
@@ -112,7 +112,7 @@ async function DashboardLoader() {
           row.working_fields && typeof row.working_fields === "object"
             ? (row.working_fields as Record<string, unknown>)
             : {};
-        const populatedCount = BATTERY_FIELDS.filter(
+        const populatedCount = STATIC_BATTERY_FIELDS.filter(
           (f) => typeof fields[f.key] === "string" && String(fields[f.key]).trim().length > 0,
         ).length;
 
@@ -126,7 +126,7 @@ async function DashboardLoader() {
             ? (versionNumberMap.get(String(row.current_version_id)) ?? null)
             : null,
           populatedCount,
-          totalFieldCount: BATTERY_FIELDS.length,
+          totalFieldCount: STATIC_BATTERY_FIELDS.length,
           updatedAt: String(row.updated_at),
         };
       });

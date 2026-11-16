@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  isValidBatteryCategory,
+  type BatteryCategory,
+} from "@/config/battery-fields";
 import { isBillingEnabled } from "@/config/site";
 import {
   ACCURACY_DECLARATION_TEXT,
@@ -12,6 +16,7 @@ import { getWorkspaceContext } from "@/lib/workspace/context";
 const PublishActionSchema = z.object({
   action: z.enum(["publish", "publish_new_version", "unpublish"]),
   declarationAccepted: z.boolean().optional().default(false),
+  batteryCategory: z.enum(["LMT", "EV", "industrial"]).optional(),
   workingFields: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -106,11 +111,18 @@ export async function POST(
     parsed.data.workingFields ??
     ((passportRow.working_fields as Record<string, unknown>) || {});
 
+  const resolvedCategory: BatteryCategory =
+    parsed.data.batteryCategory ??
+    (isValidBatteryCategory(sourceFields.battery_category)
+      ? sourceFields.battery_category
+      : "LMT");
+
   let snapshots: ReturnType<typeof preparePublishSnapshots>;
   try {
     snapshots = preparePublishSnapshots({
       workingFields: sourceFields,
       declarationAccepted: Boolean(parsed.data.declarationAccepted),
+      batteryCategory: resolvedCategory,
     });
   } catch (err) {
     return NextResponse.json(
@@ -134,19 +146,42 @@ export async function POST(
 
   const declaredAt = new Date().toISOString();
 
-  const { data: createdVersion, error: versionErr } = await supabase
+  let versionInsert = await supabase
     .from("passport_versions")
     .insert({
       passport_id: id,
       org_id: ctx.org.orgId,
       version_number: nextVersionNumber,
+      battery_category: resolvedCategory,
       snapshot_all_fields: snapshots.snapshotAllFields,
       snapshot_public_fields: snapshots.snapshotPublicFields,
+      snapshot_legitimate_interest_fields:
+        snapshots.snapshotLegitimateInterestFields,
+      snapshot_authorities_only_fields:
+        snapshots.snapshotAuthoritiesOnlyFields,
       declared_accurate_by: ctx.user.id,
       declared_at: declaredAt,
     })
     .select("id, version_number, declared_at, created_at")
     .single();
+
+  if (versionInsert.error) {
+    versionInsert = await supabase
+      .from("passport_versions")
+      .insert({
+        passport_id: id,
+        org_id: ctx.org.orgId,
+        version_number: nextVersionNumber,
+        snapshot_all_fields: snapshots.snapshotAllFields,
+        snapshot_public_fields: snapshots.snapshotPublicFields,
+        declared_accurate_by: ctx.user.id,
+        declared_at: declaredAt,
+      })
+      .select("id, version_number, declared_at, created_at")
+      .single();
+  }
+
+  const { data: createdVersion, error: versionErr } = versionInsert;
 
   if (versionErr || !createdVersion) {
     return NextResponse.json(

@@ -1,7 +1,10 @@
-import { BATTERY_FIELDS } from "../config/battery-fields.ts";
 import {
-  normalizeFieldValues,
-  projectPublicPassportFields,
+  BATTERY_FIELDS,
+  isStaticBlockingFieldForCategory,
+  type BatteryCategory,
+} from "../config/battery-fields.ts";
+import {
+  projectTieredPassportSnapshots,
   type FieldValueMap,
 } from "./passport-projection.ts";
 import type { BillingStatus } from "../types/database.ts";
@@ -28,17 +31,21 @@ export function canOrgPublish({
 export interface PreparePublishInput {
   workingFields: Record<string, unknown>;
   declarationAccepted: boolean;
+  batteryCategory?: BatteryCategory;
 }
 
 export interface PreparedSnapshots {
   snapshotAllFields: FieldValueMap;
   snapshotPublicFields: FieldValueMap;
+  snapshotLegitimateInterestFields: FieldValueMap;
+  snapshotAuthoritiesOnlyFields: FieldValueMap;
   missingRequiredKeys: string[];
 }
 
 export function preparePublishSnapshots({
   workingFields,
   declarationAccepted,
+  batteryCategory = "LMT",
 }: PreparePublishInput): PreparedSnapshots {
   if (!declarationAccepted) {
     throw new Error(
@@ -46,19 +53,23 @@ export function preparePublishSnapshots({
     );
   }
 
-  const snapshotAllFields = normalizeFieldValues(workingFields);
-  if (Object.keys(snapshotAllFields).length === 0) {
-    throw new Error("At least one passport field must be populated before publishing.");
+  const tiered = projectTieredPassportSnapshots(workingFields);
+  if (Object.keys(tiered.snapshotAllFields).length === 0) {
+    throw new Error(
+      "At least one passport field must be populated before publishing.",
+    );
   }
 
-  const snapshotPublicFields = projectPublicPassportFields(snapshotAllFields);
+  // Only static fields required for the chosen category count as missing-required;
+  // dynamic BMS telemetry fields (Points 51–71) are never required or blocking for publishing.
   const missingRequiredKeys = BATTERY_FIELDS.filter(
-    (f) => f.required && !snapshotAllFields[f.key],
+    (f) =>
+      isStaticBlockingFieldForCategory(f, batteryCategory) &&
+      !tiered.snapshotAllFields[f.key],
   ).map((f) => f.key);
 
   return {
-    snapshotAllFields,
-    snapshotPublicFields,
+    ...tiered,
     missingRequiredKeys,
   };
 }

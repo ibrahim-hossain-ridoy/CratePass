@@ -74,12 +74,24 @@ export function PublicPassportView({
     visibleTabs[0] ?? "provenance",
   );
 
-  const modelName = publicFields.battery_model_name || slug;
+  const modelName =
+    publicFields.model_serial_number ||
+    publicFields.battery_model_name ||
+    slug;
   const manufacturer = publicFields.manufacturer_name || "Battery manufacturer";
   const specPieces = [
     publicFields.nominal_voltage_v ? `${publicFields.nominal_voltage_v} V` : "",
-    publicFields.rated_capacity_ah ? `${publicFields.rated_capacity_ah} Ah` : "",
-    publicFields.rated_energy_wh ? `${publicFields.rated_energy_wh} Wh` : "",
+    publicFields.capacity_ah
+      ? `${publicFields.capacity_ah} Ah`
+      : publicFields.rated_capacity_ah
+        ? `${publicFields.rated_capacity_ah} Ah`
+        : "",
+    publicFields.original_power_w
+      ? `${publicFields.original_power_w} W`
+      : publicFields.rated_energy_wh
+        ? `${publicFields.rated_energy_wh} Wh`
+        : "",
+    publicFields.weight_kg ? `${publicFields.weight_kg} kg` : "",
   ].filter(Boolean);
 
   const repairItems = BATTERY_FIELDS.filter(

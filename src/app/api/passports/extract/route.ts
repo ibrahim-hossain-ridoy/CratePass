@@ -1,5 +1,9 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
+import {
+  isValidBatteryCategory,
+  type BatteryCategory,
+} from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
 import { extractBatteryFieldsFromText } from "@/lib/extractor";
 import { normalizeFieldValues } from "@/lib/passport-projection";
@@ -81,6 +85,10 @@ export async function POST(request: Request) {
 
   const fileEntry = formData.get("file");
   const productNameOverride = String(formData.get("productName") ?? "").trim().slice(0, 160);
+  const rawCategory = String(formData.get("batteryCategory") ?? "LMT").trim();
+  const batteryCategory: BatteryCategory = isValidBatteryCategory(rawCategory)
+    ? rawCategory
+    : "LMT";
 
   if (!(fileEntry instanceof File)) {
     return NextResponse.json(
@@ -167,6 +175,9 @@ export async function POST(request: Request) {
         workingFields[key] = item.value;
       }
     }
+    if (!workingFields.battery_category) {
+      workingFields.battery_category = batteryCategory;
+    }
     const cleanWorkingFields = normalizeFieldValues(workingFields);
 
     const finalProductName =
@@ -174,7 +185,8 @@ export async function POST(request: Request) {
       extraction.productName ||
       safeFilename.replace(/\.pdf$/i, "") ||
       "Battery Pack";
-    const finalModelCode = extraction.modelCode || cleanWorkingFields.model_code || "";
+    const finalModelCode =
+      extraction.modelCode || cleanWorkingFields.model_serial_number || "";
 
     const slug = `${slugifyPassportName(finalProductName)}-${randomBytes(3).toString("hex")}`;
 
@@ -192,17 +204,34 @@ export async function POST(request: Request) {
       throw new Error("Could not create product record.");
     }
 
-    const { data: passportRow, error: passportErr } = await supabase
+    let passportInsert = await supabase
       .from("passports")
       .insert({
         org_id: ctx.org.orgId,
         product_id: productRow.id,
         slug,
         status: "draft",
+        battery_category: batteryCategory,
         working_fields: cleanWorkingFields,
       })
       .select("id, slug")
       .single();
+
+    if (passportInsert.error) {
+      passportInsert = await supabase
+        .from("passports")
+        .insert({
+          org_id: ctx.org.orgId,
+          product_id: productRow.id,
+          slug,
+          status: "draft",
+          working_fields: cleanWorkingFields,
+        })
+        .select("id, slug")
+        .single();
+    }
+
+    const { data: passportRow, error: passportErr } = passportInsert;
 
     if (passportErr || !passportRow) {
       throw new Error("Could not create draft battery passport.");
@@ -245,6 +274,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       passportId: passportRow.id,
       slug: passportRow.slug,
+      batteryCategory,
       productName: finalProductName,
       modelCode: finalModelCode,
       totalPages: parsedPdf.totalPages,
