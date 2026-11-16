@@ -49,6 +49,7 @@ export function PassportReviewWorkspace({
   const [declarationChecked, setDeclarationChecked] = useState(false);
   const [submittingAction, setSubmittingAction] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [billingRequiredError, setBillingRequiredError] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [qrAssets, setQrAssets] = useState<QrAssets | null>(null);
   const [publicUrl, setPublicUrl] = useState<string>(() =>
@@ -89,6 +90,7 @@ export function PassportReviewWorkspace({
     action: "publish" | "publish_new_version" | "unpublish",
   ) {
     setActionError(null);
+    setBillingRequiredError(false);
     setActionNotice(null);
 
     if (action !== "unpublish" && !declarationChecked) {
@@ -111,11 +113,15 @@ export function PassportReviewWorkspace({
       });
       const json = (await res.json()) as {
         error?: string;
+        code?: string;
         status?: PassportStatus;
         version?: VersionHistoryItem;
       };
 
       if (!res.ok) {
+        if (res.status === 402 || json.code === "BILLING_REQUIRED") {
+          setBillingRequiredError(true);
+        }
         setActionError(json.error || "Action failed. Try again.");
         return;
       }
@@ -239,7 +245,15 @@ export function PassportReviewWorkspace({
               role="alert"
               className="mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
             >
-              {actionError}
+              <p>{actionError}</p>
+              {billingRequiredError && (
+                <Link
+                  href="/app/billing"
+                  className="mt-2 inline-flex font-semibold text-red-950 underline underline-offset-4"
+                >
+                  Open Plan &amp; Billing (/app/billing)
+                </Link>
+              )}
             </div>
           )}
 

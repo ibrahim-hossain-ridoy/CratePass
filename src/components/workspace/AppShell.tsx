@@ -17,6 +17,7 @@ interface AppShellProps {
 const NAV_ITEMS = [
   { href: "/app", label: "Passports" },
   { href: "/app/new", label: "New passport" },
+  { href: "/app/billing", label: "Plan & billing" },
 ] as const;
 
 export function AppShell({
