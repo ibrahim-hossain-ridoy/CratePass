@@ -378,14 +378,14 @@ export function PassportFieldEditor({
         </div>
       )}
 
-      <div className="sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-3">
-        <p className="num text-[13px] text-[var(--muted)]">
+      <div className="sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#233242] bg-[#0B1016] px-4 py-3 text-white">
+        <p className="num font-mono text-[13px] text-[#CBD5E1]">
           {summary.populated} populated · {summary.missing + summary.uncertain} flagged
         </p>
         <button
           type="submit"
           disabled={saving}
-          className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-5 py-2 text-[14px] font-semibold text-white hover:bg-[#963103] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[#34D399] px-5 py-2 text-[14px] font-bold text-[#052E16] hover:bg-[#6EE7B7] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {saving ? "Saving..." : primarySaveLabel}
         </button>

@@ -80,7 +80,7 @@ export function PrivacyWorkspace({
           <div className="mt-4">
             <a
               href="/api/org/export"
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-[#963103]"
+              className="pressable chamfer-sm inline-flex min-h-[42px] items-center justify-center bg-[var(--accent)] px-4 py-2 text-[13.5px] font-bold text-white hover:bg-[var(--accent-ink)]"
             >
               Download JSON export
             </a>

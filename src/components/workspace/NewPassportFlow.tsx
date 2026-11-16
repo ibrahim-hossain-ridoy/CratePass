@@ -172,7 +172,7 @@ export function NewPassportFlow({
           <button
             type="submit"
             disabled={uploading || usedCount >= dailyLimit}
-            className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-[#963103] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            className="pressable chamfer-sm inline-flex min-h-[46px] items-center justify-center bg-[var(--accent)] px-6 py-2.5 text-[14.5px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {uploading
               ? "Extracting datasheet fields..."

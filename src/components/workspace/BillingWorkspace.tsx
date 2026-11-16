@@ -204,7 +204,7 @@ export function BillingWorkspace({
                 type="button"
                 disabled={loadingCheckout}
                 onClick={handleStartCheckout}
-                className="pressable inline-flex min-h-[44px] w-full items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-4 py-2 text-[14px] font-semibold text-white hover:bg-[#963103] disabled:opacity-60 cursor-pointer"
+                className="pressable chamfer-sm inline-flex min-h-[44px] w-full items-center justify-center bg-[var(--accent)] px-4 py-2 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:opacity-60 cursor-pointer"
               >
                 {loadingCheckout
                   ? "Opening Paddle checkout..."

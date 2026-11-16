@@ -49,38 +49,44 @@ export function PassportDashboard({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="rounded-[8px] border border-[var(--border)] bg-[var(--well-soft)] px-3 py-1.5 text-[12.5px]">
+          <div className="rounded-[8px] border border-[var(--border-strong)] bg-[var(--well-soft)] px-3.5 py-2 text-[12.5px]">
             <span className="text-[var(--muted)]">Daily PDF checks </span>
-            <span className="num font-semibold text-[var(--ink)]">
+            <span className="num font-mono font-bold text-[var(--ink)]">
               {dailyExtractionsUsed} / {dailyExtractionLimit}
             </span>
           </div>
           <Link
             href="/app/new"
-            className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-4 py-2 text-[14px] font-semibold text-white hover:bg-[#963103]"
+            className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[var(--accent)] px-5 py-2 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)]"
           >
             New passport
           </Link>
         </div>
       </div>
 
-      {/* Summary metrics strip (type, not noisy icon tiles) */}
-      <dl className="grid grid-cols-3 gap-4 border-b border-[var(--rule)] pb-5">
-        <div>
-          <dt className="text-[12.5px] text-[var(--muted)]">Total records</dt>
-          <dd className="num mt-0.5 text-[22px] font-semibold text-[var(--ink)]">
+      {/* Summary metrics strip */}
+      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-4">
+          <dt className="font-mono text-[11.5px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+            Total records
+          </dt>
+          <dd className="num mt-1 text-[26px] font-bold text-[var(--ink)]">
             {passports.length}
           </dd>
         </div>
-        <div>
-          <dt className="text-[12.5px] text-[var(--muted)]">Published pages</dt>
-          <dd className="num mt-0.5 text-[22px] font-semibold text-[var(--positive)]">
+        <div className="rounded-[12px] border border-[var(--positive-border)] bg-[var(--positive-bg)] p-4">
+          <dt className="font-mono text-[11.5px] font-semibold uppercase tracking-wider text-[var(--positive)]">
+            Published pages
+          </dt>
+          <dd className="num mt-1 text-[26px] font-bold text-[var(--positive)]">
             {publishedCount}
           </dd>
         </div>
-        <div>
-          <dt className="text-[12.5px] text-[var(--muted)]">Drafts in check</dt>
-          <dd className="num mt-0.5 text-[22px] font-semibold text-[var(--ink)]">
+        <div className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-4">
+          <dt className="font-mono text-[11.5px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+            Drafts in check
+          </dt>
+          <dd className="num mt-1 text-[26px] font-bold text-[var(--ink)]">
             {passports.length - publishedCount}
           </dd>
         </div>
@@ -98,25 +104,28 @@ export function PassportDashboard({
 
       {/* Empty state */}
       {!queryError && passports.length === 0 && (
-        <section className="rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)] p-6 text-center sm:p-8">
-          <h2 className="text-[18px] font-semibold text-[var(--ink)]">
+        <section className="rounded-[12px] border border-[#233242] bg-[#0B1016] p-6 text-center text-[#F1F5F9] sm:p-9">
+          <p className="font-mono text-[11.5px] font-bold uppercase tracking-wider text-[#34D399]">
+            + WORKSPACE READY
+          </p>
+          <h2 className="mt-1.5 text-[20px] font-bold text-white">
             No battery passports created yet
           </h2>
-          <p className="mx-auto mt-2 max-w-[46ch] text-[14px] leading-relaxed text-[var(--muted)]">
+          <p className="mx-auto mt-2 max-w-[46ch] text-[14.5px] leading-relaxed text-[#94A3B8]">
             Upload an OEM battery spec PDF to inspect missing fields, review
             technical details, and publish a mobile QR page at{" "}
-            <code className="font-mono text-[13px] text-[var(--ink)]">/p/[slug]</code>.
+            <code className="font-mono text-[13px] text-[#6EE7B7]">/p/[slug]</code>.
           </p>
-          <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/app/new"
-              className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-[#963103]"
+              className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[#34D399] px-5 py-2.5 text-[14px] font-bold text-[#052E16] hover:bg-[#6EE7B7]"
             >
               Upload first spec PDF
             </Link>
             <Link
               href="/demo"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-[14px] font-medium text-[var(--ink)] hover:border-[var(--ink)]"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-[#233242] bg-[#131D28] px-4 py-2 text-[14px] font-semibold text-white hover:border-[#34D399]"
             >
               Inspect /demo output
             </Link>

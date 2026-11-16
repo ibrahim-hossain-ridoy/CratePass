@@ -110,7 +110,7 @@ export function LoginForm({
   }
 
   return (
-    <div className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6">
+    <div className="hero-enter-delay-1 rounded-[14px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6">
       {!supabaseConfigured && (
         <div
           role="status"
@@ -130,7 +130,7 @@ export function LoginForm({
       <div
         role="tablist"
         aria-label="Sign-in method"
-        className="grid grid-cols-2 gap-1 rounded-[8px] border border-[var(--border)] bg-[var(--well-soft)] p-1"
+        className="grid grid-cols-2 gap-1 rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)] p-1"
       >
         <button
           type="button"
@@ -141,9 +141,9 @@ export function LoginForm({
             setErrorMsg(null);
             setStatusMsg(null);
           }}
-          className={`min-h-[40px] rounded-[6px] px-3 text-[13px] font-semibold transition-colors cursor-pointer ${
+          className={`min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold transition-colors cursor-pointer ${
             mode === "password"
-              ? "bg-[var(--surface)] text-[var(--ink)] border border-[var(--border)]"
+              ? "bg-[#0B1016] text-white"
               : "text-[var(--muted)] hover:text-[var(--ink)]"
           }`}
         >
@@ -158,9 +158,9 @@ export function LoginForm({
             setErrorMsg(null);
             setStatusMsg(null);
           }}
-          className={`min-h-[40px] rounded-[6px] px-3 text-[13px] font-semibold transition-colors cursor-pointer ${
+          className={`min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold transition-colors cursor-pointer ${
             mode === "magic-link"
-              ? "bg-[var(--surface)] text-[var(--ink)] border border-[var(--border)]"
+              ? "bg-[#0B1016] text-white"
               : "text-[var(--muted)] hover:text-[var(--ink)]"
           }`}
         >
@@ -250,7 +250,7 @@ export function LoginForm({
         <button
           type="submit"
           disabled={loading}
-          className="pressable inline-flex min-h-[44px] w-full items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-4 py-2.5 text-[15px] font-semibold text-white hover:bg-[#963103] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="pressable chamfer-sm inline-flex min-h-[46px] w-full items-center justify-center bg-[var(--accent)] px-4 py-2.5 text-[15px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {loading
             ? "Working..."

@@ -276,7 +276,7 @@ export function PassportReviewWorkspace({
                     versions.length > 0 ? "publish_new_version" : "publish",
                   )
                 }
-                className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-5 py-2 text-[14px] font-semibold text-white hover:bg-[#963103] disabled:opacity-60 cursor-pointer"
+                className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[var(--accent)] px-5 py-2 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:opacity-60 cursor-pointer"
               >
                 {submittingAction ? "Publishing..." : "Approve & Publish"}
               </button>
@@ -286,7 +286,7 @@ export function PassportReviewWorkspace({
                   type="button"
                   disabled={submittingAction !== null}
                   onClick={() => handlePublishAction("publish_new_version")}
-                  className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] bg-[var(--accent-ink)] px-4 py-2 text-[14px] font-semibold text-white hover:bg-[#963103] disabled:opacity-60 cursor-pointer"
+                  className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[var(--accent)] px-4 py-2 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:opacity-60 cursor-pointer"
                 >
                   {submittingAction === "publish_new_version"
                     ? "Publishing..."
@@ -330,44 +330,46 @@ export function PassportReviewWorkspace({
         </div>
 
         {/* Downloadable QR card */}
-        <div className="rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)] p-4 sm:p-5 lg:col-span-5">
+        <div className="rounded-[12px] border border-[#233242] bg-[#0B1016] p-4 text-[#F1F5F9] sm:p-5 lg:col-span-5">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+              <h2 className="text-[16px] font-bold text-white">
                 QR label download
               </h2>
-              <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">
+              <p className="mt-0.5 text-[12.5px] text-[#94A3B8]">
                 Encodes permanent public route
               </p>
             </div>
-            <span className="rounded bg-[var(--surface)] px-2 py-0.5 font-mono text-[11px] text-[var(--ink)] border border-[var(--border)]">
+            <span className="rounded border border-[#34D399]/40 bg-[#0A2921] px-2 py-0.5 font-mono text-[11px] font-bold text-[#6EE7B7]">
               {isPublished ? "LIVE" : "DRAFT"}
             </span>
           </div>
 
-          <div className="mt-4 flex flex-col items-center rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4">
+          <div className="mt-4 flex flex-col items-center rounded-[10px] border border-[#233242] bg-[#131D28] p-4">
             {qrAssets ? (
-              <Image
-                src={qrAssets.pngDataUrl}
-                alt={`QR code pointing to ${publicUrl}`}
-                width={168}
-                height={168}
-                unoptimized
-                className="h-[168px] w-[168px]"
-              />
+              <div className="rounded-[8px] bg-white p-2">
+                <Image
+                  src={qrAssets.pngDataUrl}
+                  alt={`QR code pointing to ${publicUrl}`}
+                  width={168}
+                  height={168}
+                  unoptimized
+                  className="h-[168px] w-[168px]"
+                />
+              </div>
             ) : (
-              <div className="flex h-[168px] w-[168px] items-center justify-center bg-[var(--well-soft)] text-[12px] text-[var(--muted)]">
+              <div className="flex h-[168px] w-[168px] items-center justify-center bg-[#0B1016] text-[12px] text-[#94A3B8]">
                 Generating QR...
               </div>
             )}
 
-            <p className="mt-3 max-w-full break-all text-center font-mono text-[11.5px] text-[var(--muted)]">
+            <p className="mt-3 max-w-full break-all text-center font-mono text-[11.5px] text-[#6EE7B7]">
               {publicUrl}
             </p>
           </div>
 
           {!isPublished && (
-            <p className="mt-2.5 text-[12px] text-[var(--notice-ink)]">
+            <p className="mt-2.5 text-[12px] text-[#FCD34D]">
               Approve &amp; Publish before printing so scanners resolve the live page
               instead of 404.
             </p>
@@ -378,7 +380,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadSvg}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] disabled:opacity-50 cursor-pointer"
+              className="pressable chamfer-sm inline-flex min-h-[42px] items-center justify-center bg-[#34D399] px-3 text-[13px] font-bold text-[#052E16] hover:bg-[#6EE7B7] disabled:opacity-50 cursor-pointer"
             >
               Download SVG
             </button>
@@ -386,7 +388,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadPng}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[#233242] bg-[#131D28] px-3 text-[13px] font-bold text-white hover:border-[#34D399] disabled:opacity-50 cursor-pointer"
             >
               Download PNG
             </button>

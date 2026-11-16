@@ -26,16 +26,16 @@ export function LegalDocumentShell({
 }: LegalDocumentShellProps) {
   return (
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      <header className="border-b border-[var(--border)] bg-[var(--surface)]">
-        <div className="mx-auto flex max-w-[960px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <header className="border-b border-[#1E2C3A] bg-[#0B1016] text-white">
+        <div className="mx-auto flex max-w-[960px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
           <Link href="/" className="flex min-h-[44px] items-center gap-2.5">
             <BrandMark className="h-8 w-8 shrink-0" />
             <div>
-              <span className="block text-[15px] font-semibold tracking-tight text-[var(--ink)]">
+              <span className="block text-[15px] font-bold tracking-tight text-white">
                 {siteConfig.siteName}
               </span>
-              <span className="block text-[12px] text-[var(--muted)]">
-                Draft legal documentation
+              <span className="block font-mono text-[11.5px] text-[#94A3B8]">
+                DRAFT LEGAL DOCUMENTATION
               </span>
             </div>
           </Link>
@@ -47,10 +47,10 @@ export function LegalDocumentShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex min-h-[38px] items-center rounded-[8px] px-3 text-[13.5px] font-medium transition-colors ${
+                  className={`inline-flex min-h-[38px] items-center rounded-[8px] px-3 text-[13.5px] font-semibold transition-colors ${
                     active
-                      ? "bg-[var(--well)] font-semibold text-[var(--ink)]"
-                      : "text-[var(--muted)] hover:bg-[var(--well-soft)] hover:text-[var(--ink)]"
+                      ? "bg-[#34D399] text-[#052E16]"
+                      : "text-[#CBD5E1] hover:bg-[#131D28] hover:text-white"
                   }`}
                 >
                   {item.label}
@@ -59,7 +59,7 @@ export function LegalDocumentShell({
             })}
             <Link
               href="/app"
-              className="inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13.5px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="inline-flex min-h-[38px] items-center rounded-[8px] border border-[#233242] bg-[#131D28] px-3 text-[13.5px] font-semibold text-white hover:border-[#34D399]"
             >
               Workspace
             </Link>
