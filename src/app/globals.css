@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  --ground: #F5F4F0;
+  /* Light Technical Ledger Surfaces */
+  --ground: #F2F4F7;
   --surface: #FFFFFF;
-  --well: #ECEAE3;
-  --well-soft: #F0EFEA;
-  --border: #DDD9CE;
-  --border-strong: #C6C1B4;
-  --rule: #E8E5DC;
-  --ink: #141413;
-  --muted: #57534E;
-  --accent: #EA580C;
-  --accent-ink: #B43D06;
-  --accent-soft: #FFF1EA;
-  --accent-border: #F5C3A8;
-  --positive: #15803D;
-  --positive-bg: #ECFDF3;
-  --positive-border: #B8E6C8;
+  --well: #E5E9F0;
+  --well-soft: #EEF1F6;
+  --border: #D5DCE6;
+  --border-strong: #B6C2D2;
+  --rule: #E3E8F0;
+
+  /* Typography Ink */
+  --ink: #0B1017;
+  --muted: #4A5565;
+
+  /* Hybrid Accents: Cobalt Blue + Electrochemical Jade + Signal Amber */
+  --accent: #1D4ED8;
+  --accent-ink: #1E40AF;
+  --accent-soft: #EFF6FF;
+  --accent-border: #BFDBFE;
+
+  --positive: #047857;
+  --positive-bg: #ECFDF5;
+  --positive-border: #A7F3D0;
+
   --notice-bg: #FEF7E6;
-  --notice-border: #EED28A;
+  --notice-border: #E5C168;
   --notice-ink: #7C4A03;
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Obsidian Dark Hardware Stage Tokens */
+  --stage-bg: #0B1016;
+  --stage-surface: #121A23;
+  --stage-well: #17222E;
+  --stage-border: #233242;
+  --stage-ink: #F1F5F9;
+  --stage-muted: #94A3B8;
+  --stage-jade: #34D399;
+  --stage-jade-ink: #052E16;
+  --stage-cobalt: #3B82F6;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
@@ -35,6 +55,7 @@ html {
   color: var(--ink);
   caret-color: var(--accent);
   scrollbar-color: var(--border-strong) var(--ground);
+  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -58,26 +79,99 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
-/* Tactile button press and crisp CSS-only tab transitions */
+/* Chamfered hardware badge utility (Direction C motif) */
+.chamfer-sm {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    8px 100%,
+    0 calc(100% - 8px)
+  );
+}
+
+.chamfer-card {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 16px) 0,
+    100% 16px,
+    100% 100%,
+    0 100%
+  );
+}
+
+/* Tactile button press and interactive card elevation */
 .pressable {
   transition:
-    transform 150ms var(--ease-out),
+    transform 160ms var(--ease-out),
     background-color 180ms ease,
     border-color 180ms ease,
     color 180ms ease;
 }
 
+.pressable:hover {
+  transform: translateY(-1px);
+}
+
 .pressable:active {
-  transform: scale(0.97);
+  transform: translateY(0) scale(0.98);
+}
+
+.interactive-card {
+  transition:
+    transform 220ms var(--ease-out),
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-2px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .hero-enter {
+    animation: heroFadeUp 460ms var(--ease-spring) both;
+  }
+
+  .hero-enter-delay-1 {
+    animation: heroFadeUp 520ms var(--ease-spring) 90ms both;
+  }
+
+  .hero-enter-delay-2 {
+    animation: heroFadeUp 580ms var(--ease-spring) 180ms both;
+  }
+
   .tab-panel-enter {
-    animation: panelEnter 220ms var(--ease-out) both;
+    animation: panelEnter 240ms var(--ease-out) both;
   }
 
   .hotspot-card-enter {
-    animation: cardReveal 200ms var(--ease-out) both;
+    animation: cardReveal 220ms var(--ease-out) both;
+  }
+
+  .qr-scan-line {
+    animation: qrLaserSweep 3.4s ease-in-out infinite;
+  }
+
+  .status-pulse {
+    animation: statusPulse 2.4s ease-in-out infinite;
+  }
+
+  .bar-fill-enter {
+    transform-origin: left center;
+    animation: barGrow 650ms var(--ease-spring) both;
+  }
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -95,7 +189,7 @@ a {
 @keyframes cardReveal {
   from {
     opacity: 0;
-    transform: translateY(4px) scale(0.99);
+    transform: translateY(5px) scale(0.99);
   }
   to {
     opacity: 1;
@@ -103,14 +197,57 @@ a {
   }
 }
 
+@keyframes qrLaserSweep {
+  0%,
+  100% {
+    transform: translateY(4px);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(68px);
+    opacity: 0.95;
+  }
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.88);
+  }
+}
+
+@keyframes barGrow {
+  from {
+    transform: scaleX(0.15);
+    opacity: 0.4;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   .pressable,
+  .interactive-card,
+  .hero-enter,
+  .hero-enter-delay-1,
+  .hero-enter-delay-2,
   .tab-panel-enter,
-  .hotspot-card-enter {
+  .hotspot-card-enter,
+  .qr-scan-line,
+  .status-pulse,
+  .bar-fill-enter {
     animation: none !important;
     transition: none !important;
-  }
-  .pressable:active {
-    transform: none;
+    transform: none !important;
   }
 }
