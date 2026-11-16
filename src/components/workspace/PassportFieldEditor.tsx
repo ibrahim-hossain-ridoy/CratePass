@@ -64,6 +64,23 @@ function TierBadge({ tier }: { tier: FieldAccessTier }) {
   );
 }
 
+function AccordionChevron() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0 text-[var(--muted)] transition-transform duration-200 group-open:rotate-180"
+    >
+      <path d="m5 7.5 5 5 5-5" />
+    </svg>
+  );
+}
+
 export function PassportFieldEditor({
   passportId,
   initialProductName,
@@ -216,12 +233,24 @@ export function PassportFieldEditor({
     }
   }
 
+  const activeCategoryIndex = Math.max(
+    0,
+    BATTERY_CATEGORIES.findIndex((c) => c.id === batteryCategory),
+  );
+  const requiredProgressRatio = Math.min(
+    1,
+    Math.max(
+      0,
+      summary.populatedRequiredStatic / Math.max(1, summary.totalRequiredStatic),
+    ),
+  );
+
   return (
     <form onSubmit={handleSave} className="space-y-6">
       {/* Completeness summary + Battery Category Selector */}
       <section
         aria-label="Completeness check summary"
-        className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-4 sm:p-5"
+        className="surface-elevated rounded-[14px] bg-[var(--well-soft)] p-4 sm:p-5"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -235,7 +264,7 @@ export function PassportFieldEditor({
           <button
             type="button"
             onClick={() => setFlaggedOnly((prev) => !prev)}
-            className={`min-h-[38px] rounded-[8px] border px-3 text-[12.5px] font-semibold transition-colors cursor-pointer ${
+            className={`pressable min-h-[38px] rounded-[8px] border px-3 text-[12.5px] font-semibold cursor-pointer ${
               flaggedOnly
                 ? "border-red-500 bg-red-50 text-red-900"
                 : "border-[var(--border-strong)] bg-[var(--surface)] text-[var(--ink)] hover:border-[var(--ink)]"
@@ -247,8 +276,8 @@ export function PassportFieldEditor({
           </button>
         </div>
 
-        {/* Category selector bar */}
-        <div className="mt-4 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-3.5">
+        {/* Category selector bar with tactile sliding pill */}
+        <div className="mt-4 rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-3.5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-[13px] font-bold text-[var(--ink)]">
@@ -271,8 +300,15 @@ export function PassportFieldEditor({
             <div
               role="group"
               aria-label="Battery category selector"
-              className="inline-flex rounded-[8px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-1"
+              className="relative grid grid-cols-3 gap-1 rounded-[10px] border border-[var(--border-strong)] bg-[var(--well)] p-1"
             >
+              <span
+                aria-hidden="true"
+                style={{
+                  transform: `translateX(${activeCategoryIndex * 100}%)`,
+                }}
+                className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/3)] rounded-[8px] bg-[#141210] shadow-sm"
+              />
               {BATTERY_CATEGORIES.map((cat) => {
                 const active = batteryCategory === cat.id;
                 return (
@@ -286,9 +322,9 @@ export function PassportFieldEditor({
                         battery_category: cat.id,
                       }));
                     }}
-                    className={`min-h-[36px] rounded-[6px] px-3 text-[12.5px] font-bold transition-colors cursor-pointer ${
+                    className={`pressable relative z-10 min-h-[36px] rounded-[8px] px-3 text-[12.5px] font-bold cursor-pointer ${
                       active
-                        ? "bg-[#0B1016] text-white"
+                        ? "text-white"
                         : "text-[var(--muted)] hover:text-[var(--ink)]"
                     }`}
                   >
@@ -298,10 +334,29 @@ export function PassportFieldEditor({
               })}
             </div>
           </div>
+
+          {/* Animated Required Completeness Progress Bar */}
+          <div className="mt-3 border-t border-[var(--rule)] pt-3">
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="font-medium text-[var(--muted)]">
+                Required static completeness ({batteryCategory})
+              </span>
+              <span className="num font-mono font-bold text-[var(--ink)]">
+                {Math.round(requiredProgressRatio * 100)}% (
+                {summary.populatedRequiredStatic} / {summary.totalRequiredStatic})
+              </span>
+            </div>
+            <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-[var(--well)]">
+              <div
+                style={{ transform: `scaleX(${requiredProgressRatio})` }}
+                className="progress-fill-smooth h-full w-full rounded-full bg-[var(--positive)]"
+              />
+            </div>
+          </div>
         </div>
 
         <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5">
+          <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5">
             <dt className="text-[12px] text-[var(--muted)]">
               Static populated
             </dt>
@@ -313,7 +368,7 @@ export function PassportFieldEditor({
               </span>
             </dd>
           </div>
-          <div className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5">
+          <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5">
             <dt className="text-[12px] text-[var(--muted)]">
               Required for {batteryCategory} (static)
             </dt>
@@ -325,7 +380,7 @@ export function PassportFieldEditor({
               </span>
             </dd>
           </div>
-          <div className="rounded-[8px] border border-red-300 bg-red-50 px-3 py-2.5">
+          <div className="rounded-[10px] border border-red-300 bg-red-50 px-3 py-2.5">
             <dt className="text-[12px] text-red-900">
               Missing required ({batteryCategory})
             </dt>
@@ -333,7 +388,7 @@ export function PassportFieldEditor({
               {summary.missingRequiredStatic}
             </dd>
           </div>
-          <div className="rounded-[8px] border border-red-300 bg-red-50 px-3 py-2.5">
+          <div className="rounded-[10px] border border-red-300 bg-red-50 px-3 py-2.5">
             <dt className="text-[12px] text-red-900">Uncertain</dt>
             <dd className="num mt-0.5 text-[20px] font-bold text-red-800">
               {summary.uncertainStatic}
@@ -350,7 +405,7 @@ export function PassportFieldEditor({
       </section>
 
       {/* Product title & model code */}
-      <section className="grid grid-cols-1 gap-4 rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-4 sm:grid-cols-2">
+      <section className="surface-card-subtle grid grid-cols-1 gap-4 rounded-[12px] p-4 sm:grid-cols-2">
         <div>
           <label
             htmlFor="editor-product-name"
@@ -364,7 +419,7 @@ export function PassportFieldEditor({
             required
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+            className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)]"
           />
         </div>
         <div>
@@ -379,7 +434,7 @@ export function PassportFieldEditor({
             type="text"
             value={modelCode}
             onChange={(e) => setModelCode(e.target.value)}
-            className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 font-mono text-[13.5px] text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+            className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 font-mono text-[13.5px] text-[var(--ink)]"
           />
         </div>
       </section>
@@ -393,6 +448,10 @@ export function PassportFieldEditor({
         const populatedInGroup = staticGroupFields.filter(
           (f) => Boolean((values[f.key] ?? "").trim()),
         ).length;
+        const groupRatio = Math.min(
+          1,
+          Math.max(0, populatedInGroup / Math.max(1, staticGroupFields.length)),
+        );
 
         // Sort "Required for [Category]" fields first inside each group
         const sortedFields = [...staticGroupFields]
@@ -413,9 +472,9 @@ export function PassportFieldEditor({
           <details
             key={groupId}
             open
-            className="group rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)]"
+            className="surface-elevated group overflow-hidden rounded-[14px]"
           >
-            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--well-soft)] px-4 py-3.5 sm:px-5">
+            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--well-soft)] px-4 py-3.5 transition-colors hover:bg-[var(--well)]/60 sm:px-5">
               <div>
                 <h3 className="text-[16px] font-bold text-[var(--ink)]">
                   {groupMeta.title}
@@ -424,14 +483,21 @@ export function PassportFieldEditor({
                   {groupMeta.subtitle}
                 </p>
               </div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
+                <div className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-[var(--well)] sm:block">
+                  <div
+                    style={{ transform: `scaleX(${groupRatio})` }}
+                    className="progress-fill-smooth h-full w-full rounded-full bg-[var(--positive)]"
+                  />
+                </div>
                 <span className="num rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 py-1 font-mono text-[12px] font-bold text-[var(--ink)]">
                   {populatedInGroup} / {staticGroupFields.length} populated
                 </span>
+                <AccordionChevron />
               </div>
             </summary>
 
-            <div className="grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
+            <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
               {sortedFields.map((field) => {
                 const status = getFieldVisualStatus(field);
                 const isReqForCat = isFieldRequiredForCategory(
@@ -448,7 +514,7 @@ export function PassportFieldEditor({
                 return (
                   <div
                     key={field.key}
-                    className={`rounded-[10px] border p-3.5 ${
+                    className={`rounded-[10px] border p-3.5 transition-colors duration-150 ${
                       isFlagged
                         ? "border-red-500 bg-red-50/60"
                         : "border-[var(--border)] bg-[var(--surface)]"
@@ -478,7 +544,7 @@ export function PassportFieldEditor({
 
                       <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium">
                         {isReqForCat ? (
-                          <span className="rounded bg-[#0B1016] px-2 py-0.5 font-semibold text-white">
+                          <span className="rounded bg-[#141210] px-2 py-0.5 font-semibold text-white">
                             Required for {batteryCategory}
                           </span>
                         ) : (
@@ -518,10 +584,10 @@ export function PassportFieldEditor({
                           }))
                         }
                         placeholder={field.placeholder ?? ""}
-                        className={`mt-2 w-full rounded-[6px] border bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none ${
+                        className={`input-apple mt-2 w-full rounded-[6px] border bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)] ${
                           isFlagged
                             ? "border-red-400 focus:border-red-600"
-                            : "border-[var(--border-strong)] focus:border-[var(--accent)]"
+                            : "border-[var(--border-strong)]"
                         }`}
                       />
                     ) : (
@@ -537,10 +603,10 @@ export function PassportFieldEditor({
                           }))
                         }
                         placeholder={field.placeholder ?? ""}
-                        className={`mt-2 w-full rounded-[6px] border bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:outline-none ${
+                        className={`input-apple mt-2 w-full rounded-[6px] border bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)] ${
                           isFlagged
                             ? "border-red-400 focus:border-red-600"
-                            : "border-[var(--border-strong)] focus:border-[var(--accent)]"
+                            : "border-[var(--border-strong)]"
                         }`}
                       />
                     )}
@@ -565,8 +631,8 @@ export function PassportFieldEditor({
       })}
 
       {/* Collapsible Dynamic BMS Telemetry Section (Points 51–71) */}
-      <details className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)]">
-        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--well-soft)] px-4 py-3.5 sm:px-5">
+      <details className="surface-elevated group overflow-hidden rounded-[14px]">
+        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--well-soft)] px-4 py-3.5 transition-colors hover:bg-[var(--well)]/60 sm:px-5">
           <div>
             <h3 className="text-[16px] font-bold text-[var(--ink)]">
               Dynamic BMS &amp; In-Service Telemetry (Points 51–71)
@@ -576,17 +642,20 @@ export function PassportFieldEditor({
               or initial publication
             </p>
           </div>
-          <span className="num rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 py-1 font-mono text-[12px] font-bold text-[var(--muted)]">
-            {
-              DYNAMIC_BMS_FIELDS.filter((f) =>
-                Boolean((values[f.key] ?? "").trim()),
-              ).length
-            }{" "}
-            / {DYNAMIC_BMS_FIELDS.length} populated
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="num rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 py-1 font-mono text-[12px] font-bold text-[var(--muted)]">
+              {
+                DYNAMIC_BMS_FIELDS.filter((f) =>
+                  Boolean((values[f.key] ?? "").trim()),
+                ).length
+              }{" "}
+              / {DYNAMIC_BMS_FIELDS.length} populated
+            </span>
+            <AccordionChevron />
+          </div>
         </summary>
 
-        <div className="grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
+        <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
           {DYNAMIC_BMS_FIELDS.map((field) => {
             const inputId = `field-${field.key}`;
             return (
@@ -631,7 +700,7 @@ export function PassportFieldEditor({
                     }))
                   }
                   placeholder={DYNAMIC_BMS_NOTICE}
-                  className="mt-2 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]/60 focus:border-[var(--accent)] focus:outline-none"
+                  className="input-apple mt-2 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]"
                 />
                 <p className="mt-1.5 text-[11.5px] text-[var(--muted)]">
                   {RESTRICTED_TIER_NOTICE}
@@ -645,7 +714,7 @@ export function PassportFieldEditor({
       {saveError && (
         <div
           role="alert"
-          className="rounded-[8px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
+          className="tab-panel-enter rounded-[8px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
         >
           {saveError}
         </div>
@@ -654,22 +723,30 @@ export function PassportFieldEditor({
       {saveMessage && (
         <div
           role="status"
-          className="rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]"
+          className="tab-panel-enter rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]"
         >
           {saveMessage}
         </div>
       )}
 
-      <div className="sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#233242] bg-[#0B1016] px-4 py-3 text-white">
-        <p className="num font-mono text-[13px] text-[#CBD5E1]">
-          {summary.populatedRequiredStatic} / {summary.totalRequiredStatic}{" "}
-          required static fields for {batteryCategory} ·{" "}
-          {summary.missingRequiredStatic + summary.uncertainStatic} flagged
-        </p>
+      <div className="stage-card-elevated sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-[14px] bg-[#141210] px-4 py-3 text-white">
+        <div className="min-w-[200px] flex-1">
+          <p className="num font-mono text-[12.5px] text-[#E6E1D8]">
+            {summary.populatedRequiredStatic} / {summary.totalRequiredStatic}{" "}
+            required static fields for {batteryCategory} ·{" "}
+            {summary.missingRequiredStatic + summary.uncertainStatic} flagged
+          </p>
+          <div className="mt-1.5 h-1.5 w-full max-w-[320px] overflow-hidden rounded-full bg-[#26221E]">
+            <div
+              style={{ transform: `scaleX(${requiredProgressRatio})` }}
+              className="progress-fill-smooth h-full w-full rounded-full bg-[#F97316]"
+            />
+          </div>
+        </div>
         <button
           type="submit"
           disabled={saving}
-          className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[#2FD99B] px-5 py-2 text-[14px] font-bold text-[#052E16] hover:bg-[#6EE7B7] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[#F97316] px-5 py-2 text-[14px] font-bold text-[#1A0902] hover:bg-[#FB923C] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {saving ? "Saving..." : primarySaveLabel}
         </button>

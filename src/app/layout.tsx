@@ -26,7 +26,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0B1015",
+  themeColor: "#141210",
 };
 
 export default function RootLayout({
@@ -39,7 +39,7 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[var(--ground)] text-[var(--ink)] font-sans selection:bg-[#2FD99B]/20 selection:text-[#0B1015]">
+      <body className="min-h-full bg-[var(--ground)] text-[var(--ink)] font-sans selection:bg-[#EA580C]/20 selection:text-[#161412]">
         {children}
       </body>
     </html>

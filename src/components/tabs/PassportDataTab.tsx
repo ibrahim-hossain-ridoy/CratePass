@@ -62,7 +62,7 @@ function SpecRow({
     <div className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
       <dt className="shrink-0 text-[13px] text-[var(--muted)]">{label}</dt>
       <dd
-        className={`text-[14px] font-medium text-[var(--ink)] sm:text-right ${
+        className={`text-[14px] font-semibold text-[var(--ink)] sm:text-right ${
           mono ? "font-mono text-[13px]" : "num"
         }`}
       >
@@ -83,7 +83,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
       className="tab-panel-enter space-y-4"
     >
       {/* Identity Group — full width two-column datasheet */}
-      <article className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)]">
+      <article className="surface-elevated overflow-hidden rounded-[12px]">
         <GroupHeader
           title={identity.title}
           accessTier={identity.accessTier}
@@ -122,7 +122,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
             <dl className="divide-y divide-[var(--rule)]">
               <div className="py-3">
                 <dt className="text-[13px] text-[var(--muted)]">Manufacturer</dt>
-                <dd className="mt-1 text-[14px] font-medium text-[var(--ink)]">
+                <dd className="mt-1 text-[14px] font-semibold text-[var(--ink)]">
                   {identity.data.manufacturer.name}
                 </dd>
                 <dd className="mt-0.5 text-[13px] text-[var(--muted)]">
@@ -133,7 +133,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
                 <dt className="text-[13px] text-[var(--muted)]">
                   EU responsible person
                 </dt>
-                <dd className="mt-1 text-[14px] font-medium text-[var(--ink)]">
+                <dd className="mt-1 text-[14px] font-semibold text-[var(--ink)]">
                   {identity.data.euResponsiblePerson.name}
                 </dd>
                 <dd className="mt-0.5 text-[13px] text-[var(--muted)]">
@@ -151,7 +151,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
       </article>
 
       {/* Integrity Group — full width two-column datasheet */}
-      <article className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)]">
+      <article className="surface-elevated overflow-hidden rounded-[12px]">
         <GroupHeader
           title={integrity.title}
           accessTier={integrity.accessTier}
@@ -163,7 +163,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
               <span className="text-[13px] text-[var(--muted)]">
                 State of health (SoH)
               </span>
-              <span className="num text-[22px] font-semibold tracking-tight text-[var(--ink)]">
+              <span className="num text-[22px] font-bold tracking-tight text-[var(--positive)]">
                 {integrity.data.stateOfHealthPct.toFixed(1)}%
               </span>
             </div>
@@ -200,7 +200,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
       </article>
 
       {/* Care & Repair Group — full width two-column datasheet */}
-      <article className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)]">
+      <article className="surface-elevated overflow-hidden rounded-[12px]">
         <GroupHeader
           title={careRepair.title}
           accessTier={careRepair.accessTier}
@@ -229,7 +229,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
           </div>
 
           <div className="px-4 py-3 sm:px-5">
-            <p className="text-[13px] font-medium text-[var(--ink)]">
+            <p className="text-[13px] font-semibold text-[var(--ink)]">
               Handling precautions
             </p>
             <ul className="mt-2 space-y-2 text-[13px] leading-relaxed text-[var(--muted)]">
@@ -248,7 +248,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
       </article>
 
       {/* Impact Group — full width two-column datasheet */}
-      <article className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)]">
+      <article className="surface-elevated overflow-hidden rounded-[12px]">
         <GroupHeader
           title={impact.title}
           accessTier={impact.accessTier}
@@ -263,14 +263,14 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
                 <p className="text-[13px] text-[var(--muted)]">
                   Lifecycle carbon footprint
                 </p>
-                <p className="num mt-0.5 text-[24px] font-semibold tracking-tight text-[var(--ink)]">
+                <p className="num mt-0.5 text-[24px] font-bold tracking-tight text-[var(--ink)]">
                   {impact.data.carbonFootprintTotalKg.toFixed(1)}{" "}
                   <span className="text-[14px] font-normal text-[var(--muted)]">
                     kg CO2e
                   </span>
                 </p>
               </div>
-              <p className="num text-[13px] text-[var(--muted)]">
+              <p className="num text-[13px] font-medium text-[var(--muted)]">
                 {impact.data.carbonPerKwhKg.toFixed(1)} kg CO2e / kWh
               </p>
             </div>
@@ -279,9 +279,11 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
               {impact.data.carbonLifecycleBreakdown.map((item, idx) => (
                 <div key={item.stage}>
                   <div className="flex items-baseline justify-between gap-2 text-[13px]">
-                    <span className="text-[var(--ink)]">{item.stage}</span>
+                    <span className="font-medium text-[var(--ink)]">
+                      {item.stage}
+                    </span>
                     <span className="num shrink-0 text-[var(--muted)]">
-                      <strong className="font-medium text-[var(--ink)]">
+                      <strong className="font-semibold text-[var(--ink)]">
                         {item.sharePct}%
                       </strong>{" "}
                       ({item.kgCo2e.toFixed(1)} kg)
@@ -309,7 +311,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
               <p className="text-[13px] text-[var(--muted)]">
                 Material mass breakdown
               </p>
-              <p className="num text-[13px] text-[var(--muted)]">
+              <p className="num text-[13px] font-medium text-[var(--muted)]">
                 100% by pack weight
               </p>
             </div>
@@ -318,8 +320,10 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
               {impact.data.materials.map((mat) => (
                 <div key={mat.material}>
                   <div className="flex items-baseline justify-between gap-3 text-[13px]">
-                    <span className="text-[var(--ink)]">{mat.material}</span>
-                    <span className="num shrink-0 font-medium text-[var(--ink)]">
+                    <span className="font-medium text-[var(--ink)]">
+                      {mat.material}
+                    </span>
+                    <span className="num shrink-0 font-semibold text-[var(--ink)]">
                       {mat.massSharePct}%
                     </span>
                   </div>
@@ -330,7 +334,7 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
                         style={{ width: `${mat.massSharePct}%` }}
                       />
                     </div>
-                    <span className="num w-24 shrink-0 text-right text-[12px] text-[var(--positive)]">
+                    <span className="num w-24 shrink-0 text-right text-[12px] font-semibold text-[var(--positive)]">
                       {mat.recycledSharePct}% recycled
                     </span>
                   </div>

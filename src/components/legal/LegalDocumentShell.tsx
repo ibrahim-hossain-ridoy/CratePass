@@ -26,7 +26,7 @@ export function LegalDocumentShell({
 }: LegalDocumentShellProps) {
   return (
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      <header className="border-b border-[#1E2C3A] bg-[#0B1016] text-white">
+      <header className="border-b border-[#2E2924] bg-[#141210] text-white">
         <div className="mx-auto flex max-w-[960px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
           <Link href="/" className="flex min-h-[44px] items-center gap-2.5">
             <BrandMark className="h-8 w-8 shrink-0" />
@@ -34,7 +34,7 @@ export function LegalDocumentShell({
               <span className="block text-[15px] font-bold tracking-tight text-white">
                 {siteConfig.siteName}
               </span>
-              <span className="block font-mono text-[11.5px] text-[#94A3B8]">
+              <span className="block font-mono text-[11.5px] text-[#A69E94]">
                 DRAFT LEGAL DOCUMENTATION
               </span>
             </div>
@@ -47,10 +47,10 @@ export function LegalDocumentShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex min-h-[38px] items-center rounded-[8px] px-3 text-[13.5px] font-semibold transition-colors ${
+                  className={`pressable inline-flex min-h-[38px] items-center rounded-[8px] px-3 text-[13.5px] font-semibold ${
                     active
-                      ? "bg-[#34D399] text-[#052E16]"
-                      : "text-[#CBD5E1] hover:bg-[#131D28] hover:text-white"
+                      ? "bg-[#F97316] text-[#1A0902]"
+                      : "text-[#E6E1D8] hover:bg-[#1E1B17] hover:text-white"
                   }`}
                 >
                   {item.label}
@@ -59,7 +59,7 @@ export function LegalDocumentShell({
             })}
             <Link
               href="/app"
-              className="inline-flex min-h-[38px] items-center rounded-[8px] border border-[#233242] bg-[#131D28] px-3 text-[13.5px] font-semibold text-white hover:border-[#34D399]"
+              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[#332E28] bg-[#1E1B17] px-3 text-[13.5px] font-semibold text-white hover:border-[#F97316]"
             >
               Workspace
             </Link>
@@ -71,7 +71,7 @@ export function LegalDocumentShell({
         {/* Draft legal review warning banner */}
         <div
           role="note"
-          className="mb-6 rounded-[10px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-4 text-[14px] leading-relaxed text-[var(--notice-ink)]"
+          className="mb-6 rounded-[12px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-4 text-[14px] leading-relaxed text-[var(--notice-ink)]"
         >
           <p className="font-semibold">
             TODO: lawyer review — Draft template only
@@ -83,15 +83,15 @@ export function LegalDocumentShell({
           </p>
         </div>
 
-        <article className="rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+        <article className="surface-elevated rounded-[14px] p-6 sm:p-8">
           <header className="border-b border-[var(--rule)] pb-5">
-            <h1 className="text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--ink)] sm:text-[32px]">
+            <h1 className="text-display-section font-bold text-[var(--ink)]">
               {title}
             </h1>
             <p className="mt-2 max-w-[66ch] text-[15px] leading-relaxed text-[var(--muted)]">
               {subtitle}
             </p>
-            <p className="mt-2 text-[13px] font-medium text-[var(--muted)]">
+            <p className="mt-2 font-mono text-[12.5px] font-medium text-[var(--muted)]">
               {lastUpdatedLabel}
             </p>
           </header>

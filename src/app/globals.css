@@ -1,45 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Technical Ledger Surfaces */
-  --ground: #F2F4F7;
+  /* Apple-Inspired Warm Stone & Alabaster Surfaces */
+  --ground: #F5F3EE;
   --surface: #FFFFFF;
-  --well: #E5E9F0;
-  --well-soft: #EEF1F6;
-  --border: #D5DCE6;
-  --border-strong: #B6C2D2;
-  --rule: #E3E8F0;
+  --well: #EAE6DE;
+  --well-soft: #F9F7F3;
+  --border: #DDD7CC;
+  --border-strong: #C6BEB1;
+  --rule: #E6E1D8;
 
-  /* Typography Ink */
-  --ink: #0B1017;
-  --muted: #4A5565;
+  /* Deep Espresso Typography Ink */
+  --ink: #161412;
+  --ink-secondary: #3B3631;
+  --muted: #625B53;
 
-  /* Hybrid Accents: Bespoke Industrial Cobalt + Electrochemical Jade + Signal Amber */
-  --accent: #1B3FE4;
-  --accent-ink: #1531B8;
-  --accent-soft: #EEF3FF;
-  --accent-border: #BCCDFB;
+  /* Burnt-Amber Primary Accent + Forest Emerald + Signal Amber */
+  --accent: #C2410C;
+  --accent-ink: #9A3412;
+  --accent-vivid: #EA580C;
+  --accent-soft: #FFF4ED;
+  --accent-border: #FDBA8C;
 
-  --positive: #0C7A53;
-  --positive-bg: #EAFBF3;
-  --positive-border: #A2E9C8;
+  --positive: #15803D;
+  --positive-bg: #F0FDF4;
+  --positive-border: #BBF7D0;
 
-  --notice-bg: #FEF7E6;
-  --notice-border: #E5C168;
-  --notice-ink: #7C4A03;
+  --notice-bg: #FEF8EC;
+  --notice-border: #E6BF62;
+  --notice-ink: #78350F;
 
-  /* Obsidian Dark Hardware Stage Tokens */
-  --stage-bg: #0B1016;
-  --stage-surface: #121A23;
-  --stage-well: #17222E;
-  --stage-border: #233242;
-  --stage-ink: #F1F5F9;
-  --stage-muted: #94A3B8;
-  --stage-jade: #2FD99B;
+  /* Deep Espresso Hardware Stage Tokens */
+  --stage-bg: #141210;
+  --stage-surface: #1D1A17;
+  --stage-well: #26221E;
+  --stage-border: #332E28;
+  --stage-border-strong: #494139;
+  --stage-ink: #F7F5F0;
+  --stage-muted: #A69E94;
+  --stage-amber: #F97316;
+  --stage-amber-hover: #FB923C;
+  --stage-amber-ink: #1A0902;
+  --stage-jade: #34D399;
   --stage-jade-ink: #052E16;
-  --stage-cobalt: #2D6AE8;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Emil Kowalski & Apple Fluid Interface Easing Tokens */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -57,6 +65,7 @@ html {
   scrollbar-color: var(--border-strong) var(--ground);
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
+  font-optical-sizing: auto;
 }
 
 body {
@@ -64,6 +73,7 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
 }
 
 :focus-visible {
@@ -79,7 +89,73 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
-/* Chamfered hardware badge utility (Direction C motif) */
+/* Fluid Responsive Typography Scales (390px mobile -> 768px tablet -> 1440px desktop) */
+.text-display-hero {
+  font-size: clamp(2.125rem, 3.8vw + 0.65rem, 3.35rem);
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  font-optical-sizing: auto;
+}
+
+.text-display-section {
+  font-size: clamp(1.55rem, 2.2vw + 0.45rem, 2.15rem);
+  line-height: 1.12;
+  letter-spacing: -0.026em;
+  font-optical-sizing: auto;
+}
+
+.text-title-page {
+  font-size: clamp(1.4rem, 1.8vw + 0.4rem, 1.85rem);
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+}
+
+/* Layered Surface Depth & Translucent Chrome */
+.surface-elevated {
+  background-color: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 1px 2px rgba(22, 20, 18, 0.04),
+    0 8px 24px -6px rgba(22, 20, 18, 0.06);
+}
+
+.surface-card-subtle {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(22, 20, 18, 0.03);
+}
+
+.stage-card-elevated {
+  background-color: var(--stage-surface);
+  border: 1px solid var(--stage-border);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 14px 34px -8px rgba(0, 0, 0, 0.42);
+}
+
+.input-apple {
+  transition:
+    border-color 160ms var(--ease-out),
+    box-shadow 160ms var(--ease-out),
+    background-color 160ms ease;
+}
+
+.input-apple:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.14);
+  outline: none;
+}
+
+/* 3D Perspective & Hardware Enclosures */
+.perspective-stage {
+  perspective: 1200px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Chamfered hardware badge utility */
 .chamfer-sm {
   clip-path: polygon(
     0 0,
@@ -101,32 +177,56 @@ a {
   );
 }
 
-/* Tactile button press and interactive card elevation */
+/* Tactile button press and interactive card elevation (GPU-composited transform only) */
 .pressable {
   transition:
-    transform 160ms var(--ease-out),
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease;
-}
-
-.pressable:hover {
-  transform: translateY(-1px);
+    transform 150ms var(--ease-out),
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .pressable:active {
-  transform: translateY(0) scale(0.98);
+  transform: scale(0.97);
 }
 
 .interactive-card {
   transition:
     transform 220ms var(--ease-out),
-    border-color 220ms ease,
-    background-color 220ms ease;
+    border-color 200ms ease,
+    background-color 200ms ease,
+    box-shadow 220ms var(--ease-out);
 }
 
-.interactive-card:hover {
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .pressable:hover {
+    transform: translateY(-1px);
+  }
+  .pressable:active {
+    transform: translateY(0) scale(0.97);
+  }
+  .interactive-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 2px 4px rgba(22, 20, 18, 0.04),
+      0 12px 26px -8px rgba(22, 20, 18, 0.08);
+  }
+}
+
+/* Smooth Progress Fill & Sliding Pill Indicator */
+.progress-fill-smooth {
+  transform-origin: left center;
+  transition: transform 360ms var(--ease-spring);
+}
+
+.sliding-pill {
+  transition: transform 240ms var(--ease-spring);
+}
+
+/* Collapsible Accordion Details Styling */
+details > summary::-webkit-details-marker {
+  display: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -135,61 +235,92 @@ a {
   }
 
   .hero-enter-delay-1 {
-    animation: heroFadeUp 520ms var(--ease-spring) 90ms both;
+    animation: heroFadeUp 520ms var(--ease-spring) 80ms both;
   }
 
   .hero-enter-delay-2 {
-    animation: heroFadeUp 580ms var(--ease-spring) 180ms both;
+    animation: heroFadeUp 580ms var(--ease-spring) 160ms both;
   }
 
   .tab-panel-enter {
-    animation: panelEnter 240ms var(--ease-out) both;
+    animation: panelEnter 220ms var(--ease-out) both;
   }
 
   .hotspot-card-enter {
-    animation: cardReveal 220ms var(--ease-out) both;
+    animation: cardReveal 210ms var(--ease-out) both;
+  }
+
+  .accordion-body-enter {
+    animation: panelEnter 200ms var(--ease-out) both;
   }
 
   .qr-scan-line {
-    animation: qrLaserSweep 3.4s ease-in-out infinite;
+    animation: qrLaserSweep 3.2s var(--ease-in-out) infinite;
+  }
+
+  .pdf-scan-beam {
+    animation: pdfBeamSweep 2.8s var(--ease-in-out) infinite;
   }
 
   .status-pulse {
     animation: statusPulse 2.4s ease-in-out infinite;
   }
 
+  .hotspot-ring-pulse {
+    animation: hotspotSonar 2.2s var(--ease-out) infinite;
+  }
+
+  .route-dash-flow {
+    stroke-dasharray: 8 6;
+    animation: routeDashFlow 1.6s linear infinite;
+  }
+
   .bar-fill-enter {
     transform-origin: left center;
-    animation: barGrow 650ms var(--ease-spring) both;
+    animation: barGrow 560ms var(--ease-spring) both;
+  }
+
+  /* Scroll-triggered reveal choreography (progressive enhancement: visible if not armed) */
+  .scroll-reveal[data-reveal-armed="true"][data-visible="false"] {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+
+  .scroll-reveal[data-reveal-armed="true"][data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity 480ms var(--ease-out),
+      transform 480ms var(--ease-spring);
   }
 }
 
 @keyframes heroFadeUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(12px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes panelEnter {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(6px) scale(0.99);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes cardReveal {
   from {
     opacity: 0;
-    transform: translateY(5px) scale(0.99);
+    transform: translateY(5px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -209,6 +340,18 @@ a {
   }
 }
 
+@keyframes pdfBeamSweep {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(44px);
+    opacity: 0.92;
+  }
+}
+
 @keyframes statusPulse {
   0%,
   100% {
@@ -218,6 +361,26 @@ a {
   50% {
     opacity: 0.45;
     transform: scale(0.88);
+  }
+}
+
+@keyframes hotspotSonar {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+
+@keyframes routeDashFlow {
+  from {
+    stroke-dashoffset: 28;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
@@ -232,22 +395,37 @@ a {
   }
 }
 
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur,
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .pressable,
   .interactive-card,
+  .progress-fill-smooth,
+  .sliding-pill,
   .hero-enter,
   .hero-enter-delay-1,
   .hero-enter-delay-2,
   .tab-panel-enter,
   .hotspot-card-enter,
+  .accordion-body-enter,
   .qr-scan-line,
+  .pdf-scan-beam,
   .status-pulse,
-  .bar-fill-enter {
+  .hotspot-ring-pulse,
+  .route-dash-flow,
+  .bar-fill-enter,
+  .scroll-reveal {
     animation: none !important;
-    transition: none !important;
+    transition: opacity 150ms ease !important;
     transform: none !important;
+    opacity: 1 !important;
   }
 }

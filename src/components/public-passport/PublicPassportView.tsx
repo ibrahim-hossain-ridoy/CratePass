@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   BATTERY_FIELDS,
   FIELD_GROUP_META,
@@ -74,6 +74,30 @@ export function PublicPassportView({
     visibleTabs[0] ?? "provenance",
   );
 
+  const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [indicator, setIndicator] = useState<{
+    left: number;
+    width: number;
+    ready: boolean;
+  }>({ left: 0, width: 0, ready: false });
+
+  useEffect(() => {
+    function syncUnderline() {
+      const activeEl = buttonRefs.current[activeTab];
+      if (!activeEl) return;
+      setIndicator({
+        left: activeEl.offsetLeft,
+        width: activeEl.offsetWidth,
+        ready: true,
+      });
+    }
+    syncUnderline();
+    window.addEventListener("resize", syncUnderline);
+    return () => window.removeEventListener("resize", syncUnderline);
+  }, [activeTab, visibleTabs]);
+
+  const activeIndex = Math.max(0, visibleTabs.indexOf(activeTab));
+
   const modelName =
     publicFields.model_serial_number ||
     publicFields.battery_model_name ||
@@ -122,31 +146,31 @@ export function PublicPassportView({
 
   return (
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      {/* Obsidian Hardware Identity Masthead */}
-      <header className="border-b border-[#1E2C3A] bg-[#0B1016] text-[#F1F5F9]">
+      {/* Deep Espresso Hardware Identity Masthead */}
+      <header className="border-b border-[#2E2924] bg-[#141210] text-[#F7F5F0]">
         <div className="mx-auto max-w-[1040px] px-4 py-5 sm:px-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3.5">
               <BrandMark className="mt-0.5 h-9 w-9 shrink-0" />
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#94A3B8]">
+                <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#A69E94]">
                   <span
                     aria-hidden="true"
                     className="status-pulse h-2 w-2 rounded-full bg-[#34D399]"
                   />
-                  <span className="uppercase tracking-wider text-[#CBD5E1]">
+                  <span className="uppercase tracking-wider text-[#E6E1D8]">
                     {manufacturer}
                   </span>
                   <span aria-hidden="true">·</span>
                   <span>Digital Battery Passport</span>
                 </div>
 
-                <h1 className="mt-1 text-[24px] font-bold leading-tight tracking-[-0.025em] text-white sm:text-[30px]">
+                <h1 className="text-title-page mt-1 font-bold text-white">
                   {modelName}
                 </h1>
 
                 <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[12.5px]">
-                  <code className="rounded border border-[#233242] bg-[#121B24] px-2 py-0.5 font-mono text-[12px] font-semibold text-[#6EE7B7]">
+                  <code className="rounded border border-[#332E28] bg-[#1E1B17] px-2 py-0.5 font-mono text-[12px] font-semibold text-[#FB923C]">
                     /p/{slug}
                   </code>
                   <span className="num rounded border border-[#34D399]/40 bg-[#0A2921] px-2 py-0.5 font-mono text-[11.5px] font-bold text-[#6EE7B7]">
@@ -155,7 +179,7 @@ export function PublicPassportView({
                   {specPieces.map((piece) => (
                     <span
                       key={piece}
-                      className="num rounded border border-[#233242] bg-[#121B24] px-2.5 py-0.5 font-semibold text-[#F1F5F9]"
+                      className="num rounded border border-[#332E28] bg-[#1E1B17] px-2.5 py-0.5 font-semibold text-[#F7F5F0]"
                     >
                       {piece}
                     </span>
@@ -165,7 +189,7 @@ export function PublicPassportView({
             </div>
 
             <div className="flex shrink-0 items-center self-start sm:self-center">
-              <span className="inline-flex items-center gap-2 rounded-[8px] border border-[#F59E0B]/40 bg-[#291D09] px-3 py-2 text-[12.5px] font-semibold text-[#FCD34D]">
+              <span className="inline-flex items-center gap-2 rounded-[8px] border border-[#F59E0B]/40 bg-[#2C1E0A] px-3 py-2 text-[12.5px] font-semibold text-[#FCD34D]">
                 <InfoIcon className="h-4 w-4 shrink-0 text-[#FBBF24]" />
                 <span>{PUBLIC_MANUFACTURER_NOTICE}</span>
               </span>
@@ -174,7 +198,7 @@ export function PublicPassportView({
         </div>
       </header>
 
-      {/* Sticky Desktop Horizontal Tab Bar */}
+      {/* Sticky Desktop Horizontal Tab Bar with Sliding Underline */}
       <nav
         aria-label="Battery passport sections"
         className="sticky top-0 z-30 hidden border-b border-[var(--border-strong)] bg-[var(--surface)]/95 backdrop-blur md:block"
@@ -182,7 +206,7 @@ export function PublicPassportView({
         <div
           role="tablist"
           aria-label="Battery passport sections"
-          className="mx-auto flex max-w-[1040px] items-center gap-2 px-6"
+          className="relative mx-auto flex max-w-[1040px] items-center gap-2 px-6"
         >
           {visibleTabs.map((tabId) => {
             const def = TAB_DEFS[tabId];
@@ -191,18 +215,23 @@ export function PublicPassportView({
             return (
               <button
                 key={tabId}
+                ref={(el) => {
+                  buttonRefs.current[tabId] = el;
+                }}
                 type="button"
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActiveTab(tabId)}
                 className={`pressable relative inline-flex min-h-[48px] items-center gap-2 border-b-2 px-4 py-2.5 text-[14.5px] font-bold whitespace-nowrap cursor-pointer ${
                   selected
-                    ? "border-[var(--accent)] text-[var(--ink)]"
+                    ? indicator.ready
+                      ? "border-transparent text-[var(--ink)]"
+                      : "border-[var(--accent)] text-[var(--ink)]"
                     : "border-transparent text-[var(--muted)] hover:text-[var(--ink)]"
                 }`}
               >
                 <Icon
-                  className={`h-4 w-4 shrink-0 ${
+                  className={`h-4 w-4 shrink-0 transition-colors duration-150 ${
                     selected ? "text-[var(--accent)]" : "text-[var(--muted)]"
                   }`}
                 />
@@ -210,19 +239,38 @@ export function PublicPassportView({
               </button>
             );
           })}
+
+          {indicator.ready && (
+            <span
+              aria-hidden="true"
+              style={{
+                width: `${indicator.width}px`,
+                transform: `translateX(${indicator.left}px)`,
+              }}
+              className="sliding-pill pointer-events-none absolute bottom-0 left-0 h-[2.5px] rounded-full bg-[var(--accent)]"
+            />
+          )}
         </div>
       </nav>
 
-      {/* Sticky Mobile Bottom Tab Bar */}
+      {/* Sticky Mobile Bottom Tab Bar with Sliding Pill */}
       <nav
         aria-label="Battery passport sections mobile"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#1E2C3A] bg-[#0B1016]/95 text-[#F1F5F9] backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#2E2924] bg-[#141210]/95 text-[#F7F5F0] backdrop-blur md:hidden"
         style={{ paddingBottom: "max(0.4rem, env(safe-area-inset-bottom))" }}
       >
         <div
           role="tablist"
-          className={`grid ${mobileGridClass} gap-1.5 px-2 pt-1.5`}
+          className={`relative grid ${mobileGridClass} gap-1 px-2 pt-1.5`}
         >
+          <span
+            aria-hidden="true"
+            style={{
+              width: `calc((100% - 1rem) / ${Math.max(1, visibleTabs.length)})`,
+              transform: `translateX(${activeIndex * 100}%)`,
+            }}
+            className="sliding-pill pointer-events-none absolute inset-y-1.5 left-2 rounded-[10px] bg-[#F97316]"
+          />
           {visibleTabs.map((tabId) => {
             const def = TAB_DEFS[tabId];
             const Icon = def.icon;
@@ -234,15 +282,15 @@ export function PublicPassportView({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActiveTab(tabId)}
-                className={`pressable flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[10px] px-1.5 py-1.5 text-[11.5px] font-bold leading-none cursor-pointer ${
+                className={`pressable relative z-10 flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[10px] px-1.5 py-1.5 text-[11.5px] font-bold leading-none cursor-pointer ${
                   selected
-                    ? "bg-[#34D399] text-[#052E16]"
-                    : "text-[#94A3B8] hover:text-white"
+                    ? "text-[#1A0902]"
+                    : "text-[#A69E94] hover:text-white"
                 }`}
               >
                 <Icon
                   className={`h-[18px] w-[18px] ${
-                    selected ? "text-[#052E16]" : "text-[#94A3B8]"
+                    selected ? "text-[#1A0902]" : "text-[#A69E94]"
                   }`}
                 />
                 <span>{def.mobileLabel}</span>
@@ -253,7 +301,7 @@ export function PublicPassportView({
       </nav>
 
       <main className="mx-auto w-full max-w-[1040px] flex-1 space-y-5 px-4 pt-6 pb-28 sm:px-6 md:pb-14">
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2.5 text-[13px] text-[var(--muted)]">
+        <div className="surface-card-subtle flex flex-wrap items-center justify-between gap-2 rounded-[10px] px-4 py-2.5 text-[13px] text-[var(--muted)]">
           <span>
             <strong className="font-semibold text-[var(--ink)]">
               {WORKING_FIELD_LIST_NOTICE}
@@ -261,7 +309,7 @@ export function PublicPassportView({
             Restricted fields for authorities and repair operators are omitted
             from this public view.
           </span>
-          <span className="font-mono text-[11.5px] font-semibold text-[var(--accent)]">
+          <span className="font-mono text-[11.5px] font-bold text-[var(--accent)]">
             PUBLIC TIER ONLY
           </span>
         </div>
@@ -283,7 +331,7 @@ export function PublicPassportView({
               return (
                 <section
                   key={groupId}
-                  className="interactive-card rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-5"
+                  className="interactive-card surface-elevated rounded-[12px] p-5"
                 >
                   <div className="flex items-start justify-between gap-3 border-b border-[var(--rule)] pb-3.5">
                     <div>
@@ -294,7 +342,7 @@ export function PublicPassportView({
                         {meta.subtitle}
                       </p>
                     </div>
-                    <span className="chamfer-sm shrink-0 bg-[var(--positive-bg)] px-2.5 py-1 text-[11.5px] font-bold text-[var(--positive)] border border-[var(--positive-border)]">
+                    <span className="chamfer-sm shrink-0 border border-[var(--positive-border)] bg-[var(--positive-bg)] px-2.5 py-1 text-[11.5px] font-bold text-[var(--positive)]">
                       Public
                     </span>
                   </div>
@@ -323,7 +371,7 @@ export function PublicPassportView({
 
         {/* Tab 2: Conditional text-only Care & Repair info tab */}
         {activeTab === "repair" && repairItems.length > 0 && (
-          <section className="tab-panel-enter rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6">
+          <section className="tab-panel-enter surface-elevated rounded-[12px] p-5 sm:p-6">
             <div className="border-b border-[var(--rule)] pb-4">
               <h2 className="text-[19px] font-bold text-[var(--ink)]">
                 Care, handling &amp; external spare-parts information
@@ -351,7 +399,7 @@ export function PublicPassportView({
 
         {/* Tab 3: Conditional Supply tab (real brand fields only) */}
         {activeTab === "supply" && supplyItems.length > 0 && (
-          <section className="tab-panel-enter rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6">
+          <section className="tab-panel-enter surface-elevated rounded-[12px] p-5 sm:p-6">
             <div className="border-b border-[var(--rule)] pb-4">
               <h2 className="text-[19px] font-bold text-[var(--ink)]">
                 Disclosed supply &amp; origin notes
@@ -384,7 +432,7 @@ export function PublicPassportView({
         {/* Tab 4: Provenance & recycling */}
         {activeTab === "provenance" && (
           <div className="tab-panel-enter grid grid-cols-1 gap-5 lg:grid-cols-12">
-            <article className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6 lg:col-span-6">
+            <article className="surface-elevated rounded-[12px] p-5 sm:p-6 lg:col-span-6">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--rule)] pb-3.5">
                 <div>
                   <h2 className="text-[18px] font-bold text-[var(--ink)]">
@@ -424,7 +472,7 @@ export function PublicPassportView({
               </dl>
             </article>
 
-            <article className="rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6 lg:col-span-6">
+            <article className="surface-elevated rounded-[12px] p-5 sm:p-6 lg:col-span-6">
               <div className="flex items-center gap-3 border-b border-[var(--rule)] pb-3.5">
                 <WheeledBinIcon className="h-7 w-7 shrink-0 text-[var(--ink)]" />
                 <div>

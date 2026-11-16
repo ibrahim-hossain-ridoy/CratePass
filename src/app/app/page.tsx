@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { AppShell } from "@/components/workspace/AppShell";
 import {
   PassportDashboard,
@@ -13,6 +14,7 @@ import { getWorkspaceContext } from "@/lib/workspace/context";
 import WorkspaceLoading from "./loading";
 
 async function DashboardLoader() {
+  await connection();
   const ctx = await getWorkspaceContext();
 
   if (ctx.state === "unauthenticated") {

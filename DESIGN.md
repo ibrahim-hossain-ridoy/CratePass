@@ -1,32 +1,34 @@
 ---
 impeccable:design-schema: 1
 mode: operate
-surface: hybrid-obsidian-telemetry-ledger
+surface: apple-warm-stone-espresso-telemetry
 palette:
-  ground: "#F2F4F7"
+  ground: "#F5F3EE"
   surface: "#FFFFFF"
-  well: "#E5E9F0"
-  wellSoft: "#EEF1F6"
-  border: "#D5DCE6"
-  borderStrong: "#B6C2D2"
-  rule: "#E3E8F0"
-  ink: "#0B1017"
-  muted: "#4A5565"
-  accent: "#1D4ED8"
-  accentInk: "#1E40AF"
-  accentSoft: "#EFF6FF"
-  accentBorder: "#BFDBFE"
-  positive: "#047857"
-  positiveBg: "#ECFDF5"
-  positiveBorder: "#A7F3D0"
-  noticeBg: "#FEF7E6"
-  noticeBorder: "#E5C168"
-  noticeInk: "#7C4A03"
-  stageBg: "#0B1016"
-  stageSurface: "#121A23"
-  stageBorder: "#233242"
-  stageInk: "#F1F5F9"
-  stageMuted: "#94A3B8"
+  well: "#EAE6DE"
+  wellSoft: "#F9F7F3"
+  border: "#DDD7CC"
+  borderStrong: "#C6BEB1"
+  rule: "#E6E1D8"
+  ink: "#161412"
+  muted: "#625B53"
+  accent: "#C2410C"
+  accentInk: "#9A3412"
+  accentVivid: "#EA580C"
+  accentSoft: "#FFF4ED"
+  accentBorder: "#FDBA8C"
+  positive: "#15803D"
+  positiveBg: "#F0FDF4"
+  positiveBorder: "#BBF7D0"
+  noticeBg: "#FEF8EC"
+  noticeBorder: "#E6BF62"
+  noticeInk: "#78350F"
+  stageBg: "#141210"
+  stageSurface: "#1D1A17"
+  stageBorder: "#332E28"
+  stageInk: "#F7F5F0"
+  stageMuted: "#A69E94"
+  stageAmber: "#F97316"
   stageJade: "#34D399"
   stageJadeInk: "#052E16"
 typography:
@@ -34,65 +36,53 @@ typography:
   mono: "JetBrains Mono"
   tabularNumerals: true
 radius:
-  card: "12px"
-  well: "8px"
+  card: "14px"
+  well: "10px"
   pill: "9999px"
 ---
 
-# DESIGN.md — Battery Passport Host (Hybrid Obsidian Telemetry & Technical Ledger)
+# DESIGN.md — Battery Passport Host (Apple-Inspired Warm Stone, Deep Espresso & Burnt-Amber Telemetry)
 
 ## Overview
 
-The Hybrid design system combines **Obsidian Dark Hardware Stages (`#0B1016`)** and **Electrochemical Jade (`#34D399`)** telemetry from Direction A with **Exposed Registration Crosshairs (`+`) & High-Contrast Specification Cards (`#FFFFFF` over `#F2F4F7`)** from Direction B and **`45°` Chamfered Hardware Badges (`clip-path`) & Industrial Cobalt (`#1D4ED8`)** from Direction C.
+The design system pairs **Warm Stone & Alabaster Ledger Surfaces (`#F5F3EE` / `#FFFFFF`)** with **Deep Espresso Hardware Enclosures (`#141210`)**, **Burnt-Amber Industrial Accents (`#C2410C` / `#F97316`)**, and **Electrochemical Forest Emerald (`#15803D` / `#34D399`)** status signals.
 
-Every screen is engineered for fast mobile QR-scan sessions and scannable B2B technical workflows while maintaining strict AA+ contrast, 44px+ touch targets, and CSS-only motion graphics that respect `prefers-reduced-motion`.
+Every screen is engineered for fast mobile QR-scan sessions and scannable B2B technical workflows while maintaining strict AA+ contrast, 44px+ touch targets, GPU-composited `transform`/`opacity` animations, and full `prefers-reduced-motion` support.
 
 ## Color System
 
 | Token | Hex | Role |
 | :--- | :--- | :--- |
-| `--ground` | `#F2F4F7` | Cool titanium-stone ledger canvas |
+| `--ground` | `#F5F3EE` | Warm stone / alabaster ledger canvas |
 | `--surface` | `#FFFFFF` | High-contrast specification cards & workspace sheet |
-| `--well` | `#E5E9F0` | Recessed data wells and progress tracks |
-| `--well-soft` | `#EEF1F6` | Card headers and subtle inset callouts |
-| `--border` | `#D5DCE6` | 1px structural card and row borders |
-| `--border-strong` | `#B6C2D2` | High-emphasis card and input outlines |
-| `--rule` | `#E3E8F0` | Internal `<dl>` key-value divider rules |
-| `--ink` | `#0B1017` | Primary carbon ink (`18.4:1` on `#FFFFFF`) |
-| `--muted` | `#4A5565` | Secondary technical labels (`7.3:1` on `#FFFFFF`) |
-| `--accent` | `#1D4ED8` | Industrial cobalt primary action & active tab indicator |
-| `--accent-ink` | `#1E40AF` | Darker cobalt hover and high-contrast badge ink |
-| `--positive` | `#047857` | Matched / public-tier emerald status (`>= 5.4:1`) |
-| `--notice-bg` | `#FEF7E6` | Warm amber notice surface |
-| `--notice-border` | `#E5C168` | Amber notice border |
-| `--notice-ink` | `#7C4A03` | High-contrast amber disclosure text |
-| `--stage-bg` | `#0B1016` | Obsidian dark masthead, workspace rail, and hero stage |
-| `--stage-surface` | `#121A23` | Recessed dark instrument cards |
-| `--stage-border` | `#233242` | Dark stage structural hairline |
-| `--stage-jade` | `#34D399` | Electrochemical jade CTA & live telemetry accent |
-| `--stage-jade-ink` | `#052E16` | Deep forest ink over `#34D399` buttons (`11.6:1`) |
+| `--well` | `#EAE6DE` | Recessed warm stone wells and progress tracks |
+| `--well-soft` | `#F9F7F3` | Card headers and subtle inset callouts |
+| `--border` | `#DDD7CC` | 1px precision card and row borders |
+| `--border-strong` | `#C6BEB1` | High-emphasis card and input outlines |
+| `--rule` | `#E6E1D8` | Internal `<dl>` key-value divider rules |
+| `--ink` | `#161412` | Primary deep espresso ink (`17.8:1` on `#FFFFFF`) |
+| `--muted` | `#625B53` | Warm stone-taupe technical labels (`6.2:1` on `#FFFFFF`) |
+| `--accent` | `#C2410C` | Burnt-amber primary action & active tab indicator |
+| `--accent-ink` | `#9A3412` | Deep burnt sienna hover & high-contrast badge ink |
+| `--positive` | `#15803D` | Matched / public-tier forest emerald status (`>= 5.1:1`) |
+| `--notice-bg` | `#FEF8EC` | Warm amber notice surface |
+| `--notice-border` | `#E6BF62` | Amber notice border |
+| `--notice-ink` | `#78350F` | High-contrast amber disclosure text |
+| `--stage-bg` | `#141210` | Deep espresso masthead, workspace rail, and 3D hero stage |
+| `--stage-surface` | `#1D1A17` | Elevated dark espresso instrument cards |
+| `--stage-border` | `#332E28` | Warm bronze-espresso structural hairline |
+| `--stage-amber` | `#F97316` | Luminous burnt-amber CTA & live pipeline highlight |
+| `--stage-jade` | `#34D399` | Live emerald telemetry indicator |
 
-## Typography (2 Font Families via `next/font/google` with `display: "swap"`)
+## Typography & Fluid Scales
 
-- **Primary UI & Display Sans (`--font-space-grotesk` -> `Plus Jakarta Sans`):** Weights `400`, `500`, `600`, `700`. Tight tracking (`-0.025em` to `-0.03em`) on headings, generous `1.6` line-height on body copy.
-- **Technical Monospace (`--font-jetbrains-mono` -> `JetBrains Mono`):** Weights `400`, `500`, `600` for passport IDs, `/p/[slug]` routes, SHA-256 digests, PDF parser trace snippets, and version tags.
+- **Primary UI & Display Sans (`--font-space-grotesk` -> `Plus Jakarta Sans`):** Weights `400`, `500`, `600`, `700`. Fluid responsive scales (`.text-display-hero`, `.text-display-section`, `.text-title-page`) with optical sizing and tight negative tracking (`-0.022em` to `-0.032em`).
+- **Technical Monospace (`--font-jetbrains-mono` -> `JetBrains Mono`):** Weights `400`, `500`, `600` for passport IDs, `/p/[slug]` routes, SHA-256 digests, PDF parser traces, and version tags.
 - **Tabular Numerals (`.num`):** `font-variant-numeric: tabular-nums` enforced across all electrical ratings, carbon metrics (`kg CO2e`), percentages, and UTC timestamps.
 
-## Visual Motifs & Interactive Motion Graphics
+## Motion & Micro-Interactions (`globals.css`, `prefers-reduced-motion` safe)
 
-1. **QR Finder Corner Brackets (`CornerBrackets`):** `2px` L-shaped corner ticks framing the hero stage, step cards, and contact panel.
-2. **45° Chamfered Badges & Buttons (`.chamfer-sm`, `.chamfer-card`):** Beveled polygon corners echoing an anodized e-bike battery enclosure.
-3. **Registration Crosshairs (`+`):** Monospace grid markers on section headers and specification cards.
-4. **CSS-Only Motion Graphics (`globals.css`, `prefers-reduced-motion` safe):**
-   - `.hero-enter` / `.hero-enter-delay-1`: Spring-eased entrance transitions (`cubic-bezier(0.16, 1, 0.3, 1)`).
-   - `.qr-scan-line`: Sweeping emerald laser line over the battery casing QR code preview.
-   - `.status-pulse`: Subtle pulsing live indicator dot on passport mastheads and 2.5D repair pins.
-   - `.bar-fill-enter`: Smooth horizontal scale-in on carbon footprint and material mass breakdown bars.
-   - `.pressable` & `.interactive-card`: Tactile hover lift (`-1px` / `-2px`) and active press (`scale(0.98)`).
-
-## Surface Architecture Across Routes
-
-- **`/` (Landing Page):** Obsidian dark header & hero stage housing `HeroPassportStage` (interactive 4-row Completeness Check with live PDF parser trace + animated QR code + interactive 4-tab Phone Hardware Mockup), followed by `How it works`, `Who it's for`, `PassportPreview`, `#contact`, and disclaimer footer.
-- **`/p/[slug]` (Public Passport):** Obsidian dark identity masthead (`v1`, `/p/[slug]`, electrical spec pills, manufacturer disclaimer), sticky desktop tab bar, frosted dark mobile bottom bar (`min-h-[52px]` touch targets), and high-contrast specification cards. Empty `Repair` and `Supply` tabs remain hidden; restricted fields are stripped server-side.
-- **`/demo` (Concept Demo):** Matches the Hybrid obsidian masthead and sticky mobile bar, featuring the dark-stage 2.5D battery cutaway with glowing SVG leader lines, animated carbon bars, supply route corridor, and `DEMO – no real verification performed` certificate.
-- **`/login` & `/app/*` (Brand Workspace):** Framed-sheet architecture pairing the `#0B1016` dark obsidian navigation rail with a crisp `#FFFFFF` workspace sheet, sticky dark completeness summary bar, and dark QR download panel.
+- **Easing Tokens:** `--ease-out: cubic-bezier(0.23, 1, 0.32, 1)`, `--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)`, `--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1)`, `--ease-spring: cubic-bezier(0.16, 1, 0.3, 1)`.
+- **Ref-Driven 3D Tilt Stage:** Pointer-tracked `rotateX` / `rotateY` via `requestAnimationFrame` writing directly to `ref.current.style.transform` with zero React re-renders per frame (`HeroPassportStage` & `RepairViewTab`).
+- **Sliding Active Indicators (`.sliding-pill`):** Composite `transform: translateX(...)` underline and segmented-control pills across `/`, `/demo`, `/p/[slug]`, `/login`, and `/app/passports/[id]`.
+- **Smooth Progress Bars (`.progress-fill-smooth`):** Composite `transform: scaleX(...)` progress fills across 71-point field groups and quota bars.

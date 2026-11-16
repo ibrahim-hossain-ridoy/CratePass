@@ -72,8 +72,10 @@ export function BillingWorkspace({
     <div className="space-y-6">
       <div className="flex flex-col gap-3 border-b border-[var(--rule)] pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[12.5px] font-medium text-[var(--muted)]">{orgName}</p>
-          <h1 className="mt-0.5 text-[24px] font-semibold tracking-[-0.02em] text-[var(--ink)]">
+          <p className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+            {orgName}
+          </p>
+          <h1 className="text-title-page mt-0.5 font-bold text-[var(--ink)]">
             Plan &amp; Billing
           </h1>
           <p className="mt-1 text-[13.5px] text-[var(--muted)]">
@@ -95,7 +97,7 @@ export function BillingWorkspace({
       {checkoutNotice === "success" && (
         <div
           role="status"
-          className="rounded-[10px] border border-[var(--positive-border)] bg-[var(--positive-bg)] p-4 text-[13.5px] text-[var(--positive)]"
+          className="tab-panel-enter rounded-[10px] border border-[var(--positive-border)] bg-[var(--positive-bg)] p-4 text-[13.5px] text-[var(--positive)]"
         >
           <p className="font-semibold">Checkout submitted to Paddle</p>
           <p className="mt-1">
@@ -108,7 +110,7 @@ export function BillingWorkspace({
       {checkoutNotice === "canceled" && (
         <div
           role="status"
-          className="rounded-[10px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-4 text-[13.5px] text-[var(--notice-ink)]"
+          className="tab-panel-enter rounded-[10px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-4 text-[13.5px] text-[var(--notice-ink)]"
         >
           Checkout was canceled before completion. Existing drafts and PDFs are untouched.
         </div>
@@ -116,8 +118,8 @@ export function BillingWorkspace({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Current Organization Entitlement Status */}
-        <section className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-5 lg:col-span-7">
-          <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+        <section className="surface-elevated rounded-[14px] p-5 lg:col-span-7">
+          <h2 className="text-[16px] font-bold text-[var(--ink)]">
             {displayState.headline}
           </h2>
           <p className="mt-2 text-[14px] leading-relaxed text-[var(--muted)]">
@@ -160,18 +162,18 @@ export function BillingWorkspace({
         </section>
 
         {/* Placeholder EUR Plan Card */}
-        <section className="rounded-[10px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-5 lg:col-span-5">
+        <section className="surface-elevated rounded-[14px] bg-[var(--well-soft)] p-5 lg:col-span-5">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-wide text-[var(--accent-ink)]">
+              <p className="text-[12px] font-bold uppercase tracking-wide text-[var(--accent-ink)]">
                 Placeholder EUR pricing
               </p>
-              <h2 className="mt-1 text-[18px] font-semibold text-[var(--ink)]">
+              <h2 className="mt-1 text-[18px] font-bold text-[var(--ink)]">
                 {siteConfig.billingPlan.name}
               </h2>
             </div>
             <div className="text-right">
-              <span className="num text-[26px] font-semibold tracking-tight text-[var(--ink)]">
+              <span className="num text-[26px] font-bold tracking-tight text-[var(--ink)]">
                 €{siteConfig.billingPlan.priceEurMonthly}
               </span>
               <span className="block text-[12px] text-[var(--muted)]">/ month</span>

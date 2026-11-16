@@ -157,14 +157,16 @@ export function NewPassportFlow({
     }
   }
 
+  const mandatoryRatio = categoryStats.totalMandatory / 71;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 border-b border-[var(--rule)] pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[12.5px] font-medium text-[var(--muted)]">
+          <p className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[var(--accent)]">
             Step 1 of 2 · PDF Spec Intake
           </p>
-          <h1 className="mt-0.5 text-[24px] font-bold tracking-[-0.02em] text-[var(--ink)]">
+          <h1 className="text-title-page mt-0.5 font-bold text-[var(--ink)]">
             New Battery Passport
           </h1>
           <p className="mt-1 text-[13.5px] text-[var(--muted)]">
@@ -183,9 +185,9 @@ export function NewPassportFlow({
       {!result && (
         <form
           onSubmit={handleUpload}
-          className="space-y-5 rounded-[12px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-5 sm:p-6"
+          className="surface-elevated space-y-5 rounded-[14px] bg-[var(--well-soft)] p-5 sm:p-6"
         >
-          {/* Battery Category Selector (LMT default) */}
+          {/* Battery Category Selector (LMT default) with tactile state-switch animation */}
           <div>
             <label className="block text-[13px] font-bold text-[var(--ink)]">
               Battery category (Regulation (EU) 2023/1542 Annex XIII)
@@ -204,10 +206,10 @@ export function NewPassportFlow({
                     role="radio"
                     aria-checked={selected}
                     onClick={() => setBatteryCategory(cat.id)}
-                    className={`flex flex-col items-start rounded-[10px] border p-3.5 text-left transition-colors cursor-pointer ${
+                    className={`pressable flex flex-col items-start rounded-[12px] border p-3.5 text-left cursor-pointer ${
                       selected
-                        ? "border-[var(--accent)] bg-[var(--surface)] ring-2 ring-[var(--accent)]/20"
-                        : "border-[var(--border-strong)] bg-[var(--surface)]/70 hover:border-[var(--ink)]"
+                        ? "border-[var(--accent)] bg-[var(--surface)] ring-2 ring-[var(--accent)]/20 shadow-sm"
+                        : "border-[var(--border-strong)] bg-[var(--surface)]/75 hover:border-[var(--ink)]"
                     }`}
                   >
                     <div className="flex w-full items-center justify-between">
@@ -215,7 +217,7 @@ export function NewPassportFlow({
                         {cat.label}
                       </span>
                       {cat.id === "LMT" && (
-                        <span className="rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10.5px] font-bold text-[var(--accent)]">
+                        <span className="rounded border border-[var(--accent-border)] bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10.5px] font-bold text-[var(--accent-ink)]">
                           Default
                         </span>
                       )}
@@ -227,18 +229,32 @@ export function NewPassportFlow({
                 );
               })}
             </div>
-            <p className="mt-2 text-[12.5px] text-[var(--muted)]">
-              Selected <strong className="text-[var(--ink)]">{batteryCategory}</strong>:{" "}
-              <span className="num font-semibold text-[var(--ink)]">
-                {categoryStats.totalMandatory}
-              </span>{" "}
-              mandatory Annex XIII points (
-              <span className="num">{categoryStats.reqPublic}</span> public ·{" "}
-              <span className="num">{categoryStats.reqLegit}</span> legitimate
-              interest · <span className="num">{categoryStats.reqAuth}</span>{" "}
-              authorities only). Dynamic BMS telemetry (Points 51–71) is excluded
-              from PDF extraction.
-            </p>
+
+            {/* Animated Category Mandatory Point Bar */}
+            <div className="mt-3 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[12.5px]">
+                <span className="text-[var(--muted)]">
+                  Selected <strong className="text-[var(--ink)]">{batteryCategory}</strong>:{" "}
+                  <span className="num font-bold text-[var(--ink)]">
+                    {categoryStats.totalMandatory}
+                  </span>{" "}
+                  mandatory Annex XIII points (
+                  <span className="num">{categoryStats.reqPublic}</span> public ·{" "}
+                  <span className="num">{categoryStats.reqLegit}</span> legitimate
+                  interest · <span className="num">{categoryStats.reqAuth}</span>{" "}
+                  authorities only)
+                </span>
+                <span className="num font-mono text-[11.5px] font-semibold text-[var(--accent)]">
+                  {categoryStats.totalMandatory} / 71 pts
+                </span>
+              </div>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--well)]">
+                <div
+                  style={{ transform: `scaleX(${mandatoryRatio})` }}
+                  className="progress-fill-smooth h-full w-full rounded-full bg-[var(--accent)]"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -255,7 +271,7 @@ export function NewPassportFlow({
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 placeholder="e.g. Alpine 36V-504 Downtube Pack"
-                className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
+                className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]"
               />
             </div>
 
@@ -272,7 +288,7 @@ export function NewPassportFlow({
                 value={modelCode}
                 onChange={(e) => setModelCode(e.target.value)}
                 placeholder="e.g. LMT-48V-14AH-PRO"
-                className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 font-mono text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
+                className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 font-mono text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]"
               />
             </div>
           </div>
@@ -293,7 +309,7 @@ export function NewPassportFlow({
                 setErrorMsg(null);
                 setFile(e.target.files?.[0] ?? null);
               }}
-              className="mt-1.5 block w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-3 text-[14px] text-[var(--ink)] file:mr-3 file:rounded-[6px] file:border file:border-[var(--border-strong)] file:bg-[var(--well)] file:px-3 file:py-1.5 file:text-[13px] file:font-semibold file:text-[var(--ink)] cursor-pointer"
+              className="input-apple mt-1.5 block w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-3 text-[14px] text-[var(--ink)] file:mr-3 file:rounded-[6px] file:border file:border-[var(--border-strong)] file:bg-[var(--well)] file:px-3 file:py-1.5 file:text-[13px] file:font-semibold file:text-[var(--ink)] cursor-pointer"
             />
             <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--muted)]">
               Stored privately in your organization bucket. Text is extracted and
@@ -305,7 +321,7 @@ export function NewPassportFlow({
           {errorMsg && (
             <div
               role="alert"
-              className="rounded-[8px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
+              className="tab-panel-enter rounded-[8px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
             >
               {errorMsg}
             </div>
@@ -344,7 +360,7 @@ export function NewPassportFlow({
       )}
 
       {result && (
-        <div className="space-y-5">
+        <div className="tab-panel-enter space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]">
             <div>
               <p className="font-semibold">
@@ -371,7 +387,7 @@ export function NewPassportFlow({
             <button
               type="button"
               onClick={() => router.push(`/app/passports/${result.passportId}`)}
-              className="inline-flex min-h-[38px] items-center rounded-[6px] border border-[var(--positive)] bg-[var(--surface)] px-3.5 text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--well-soft)] cursor-pointer"
+              className="pressable inline-flex min-h-[38px] items-center rounded-[6px] border border-[var(--positive)] bg-[var(--surface)] px-3.5 text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--well-soft)] cursor-pointer"
             >
               Skip to Review &amp; Publish
             </button>

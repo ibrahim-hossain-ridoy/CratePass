@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { AppShell } from "@/components/workspace/AppShell";
 import { NewPassportFlow } from "@/components/workspace/NewPassportFlow";
 import { siteConfig } from "@/config/site";
@@ -9,6 +10,7 @@ import { getWorkspaceContext } from "@/lib/workspace/context";
 import WorkspaceLoading from "../loading";
 
 async function NewPassportLoader() {
+  await connection();
   const ctx = await getWorkspaceContext();
 
   if (ctx.state === "unauthenticated") {

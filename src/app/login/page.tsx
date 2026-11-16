@@ -40,7 +40,7 @@ export default function LoginPage({
 }) {
   return (
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      <header className="border-b border-[#1E2C3A] bg-[#0B1016] text-white">
+      <header className="border-b border-[#2E2924] bg-[#141210] text-white">
         <div className="mx-auto flex max-w-[1040px] items-center justify-between px-4 py-3.5 sm:px-6">
           <Link href="/" className="flex min-h-[44px] items-center gap-2.5">
             <BrandMark className="h-8 w-8 shrink-0" />
@@ -48,7 +48,7 @@ export default function LoginPage({
               <span className="block text-[15px] font-bold tracking-tight text-white">
                 {siteConfig.siteName}
               </span>
-              <span className="block font-mono text-[11.5px] text-[#94A3B8]">
+              <span className="block font-mono text-[11.5px] text-[#A69E94]">
                 BRAND WORKSPACE SIGN-IN
               </span>
             </div>
@@ -56,7 +56,7 @@ export default function LoginPage({
 
           <Link
             href="/demo"
-            className="text-[14px] font-semibold text-[#CBD5E1] hover:text-white"
+            className="pressable text-[14px] font-semibold text-[#E6E1D8] hover:text-white"
           >
             Concept demo (/demo)
           </Link>
@@ -65,7 +65,10 @@ export default function LoginPage({
 
       <main className="mx-auto flex w-full max-w-[456px] flex-1 flex-col justify-center px-4 py-10">
         <div className="hero-enter mb-6">
-          <h1 className="text-[26px] font-bold tracking-[-0.025em] text-[var(--ink)] sm:text-[28px]">
+          <p className="font-mono text-[11.5px] font-bold uppercase tracking-wider text-[var(--accent)]">
+            Brand Workspace
+          </p>
+          <h1 className="text-title-page mt-1 font-bold text-[var(--ink)]">
             Open your brand workspace
           </h1>
           <p className="mt-1.5 text-[14.5px] leading-relaxed text-[var(--muted)]">
@@ -76,7 +79,7 @@ export default function LoginPage({
 
         <Suspense
           fallback={
-            <div className="h-[260px] rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-6" />
+            <div className="surface-elevated h-[260px] rounded-[14px] p-6" />
           }
         >
           <LoginContent searchParamsPromise={searchParams} />

@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    turbopackPluginRuntimeStrategy: "forceWorkerThreads",
+  },
   async headers() {
     return [
       {

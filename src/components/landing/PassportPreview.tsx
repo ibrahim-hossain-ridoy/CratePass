@@ -11,28 +11,28 @@ import {
 /** Static CSS + SVG facsimile of the /demo 4-tab mobile passport view. */
 export function PassportPreview() {
   return (
-    <div className="overflow-hidden rounded-[14px] border border-[#233242] bg-[#0B1016] text-[#F1F5F9]">
+    <div className="stage-card-elevated overflow-hidden rounded-[16px] bg-[#141210] text-[#F7F5F0]">
       {/* Window chrome / route strip */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1E2C3A] bg-[#111923] px-4 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2E2924] bg-[#1C1815] px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2.5">
           <span
             aria-hidden="true"
             className="status-pulse h-2.5 w-2.5 rounded-full bg-[#34D399]"
           />
-          <code className="font-mono text-[13px] font-semibold text-[#F1F5F9]">
+          <code className="font-mono text-[13px] font-semibold text-[#F7F5F0]">
             /demo · DB-36V Battery Pack
           </code>
         </div>
-        <span className="rounded border border-[#F59E0B]/40 bg-[#291D09] px-2.5 py-0.5 text-[12.5px] font-semibold text-[#FCD34D]">
+        <span className="rounded border border-[#F59E0B]/40 bg-[#2C1E0A] px-2.5 py-0.5 text-[12px] font-semibold text-[#FCD34D]">
           Static preview of live UI
         </span>
       </div>
 
-      <div className="grid grid-cols-1 divide-y divide-[#1E2C3A] lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+      <div className="grid grid-cols-1 divide-y divide-[#2E2924] lg:grid-cols-12 lg:divide-x lg:divide-y-0">
         {/* Left: Static mockup of the 4-tab passport viewport */}
         <div
           data-ui="passport-preview"
-          className="bg-[#0F1720] p-4 sm:p-6 lg:col-span-8"
+          className="bg-[#181512] p-4 sm:p-6 lg:col-span-8"
         >
           <div className="overflow-hidden rounded-[12px] border border-[var(--border-strong)] bg-[var(--ground)] text-[var(--ink)]">
             {/* Mock Sticky Identity Header */}
@@ -124,7 +124,7 @@ export function PassportPreview() {
                   </span>
                 </div>
 
-                <div className="relative my-2 aspect-[1376/768] w-full overflow-hidden rounded-md border border-[var(--border)] bg-[#0F1720]">
+                <div className="relative my-2 aspect-[1376/768] w-full overflow-hidden rounded-md border border-[var(--border)] bg-[#141210]">
                   <Image
                     src="/images/battery-cutaway-25d.jpg"
                     alt="2.5D cutaway preview of the DB-36V battery pack showing cells, fuse, BMS board, and latch"
@@ -133,7 +133,7 @@ export function PassportPreview() {
                     sizes="(max-width: 768px) 90vw, 320px"
                     className="object-cover"
                   />
-                  <span className="absolute left-[8%] top-[10%] rounded-full border border-amber-400/50 bg-[#0B1016]/90 px-2 py-0.5 text-[9.5px] font-bold text-[#FCD34D]">
+                  <span className="absolute left-[8%] top-[10%] rounded-full border border-amber-400/50 bg-[#141210]/90 px-2 py-0.5 text-[9.5px] font-bold text-[#FCD34D]">
                     Cells (Pro)
                   </span>
                   <span className="absolute bottom-[10%] left-[8%] rounded-full border border-[#34D399]/60 bg-[#052E16]/90 px-2 py-0.5 text-[9.5px] font-bold text-[#6EE7B7]">
@@ -155,9 +155,9 @@ export function PassportPreview() {
         </div>
 
         {/* Right: QR + Mobile-first callout */}
-        <div className="flex flex-col justify-between gap-5 bg-[#0B1016] p-5 sm:p-6 lg:col-span-4">
+        <div className="flex flex-col justify-between gap-5 bg-[#141210] p-5 sm:p-6 lg:col-span-4">
           <div className="space-y-4">
-            <div className="relative aspect-[1200/896] w-full overflow-hidden rounded-[10px] border border-[#233242] bg-[#131D28]">
+            <div className="relative aspect-[1200/896] w-full overflow-hidden rounded-[10px] border border-[#332E28] bg-[#1E1B17]">
               <Image
                 src="/images/battery-pack-studio.jpg"
                 alt="DB-36V e-bike battery pack product render"
@@ -168,13 +168,13 @@ export function PassportPreview() {
             </div>
 
             <div>
-              <p className="text-[13px] font-bold text-[#34D399]">
+              <p className="text-[13px] font-bold text-[#FB923C]">
                 Phone-first QR delivery
               </p>
               <h3 className="mt-1 text-[19px] font-bold text-white">
                 Built to load cleanly off a battery casing scan
               </h3>
-              <p className="mt-2 text-[14.5px] leading-relaxed text-[#94A3B8]">
+              <p className="mt-2 text-[14.5px] leading-relaxed text-[#A69E94]">
                 Inspect all 4 interactive tabs — grouped product specifications,
                 safety-bounded 2.5D repair pins, supply chain nodes, and
                 end-of-life disposal instructions.
@@ -184,7 +184,7 @@ export function PassportPreview() {
 
           <Link
             href="/demo"
-            className="pressable chamfer-sm inline-flex min-h-[46px] w-full items-center justify-center bg-[#34D399] px-4 py-2.5 text-[14.5px] font-bold text-[#052E16] hover:bg-[#6EE7B7]"
+            className="pressable chamfer-sm inline-flex min-h-[46px] w-full items-center justify-center bg-[#F97316] px-4 py-2.5 text-[14.5px] font-bold text-[#1A0902] hover:bg-[#FB923C]"
           >
             Open interactive /demo →
           </Link>

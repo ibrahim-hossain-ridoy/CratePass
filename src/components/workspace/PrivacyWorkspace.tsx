@@ -55,8 +55,10 @@ export function PrivacyWorkspace({
   return (
     <div className="space-y-6">
       <div className="border-b border-[var(--rule)] pb-5">
-        <p className="text-[12.5px] font-medium text-[var(--muted)]">{orgName}</p>
-        <h1 className="mt-0.5 text-[24px] font-semibold tracking-[-0.02em] text-[var(--ink)]">
+        <p className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+          {orgName}
+        </p>
+        <h1 className="text-title-page mt-0.5 font-bold text-[var(--ink)]">
           Privacy, GDPR Export &amp; Legal Drafts
         </h1>
         <p className="mt-1 text-[13.5px] text-[var(--muted)]">
@@ -67,8 +69,8 @@ export function PrivacyWorkspace({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* GDPR JSON export card */}
-        <section className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-5 lg:col-span-6">
-          <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+        <section className="surface-elevated rounded-[14px] p-5 lg:col-span-6">
+          <h2 className="text-[16px] font-bold text-[var(--ink)]">
             Export organization records (JSON)
           </h2>
           <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--muted)]">
@@ -88,8 +90,8 @@ export function PrivacyWorkspace({
         </section>
 
         {/* Draft legal documents summary */}
-        <section className="rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)] p-5 lg:col-span-6">
-          <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+        <section className="surface-elevated rounded-[14px] bg-[var(--well-soft)] p-5 lg:col-span-6">
+          <h2 className="text-[16px] font-bold text-[var(--ink)]">
             Legal &amp; EU data-processing drafts
           </h2>
           <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--muted)]">
@@ -99,19 +101,19 @@ export function PrivacyWorkspace({
           <div className="mt-4 flex flex-wrap gap-2.5">
             <Link
               href="/terms"
-              className="inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
             >
               Terms (Draft)
             </Link>
             <Link
               href="/privacy"
-              className="inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
             >
               Privacy &amp; GDPR (Draft)
             </Link>
             <Link
               href="/disclaimer"
-              className="inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
             >
               Disclaimer (Draft)
             </Link>
@@ -120,8 +122,8 @@ export function PrivacyWorkspace({
       </div>
 
       {/* Deletable unpublished drafts */}
-      <section className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-5">
-        <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+      <section className="surface-elevated rounded-[14px] p-5">
+        <h2 className="text-[16px] font-bold text-[var(--ink)]">
           Delete unpublished drafts &amp; source PDFs
         </h2>
         <p className="mt-1 text-[13.5px] text-[var(--muted)]">
@@ -140,7 +142,7 @@ export function PrivacyWorkspace({
         {errorMsg && (
           <div
             role="alert"
-            className="mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+            className="tab-panel-enter mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
           >
             {errorMsg}
           </div>
@@ -149,7 +151,7 @@ export function PrivacyWorkspace({
         {feedback && (
           <div
             role="status"
-            className="mt-3 rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
+            className="tab-panel-enter mt-3 rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
           >
             {feedback}
           </div>
@@ -183,14 +185,14 @@ export function PrivacyWorkspace({
                       type="button"
                       disabled={deletingId === item.id}
                       onClick={() => handleDeleteDraft(item)}
-                      className="inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[8px] border border-red-300 bg-red-50 px-3 text-[13px] font-semibold text-red-900 hover:bg-red-100 disabled:opacity-50 cursor-pointer"
+                      className="pressable inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[8px] border border-red-300 bg-red-50 px-3 text-[13px] font-semibold text-red-900 hover:bg-red-100 disabled:opacity-50 cursor-pointer"
                     >
                       {deletingId === item.id ? "Deleting..." : "Delete draft & PDF"}
                     </button>
                   ) : (
                     <Link
                       href={`/app/passports/${item.id}`}
-                      className="inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[8px] border border-[var(--border-strong)] px-3 text-[13px] font-medium text-[var(--muted)] hover:text-[var(--ink)]"
+                      className="pressable inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[8px] border border-[var(--border-strong)] px-3 text-[13px] font-medium text-[var(--muted)] hover:text-[var(--ink)]"
                     >
                       Manage published status
                     </Link>

@@ -110,7 +110,7 @@ export function LoginForm({
   }
 
   return (
-    <div className="hero-enter-delay-1 rounded-[14px] border border-[var(--border-strong)] bg-[var(--surface)] p-5 sm:p-6">
+    <div className="hero-enter-delay-1 surface-elevated rounded-[16px] p-5 sm:p-6">
       {!supabaseConfigured && (
         <div
           role="status"
@@ -126,12 +126,19 @@ export function LoginForm({
         </div>
       )}
 
-      {/* Auth mode switch: Email + Password OR Magic Link */}
+      {/* Auth mode switch: Apple-minimalist segmented control with sliding pill */}
       <div
         role="tablist"
         aria-label="Sign-in method"
-        className="grid grid-cols-2 gap-1 rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)] p-1"
+        className="relative grid grid-cols-2 gap-1 rounded-[10px] border border-[var(--border)] bg-[var(--well)] p-1"
       >
+        <span
+          aria-hidden="true"
+          style={{
+            transform: mode === "password" ? "translateX(0%)" : "translateX(100%)",
+          }}
+          className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/2)] rounded-[8px] bg-[#141210] shadow-sm"
+        />
         <button
           type="button"
           role="tab"
@@ -141,9 +148,9 @@ export function LoginForm({
             setErrorMsg(null);
             setStatusMsg(null);
           }}
-          className={`min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold transition-colors cursor-pointer ${
+          className={`pressable relative z-10 min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold cursor-pointer ${
             mode === "password"
-              ? "bg-[#0B1016] text-white"
+              ? "text-white"
               : "text-[var(--muted)] hover:text-[var(--ink)]"
           }`}
         >
@@ -158,9 +165,9 @@ export function LoginForm({
             setErrorMsg(null);
             setStatusMsg(null);
           }}
-          className={`min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold transition-colors cursor-pointer ${
+          className={`pressable relative z-10 min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold cursor-pointer ${
             mode === "magic-link"
-              ? "bg-[#0B1016] text-white"
+              ? "text-white"
               : "text-[var(--muted)] hover:text-[var(--ink)]"
           }`}
         >
@@ -185,12 +192,12 @@ export function LoginForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="engineer@brand-example.eu"
-            className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
+            className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)]"
           />
         </div>
 
         {mode === "password" && (
-          <div>
+          <div className="tab-panel-enter">
             <div className="flex items-center justify-between">
               <label
                 htmlFor="login-password"
@@ -205,7 +212,7 @@ export function LoginForm({
                     prev === "signin" ? "signup" : "signin",
                   )
                 }
-                className="text-[12.5px] font-medium text-[var(--accent-ink)] underline-offset-4 hover:underline cursor-pointer"
+                className="text-[12.5px] font-semibold text-[var(--accent-ink)] underline-offset-4 hover:underline cursor-pointer"
               >
                 {passwordAction === "signin"
                   ? "Need an account? Sign up"
@@ -224,7 +231,7 @@ export function LoginForm({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Minimum 8 characters"
-              className="mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)]/70 focus:border-[var(--accent)] focus:outline-none"
+              className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)]"
             />
           </div>
         )}
@@ -232,7 +239,7 @@ export function LoginForm({
         {errorMsg && (
           <div
             role="alert"
-            className="rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+            className="tab-panel-enter rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
           >
             {errorMsg}
           </div>
@@ -241,7 +248,7 @@ export function LoginForm({
         {statusMsg && (
           <div
             role="status"
-            className="rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
+            className="tab-panel-enter rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
           >
             {statusMsg}
           </div>

@@ -16,21 +16,21 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
       className="tab-panel-enter grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-start"
     >
       {/* Certificate-style demo record card */}
-      <article className="relative overflow-hidden rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] lg:col-span-7">
+      <article className="surface-elevated relative overflow-hidden rounded-[12px] lg:col-span-7">
         {/* Top banner */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1E2C3A] bg-[#0B1016] px-4 py-4 text-white sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2E2924] bg-[#141210] px-4 py-4 text-white sm:px-5">
           <div>
             <h2 className="text-[17px] font-bold text-white">
               Passport Record Snapshot
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[#94A3B8]">
+            <p className="mt-0.5 text-[12.5px] text-[#A69E94]">
               Reference{" "}
-              <code className="font-mono text-[12px] text-[#6EE7B7]">
+              <code className="font-mono text-[12px] text-[#FB923C]">
                 {authenticity.certificateId}
               </code>
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#F59E0B]/40 bg-[#291D09] px-2.5 py-1 text-[12px] font-semibold text-[#FCD34D]">
+          <span className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#F59E0B]/40 bg-[#2C1E0A] px-2.5 py-1 text-[12px] font-semibold text-[#FCD34D]">
             <InfoIcon className="h-3.5 w-3.5 shrink-0 text-[#FBBF24]" />
             <span>DEMO – no real verification performed</span>
           </span>
@@ -38,7 +38,7 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
 
         <div className="space-y-4 p-4 sm:p-5">
           {/* Geometric certificate corner seal & notice */}
-          <div className="flex items-start gap-3 rounded-md border border-[var(--notice-border)] bg-[var(--notice-bg)] p-3.5">
+          <div className="flex items-start gap-3 rounded-[8px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-3.5">
             <svg
               viewBox="0 0 40 40"
               aria-hidden="true"
@@ -92,7 +92,7 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
                 Check timestamp
               </dt>
               <dd className="mt-1 break-words">
-                <code className="font-mono text-[13px] text-[var(--ink)]">
+                <code className="font-mono text-[13px] font-medium text-[var(--ink)]">
                   {authenticity.timestampValue}
                 </code>
               </dd>
@@ -128,13 +128,13 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
       </article>
 
       {/* End-of-life recycling instructions card */}
-      <article className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] lg:col-span-5">
-        <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-4 py-3.5 sm:px-5">
+      <article className="surface-elevated overflow-hidden rounded-[12px] lg:col-span-5">
+        <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--well-soft)] px-4 py-3.5 sm:px-5">
           <div>
-            <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+            <h2 className="text-[16px] font-bold text-[var(--ink)]">
               {recycling.schemeTitle}
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[var(--positive)] font-medium">
+            <p className="mt-0.5 text-[12.5px] font-semibold text-[var(--positive)]">
               {recycling.collectionCode}
             </p>
           </div>
@@ -147,13 +147,13 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
           </p>
 
           <div className="border-t border-[var(--rule)] pt-3.5">
-            <p className="text-[13px] font-semibold text-[var(--ink)]">
+            <p className="text-[13px] font-bold text-[var(--ink)]">
               Preparation before drop-off
             </p>
             <ol className="mt-2 space-y-2 text-[13.5px] leading-relaxed text-[var(--muted)]">
               {recycling.prepSteps.map((step, i) => (
                 <li key={step} className="flex items-start gap-2.5">
-                  <span className="num mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--positive-bg)] text-[11.5px] font-semibold text-[var(--positive)]">
+                  <span className="num mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--positive-bg)] text-[11.5px] font-bold text-[var(--positive)]">
                     {i + 1}
                   </span>
                   <span>{step}</span>

@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { createServerSupabaseClient } from "../supabase/server.ts";
 import { isSupabaseConfigured } from "../supabase/env.ts";
 import { deriveOrgNameFromEmail } from "./helpers.ts";
@@ -14,6 +15,8 @@ export type WorkspaceContext =
     };
 
 export async function getWorkspaceContext(): Promise<WorkspaceContext> {
+  await connection();
+
   if (!isSupabaseConfigured()) {
     return { state: "unconfigured" };
   }

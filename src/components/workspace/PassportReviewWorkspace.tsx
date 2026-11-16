@@ -193,7 +193,7 @@ export function PassportReviewWorkspace({
             <span>/</span>
             <code className="font-mono text-[var(--ink)]">{slug}</code>
           </div>
-          <h1 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-[var(--ink)]">
+          <h1 className="text-title-page mt-1 font-bold text-[var(--ink)]">
             {productName}
           </h1>
           {modelCode && (
@@ -231,8 +231,8 @@ export function PassportReviewWorkspace({
       {/* Publish & QR controls grid */}
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Publish & declaration control */}
-        <div className="rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] p-4 sm:p-5 lg:col-span-7">
-          <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+        <div className="surface-elevated rounded-[14px] p-4 sm:p-5 lg:col-span-7">
+          <h2 className="text-[16px] font-bold text-[var(--ink)]">
             Review declaration &amp; publish controls
           </h2>
           <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--muted)]">
@@ -241,7 +241,13 @@ export function PassportReviewWorkspace({
             <code className="font-mono text-[var(--ink)]">/p/{slug}</code>.
           </p>
 
-          <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-[8px] border border-[var(--border-strong)] bg-[var(--well-soft)] p-3.5 text-[13.5px] text-[var(--ink)]">
+          <label
+            className={`mt-4 flex cursor-pointer items-start gap-3 rounded-[10px] border p-3.5 text-[13.5px] text-[var(--ink)] transition-colors duration-150 ${
+              declarationChecked
+                ? "border-[var(--accent)] bg-[var(--accent-soft)]/50"
+                : "border-[var(--border-strong)] bg-[var(--well-soft)]"
+            }`}
+          >
             <input
               type="checkbox"
               checked={declarationChecked}
@@ -256,7 +262,7 @@ export function PassportReviewWorkspace({
           {actionError && (
             <div
               role="alert"
-              className="mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+              className="tab-panel-enter mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
             >
               <p>{actionError}</p>
               {billingRequiredError && (
@@ -273,7 +279,7 @@ export function PassportReviewWorkspace({
           {actionNotice && (
             <div
               role="status"
-              className="mt-3 rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
+              className="tab-panel-enter mt-3 rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
             >
               {actionNotice}
             </div>
@@ -309,7 +315,7 @@ export function PassportReviewWorkspace({
                   type="button"
                   disabled={submittingAction !== null}
                   onClick={() => handlePublishAction("unpublish")}
-                  className="inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] disabled:opacity-60 cursor-pointer"
+                  className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] disabled:opacity-60 cursor-pointer"
                 >
                   {submittingAction === "unpublish" ? "Unpublishing..." : "Unpublish"}
                 </button>
@@ -343,13 +349,13 @@ export function PassportReviewWorkspace({
         </div>
 
         {/* Downloadable QR card */}
-        <div className="rounded-[12px] border border-[#233242] bg-[#0B1016] p-4 text-[#F1F5F9] sm:p-5 lg:col-span-5">
+        <div className="stage-card-elevated rounded-[14px] bg-[#141210] p-4 text-[#F7F5F0] sm:p-5 lg:col-span-5">
           <div className="flex items-start justify-between gap-2">
             <div>
               <h2 className="text-[16px] font-bold text-white">
                 QR label download
               </h2>
-              <p className="mt-0.5 text-[12.5px] text-[#94A3B8]">
+              <p className="mt-0.5 text-[12.5px] text-[#A69E94]">
                 Encodes permanent public route
               </p>
             </div>
@@ -358,7 +364,7 @@ export function PassportReviewWorkspace({
             </span>
           </div>
 
-          <div className="mt-4 flex flex-col items-center rounded-[10px] border border-[#233242] bg-[#131D28] p-4">
+          <div className="mt-4 flex flex-col items-center rounded-[12px] border border-[#332E28] bg-[#1D1A17] p-4">
             {qrAssets ? (
               <div className="rounded-[8px] bg-white p-2">
                 <Image
@@ -371,12 +377,12 @@ export function PassportReviewWorkspace({
                 />
               </div>
             ) : (
-              <div className="flex h-[168px] w-[168px] items-center justify-center bg-[#0B1016] text-[12px] text-[#94A3B8]">
+              <div className="flex h-[168px] w-[168px] items-center justify-center rounded-[8px] bg-[#141210] text-[12px] text-[#A69E94]">
                 Generating QR...
               </div>
             )}
 
-            <p className="mt-3 max-w-full break-all text-center font-mono text-[11.5px] text-[#6EE7B7]">
+            <p className="mt-3 max-w-full break-all text-center font-mono text-[11.5px] text-[#FB923C]">
               {publicUrl}
             </p>
           </div>
@@ -393,7 +399,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadSvg}
-              className="pressable chamfer-sm inline-flex min-h-[42px] items-center justify-center bg-[#34D399] px-3 text-[13px] font-bold text-[#052E16] hover:bg-[#6EE7B7] disabled:opacity-50 cursor-pointer"
+              className="pressable chamfer-sm inline-flex min-h-[42px] items-center justify-center bg-[#F97316] px-3 text-[13px] font-bold text-[#1A0902] hover:bg-[#FB923C] disabled:opacity-50 cursor-pointer"
             >
               Download SVG
             </button>
@@ -401,7 +407,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadPng}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[#233242] bg-[#131D28] px-3 text-[13px] font-bold text-white hover:border-[#34D399] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[#332E28] bg-[#1E1B17] px-3 text-[13px] font-bold text-white hover:border-[#F97316] disabled:opacity-50 cursor-pointer"
             >
               Download PNG
             </button>
