@@ -24,8 +24,8 @@
   - `BillingProvider` interface, Paddle sandbox checkout + HMAC webhook handler, per-org `comp_enabled` override, `/app/billing` plan status UI, and placeholder EUR pricing.
 - **M7 — Draft Legal Pages (`/terms`, `/privacy`, `/disclaimer`) *(Done)***
   - Clearly marked `TODO: lawyer review` draft documents with EU GDPR data-processing notes, `/app/privacy` JSON export & unpublished-draft deletion controls.
-- **M8 — Security Hardening, QA & Documentation** *(After checkpoint)*
-  - ECC security audit, automated schema/RLS/client-secret/banned-words tests, `390px` mobile QA, `impeccable` critique pass, and full deployment `README.md`.
+- **M8 — Security Hardening, QA & Documentation *(Done)***
+  - HTTP security headers (`next.config.ts`), upload size DoS guard & checkout rate limiting, security audit tests, `390px` mobile & `impeccable` polish pass, and deployment [`README.md`](README.md).
 
 ---
 

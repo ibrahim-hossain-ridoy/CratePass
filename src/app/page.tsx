@@ -58,17 +58,17 @@ export default function LandingPage() {
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
       {/* Top sticky header */}
       <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--surface)]">
-        <div className="mx-auto flex max-w-[1040px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-[1040px] items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6">
           <Link
             href="/"
-            className="flex min-h-[44px] items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
+            className="flex min-h-[44px] min-w-0 items-center gap-2 focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:gap-2.5"
           >
-            <BrandMark className="h-8 w-8 shrink-0" />
-            <div className="leading-tight">
-              <span className="block text-[16px] font-semibold tracking-tight text-[var(--ink)]">
+            <BrandMark className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
+            <div className="min-w-0 leading-tight">
+              <span className="block truncate text-[14px] font-semibold tracking-tight text-[var(--ink)] sm:text-[16px]">
                 {siteConfig.siteName}
               </span>
-              <span className="block text-[13px] text-[var(--muted)]">
+              <span className="hidden text-[13px] text-[var(--muted)] sm:block">
                 Technical DPP hosting
               </span>
             </div>
@@ -76,7 +76,7 @@ export default function LandingPage() {
 
           <nav
             aria-label="Primary sections"
-            className="flex shrink-0 items-center gap-5 text-[15px] font-medium"
+            className="flex shrink-0 items-center gap-2 text-[14px] font-medium sm:gap-5 sm:text-[15px]"
           >
             <a
               href="#how-it-works"
@@ -98,15 +98,16 @@ export default function LandingPage() {
             </a>
             <Link
               href="/app"
-              className="text-[14px] font-medium text-[var(--muted)] transition-colors hover:text-[var(--ink)] sm:text-[15px]"
+              className="inline-flex min-h-[44px] items-center px-1.5 text-[14px] font-medium text-[var(--muted)] transition-colors hover:text-[var(--ink)] sm:text-[15px]"
             >
               Sign in
             </Link>
             <Link
               href="/demo"
-              className="pressable inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--border-strong)] bg-[var(--well-soft)] px-3.5 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--well)] focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:px-4 sm:text-[15px]"
+              className="pressable inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap rounded-[8px] border border-[var(--border-strong)] bg-[var(--well-soft)] px-3 text-[13.5px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--well)] focus-visible:outline-2 focus-visible:outline-[var(--accent)] sm:px-4 sm:text-[15px]"
             >
-              See live demo
+              <span className="sm:hidden">Live demo</span>
+              <span className="hidden sm:inline">See live demo</span>
             </Link>
           </nav>
         </div>
@@ -119,17 +120,9 @@ export default function LandingPage() {
           className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center"
         >
           <div className="lg:col-span-7">
-            <p className="inline-flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-[13px] font-medium text-[var(--muted)]">
-              <span
-                aria-hidden="true"
-                className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)]"
-              />
-              Technical hosting · Completeness check
-            </p>
-
             <h1
               id="hero-heading"
-              className="mt-4 max-w-[18ch] text-[36px] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--ink)] sm:text-[44px]"
+              className="max-w-[18ch] text-[36px] font-semibold leading-[1.08] tracking-[-0.025em] text-[var(--ink)] sm:text-[44px]"
             >
               EU Battery Passport from your spec PDF
             </h1>
@@ -223,7 +216,7 @@ export default function LandingPage() {
                   2 populated · 2 flagged
                 </span>
               </div>
-              <p className="text-[12px] text-[var(--muted)]">
+              <p className="text-[13px] text-[var(--muted)]">
                 {WORKING_FIELD_LIST_NOTICE}
               </p>
             </div>

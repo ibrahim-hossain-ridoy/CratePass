@@ -85,14 +85,14 @@ export function LegalDocumentShell({
 
         <article className="rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
           <header className="border-b border-[var(--rule)] pb-5">
-            <p className="text-[12.5px] font-medium text-[var(--muted)]">
-              {lastUpdatedLabel}
-            </p>
-            <h1 className="mt-1 text-[28px] font-semibold tracking-[-0.02em] text-[var(--ink)] sm:text-[32px]">
+            <h1 className="text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--ink)] sm:text-[32px]">
               {title}
             </h1>
             <p className="mt-2 max-w-[66ch] text-[15px] leading-relaxed text-[var(--muted)]">
               {subtitle}
+            </p>
+            <p className="mt-2 text-[13px] font-medium text-[var(--muted)]">
+              {lastUpdatedLabel}
             </p>
           </header>
 

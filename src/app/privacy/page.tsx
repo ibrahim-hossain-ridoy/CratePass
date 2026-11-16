@@ -13,9 +13,9 @@ export default function PrivacyPage() {
   return (
     <LegalDocumentShell
       activePath="/privacy"
-      title="Privacy & EU Data-Processing Notice (Draft)"
-      subtitle="Describes GDPR processing roles, minimal session cookies, private PDF storage, zero default analytics, and customer export or erasure rights."
-      lastUpdatedLabel="Draft · Pending GDPR & DPA review"
+      title="Privacy & GDPR Notice (Draft)"
+      subtitle="Describes EU GDPR processing roles, minimal session cookies, private PDF storage, zero default analytics, and customer export or erasure rights."
+      lastUpdatedLabel="Status: Draft · Pending GDPR & DPA review"
     >
       <section className="space-y-2">
         <h2 className="text-[18px] font-semibold text-[var(--ink)]">

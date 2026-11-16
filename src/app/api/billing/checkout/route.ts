@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getBillingProvider, PaddleConfigError } from "@/lib/billing";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 
@@ -28,6 +29,18 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Only organization owners can initiate billing checkout." },
       { status: 403 },
+    );
+  }
+
+  const allowedCheckoutRate = await enforceRateLimit(
+    `checkout:user:${ctx.user.id}`,
+    10,
+    60,
+  );
+  if (!allowedCheckoutRate) {
+    return NextResponse.json(
+      { error: "Too many checkout attempts. Please wait a minute and retry." },
+      { status: 429, headers: { "Retry-After": "60" } },
     );
   }
 

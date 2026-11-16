@@ -16,9 +16,9 @@ export default function DisclaimerPage() {
   return (
     <LegalDocumentShell
       activePath="/disclaimer"
-      title="Technical Hosting & Regulatory Disclaimer (Draft)"
-      subtitle="Clarifies the boundary between software infrastructure and statutory responsibilities under Regulation (EU) 2023/1542."
-      lastUpdatedLabel="Draft · Pending legal review"
+      title="Regulatory Disclaimer (Draft)"
+      subtitle="Clarifies the boundary between technical hosting infrastructure and statutory duties under Regulation (EU) 2023/1542."
+      lastUpdatedLabel="Status: Draft · Pending legal review"
     >
       <section className="space-y-2">
         <h2 className="text-[18px] font-semibold text-[var(--ink)]">

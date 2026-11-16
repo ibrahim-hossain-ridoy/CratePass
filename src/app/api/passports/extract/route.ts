@@ -89,6 +89,13 @@ export async function POST(request: Request) {
     );
   }
 
+  if (fileEntry.size > siteConfig.maxUploadBytes) {
+    return NextResponse.json(
+      { error: "PDF file exceeds the 10 MB upload limit." },
+      { status: 413 },
+    );
+  }
+
   const bytes = new Uint8Array(await fileEntry.arrayBuffer());
   try {
     validatePdfUpload({
@@ -274,9 +281,9 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          err instanceof Error
+          err instanceof Error && /^PDF /.test(err.message)
             ? err.message
-            : "PDF extraction failed cleanly. Please verify the PDF or enter fields manually.",
+            : "PDF extraction failed cleanly. Please check the file or fill fields manually.",
       },
       { status: 422 },
     );
