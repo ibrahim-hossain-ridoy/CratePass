@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { href: "/app", label: "Passports" },
   { href: "/app/new", label: "New passport" },
   { href: "/app/billing", label: "Plan & billing" },
+  { href: "/app/privacy", label: "Privacy & GDPR" },
 ] as const;
 
 export function AppShell({

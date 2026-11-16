@@ -22,8 +22,8 @@
   - Accuracy declaration checkbox, immutable `passport_versions`, SVG + PNG QR downloads, unpublish + new-version flow, and public `/p/[slug]` without fictional demo SVGs/hotspots (`Repair` and `Supply` tabs conditional, `Provenance & recycling` disclaimer).
 - **M6 — Billing Adapter (`BILLING_ENABLED` + Paddle Sandbox) *(Done)***
   - `BillingProvider` interface, Paddle sandbox checkout + HMAC webhook handler, per-org `comp_enabled` override, `/app/billing` plan status UI, and placeholder EUR pricing.
-- **M7 — Draft Legal Pages (`/terms`, `/privacy`, `/disclaimer`)** *(After checkpoint)*
-  - Clearly marked `TODO: lawyer review` draft documents with EU customer data-processing notes.
+- **M7 — Draft Legal Pages (`/terms`, `/privacy`, `/disclaimer`) *(Done)***
+  - Clearly marked `TODO: lawyer review` draft documents with EU GDPR data-processing notes, `/app/privacy` JSON export & unpublished-draft deletion controls.
 - **M8 — Security Hardening, QA & Documentation** *(After checkpoint)*
   - ECC security audit, automated schema/RLS/client-secret/banned-words tests, `390px` mobile QA, `impeccable` critique pass, and full deployment `README.md`.
 

@@ -85,6 +85,17 @@ export default function LoginPage({
         <p className="mt-5 text-center text-[12.5px] text-[var(--muted)]">
           Technical hosting infrastructure only — not legal advice or regulatory certification.
         </p>
+        <div className="mt-2 flex items-center justify-center gap-4 text-[12.5px] text-[var(--muted)]">
+          <Link href="/terms" className="hover:text-[var(--ink)] hover:underline">
+            Terms
+          </Link>
+          <Link href="/privacy" className="hover:text-[var(--ink)] hover:underline">
+            Privacy
+          </Link>
+          <Link href="/disclaimer" className="hover:text-[var(--ink)] hover:underline">
+            Disclaimer
+          </Link>
+        </div>
       </main>
     </div>
   );

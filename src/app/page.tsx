@@ -338,7 +338,7 @@ export default function LandingPage() {
             Not legal advice. We provide technical hosting infrastructure, not
             compliance certification.
           </p>
-          <div className="flex shrink-0 items-center gap-4">
+          <div className="flex flex-wrap shrink-0 items-center gap-4">
             <Link
               href="/demo"
               className="font-medium text-[var(--ink)] underline-offset-4 hover:underline"
@@ -351,6 +351,24 @@ export default function LandingPage() {
             >
               Send spec PDF
             </a>
+            <Link
+              href="/terms"
+              className="text-[var(--muted)] underline-offset-4 hover:text-[var(--ink)] hover:underline"
+            >
+              Terms
+            </Link>
+            <Link
+              href="/privacy"
+              className="text-[var(--muted)] underline-offset-4 hover:text-[var(--ink)] hover:underline"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/disclaimer"
+              className="text-[var(--muted)] underline-offset-4 hover:text-[var(--ink)] hover:underline"
+            >
+              Disclaimer
+            </Link>
           </div>
         </div>
       </footer>
