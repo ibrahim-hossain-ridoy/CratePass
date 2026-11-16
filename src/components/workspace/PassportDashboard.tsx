@@ -105,10 +105,7 @@ export function PassportDashboard({
       {/* Empty state */}
       {!queryError && passports.length === 0 && (
         <section className="rounded-[12px] border border-[#233242] bg-[#0B1016] p-6 text-center text-[#F1F5F9] sm:p-9">
-          <p className="font-mono text-[11.5px] font-bold uppercase tracking-wider text-[#34D399]">
-            + WORKSPACE READY
-          </p>
-          <h2 className="mt-1.5 text-[20px] font-bold text-white">
+          <h2 className="text-[20px] font-bold text-white">
             No battery passports created yet
           </h2>
           <p className="mx-auto mt-2 max-w-[46ch] text-[14.5px] leading-relaxed text-[#94A3B8]">

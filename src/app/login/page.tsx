@@ -65,10 +65,7 @@ export default function LoginPage({
 
       <main className="mx-auto flex w-full max-w-[456px] flex-1 flex-col justify-center px-4 py-10">
         <div className="hero-enter mb-6">
-          <p className="font-mono text-[12px] font-bold uppercase tracking-wider text-[var(--accent)]">
-            + BRAND WORKSPACE
-          </p>
-          <h1 className="mt-1 text-[26px] font-bold tracking-[-0.025em] text-[var(--ink)] sm:text-[28px]">
+          <h1 className="text-[26px] font-bold tracking-[-0.025em] text-[var(--ink)] sm:text-[28px]">
             Open your brand workspace
           </h1>
           <p className="mt-1.5 text-[14.5px] leading-relaxed text-[var(--muted)]">

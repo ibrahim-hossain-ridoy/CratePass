@@ -142,10 +142,7 @@ export function HeroPassportStage({
     COMPLETENESS_ROWS.find((r) => r.id === selectedFieldId) ?? COMPLETENESS_ROWS[2];
 
   return (
-    <div
-      data-ui="hero-passport-stage"
-      className="relative rounded-[14px] border border-[#233242] bg-[#0F1720] p-4 sm:p-6"
-    >
+    <div className="relative rounded-[14px] border border-[#233242] bg-[#0F1720] p-4 sm:p-6">
       <CornerBrackets colorClass="border-[#34D399]" />
 
       {/* Stage Top Telemetry Bar */}
@@ -155,8 +152,8 @@ export function HeroPassportStage({
             aria-hidden="true"
             className="status-pulse h-2 w-2 rounded-full bg-[#34D399]"
           />
-          <span className="font-mono font-semibold tracking-wider text-[#F1F5F9]">
-            INTERACTIVE SPEC-TO-PASSPORT STAGE
+          <span className="font-mono font-semibold text-[#F1F5F9]">
+            Interactive Spec-to-Passport Stage
           </span>
         </div>
         <span className="font-mono text-[#94A3B8]">
@@ -166,7 +163,7 @@ export function HeroPassportStage({
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-12 xl:items-center">
         {/* Left Column: Interactive Completeness Check + QR Badge */}
-        <div className="space-y-4 xl:col-span-6">
+        <div data-ui="completeness-inspector" className="space-y-4 xl:col-span-6">
           <div className="rounded-[12px] border border-[#233242] bg-[#131D28] p-4">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-3">
               <div>
@@ -262,7 +259,7 @@ export function HeroPassportStage({
         </div>
 
         {/* Right Column: 2.5D Phone Hardware Mockup */}
-        <div className="flex justify-center xl:col-span-6">
+        <div data-ui="phone-passport-mockup" className="flex justify-center xl:col-span-6">
           <div className="w-full max-w-[356px] rounded-[30px] border-[3px] border-[#2A3C4F] bg-[#090D12] p-3 text-[#F1F5F9]">
             {/* Speaker & Camera Pill */}
             <div className="mx-auto mb-2.5 flex w-24 items-center justify-center gap-2 rounded-full bg-[#131C26] py-1">

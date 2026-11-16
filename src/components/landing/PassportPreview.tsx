@@ -168,8 +168,8 @@ export function PassportPreview() {
             </div>
 
             <div>
-              <p className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[#34D399]">
-                PHONE-FIRST QR DELIVERY
+              <p className="text-[13px] font-bold text-[#34D399]">
+                Phone-first QR delivery
               </p>
               <h3 className="mt-1 text-[19px] font-bold text-white">
                 Built to load cleanly off a battery casing scan

@@ -1,105 +1,98 @@
 ---
 impeccable:design-schema: 1
 mode: operate
-surface: warm-technical-manual
+surface: hybrid-obsidian-telemetry-ledger
 palette:
-  ground: "#F5F4F0"
+  ground: "#F2F4F7"
   surface: "#FFFFFF"
-  well: "#ECEAE3"
-  wellSoft: "#F0EFEA"
-  border: "#DDD9CE"
-  borderStrong: "#C6C1B4"
-  rule: "#E8E5DC"
-  ink: "#141413"
-  muted: "#57534E"
-  accent: "#EA580C"
-  accentInk: "#B43D06"
-  accentSoft: "#FFF1EA"
-  accentBorder: "#F5C3A8"
-  positive: "#15803D"
-  positiveBg: "#ECFDF3"
-  positiveBorder: "#B8E6C8"
+  well: "#E5E9F0"
+  wellSoft: "#EEF1F6"
+  border: "#D5DCE6"
+  borderStrong: "#B6C2D2"
+  rule: "#E3E8F0"
+  ink: "#0B1017"
+  muted: "#4A5565"
+  accent: "#1D4ED8"
+  accentInk: "#1E40AF"
+  accentSoft: "#EFF6FF"
+  accentBorder: "#BFDBFE"
+  positive: "#047857"
+  positiveBg: "#ECFDF5"
+  positiveBorder: "#A7F3D0"
   noticeBg: "#FEF7E6"
-  noticeBorder: "#EED28A"
+  noticeBorder: "#E5C168"
   noticeInk: "#7C4A03"
+  stageBg: "#0B1016"
+  stageSurface: "#121A23"
+  stageBorder: "#233242"
+  stageInk: "#F1F5F9"
+  stageMuted: "#94A3B8"
+  stageJade: "#34D399"
+  stageJadeInk: "#052E16"
 typography:
-  sans: "Space Grotesk"
+  sans: "Plus Jakarta Sans"
   mono: "JetBrains Mono"
   tabularNumerals: true
 radius:
-  card: "10px"
+  card: "12px"
   well: "8px"
   pill: "9999px"
 ---
 
-# DESIGN.md — Demo Brand DB-36V Digital Product Passport
+# DESIGN.md — Battery Passport Host (Hybrid Obsidian Telemetry & Technical Ledger)
 
 ## Overview
 
-Direction A implements a high-craft **Technical Field Manual** aesthetic inspired by Dieter Rams' Braun hardware manuals and Teenage Engineering spec sheets. Designed first for mobile QR-scan sessions and scannable on desktop displays, every screen uses tactile hairline rules, crisp `10px` structural cards, and high-contrast ink over warm technical paper (`#F5F4F0`) without SaaS gradients, drop shadows, or decorative chrome.
+The Hybrid design system combines **Obsidian Dark Hardware Stages (`#0B1016`)** and **Electrochemical Jade (`#34D399`)** telemetry from Direction A with **Exposed Registration Crosshairs (`+`) & High-Contrast Specification Cards (`#FFFFFF` over `#F2F4F7`)** from Direction B and **`45°` Chamfered Hardware Badges (`clip-path`) & Industrial Cobalt (`#1D4ED8`)** from Direction C.
 
-## Colors
+Every screen is engineered for fast mobile QR-scan sessions and scannable B2B technical workflows while maintaining strict AA+ contrast, 44px+ touch targets, and CSS-only motion graphics that respect `prefers-reduced-motion`.
+
+## Color System
 
 | Token | Hex | Role |
 | :--- | :--- | :--- |
-| `--ground` | `#F5F4F0` | Warm alabaster paper canvas |
-| `--surface` | `#FFFFFF` | Primary spec cards and active certificate surface |
-| `--well` | `#ECEAE3` | Recessed schematic wells, active pill badges |
-| `--well-soft` | `#F0EFEA` | Subtle row hover or inset callout background |
-| `--border` | `#DDD9CE` | Primary 1px hairline card and cell borders |
-| `--border-strong` | `#C6C1B4` | High-emphasis borders and focus outlines |
-| `--rule` | `#E8E5DC` | Internal divider rules between `<dl>` rows |
-| `--ink` | `#141413` | Primary charcoal ink (~15.5:1 on `#FFFFFF`) |
-| `--muted` | `#57534E` | Secondary metadata and labels (~6.5:1 on `#FFFFFF`) |
-| `--accent` | `#EA580C` | Safety orange for active hotspots and primary indicators |
-| `--accent-ink` | `#B43D06` | Accessible dark safety-orange text (>= 4.5:1 on `#FFF1EA`) |
-| `--accent-soft` | `#FFF1EA` | Tinted background for restricted/safety pills |
-| `--accent-border` | `#F5C3A8` | Hairline border for safety-orange callouts |
-| `--positive` | `#15803D` | Forest green for lifecycle impact & recycling status |
-| `--positive-bg` | `#ECFDF3` | Soft green callout background |
-| `--positive-border` | `#B8E6C8` | Soft green pill and panel border |
-| `--notice-bg` | `#FEF7E6` | Warm amber pill background for `"Concept demo – fictional data"` |
-| `--notice-border` | `#EED28A` | Warm amber border for demo disclosures |
-| `--notice-ink` | `#7C4A03` | High-contrast amber text |
+| `--ground` | `#F2F4F7` | Cool titanium-stone ledger canvas |
+| `--surface` | `#FFFFFF` | High-contrast specification cards & workspace sheet |
+| `--well` | `#E5E9F0` | Recessed data wells and progress tracks |
+| `--well-soft` | `#EEF1F6` | Card headers and subtle inset callouts |
+| `--border` | `#D5DCE6` | 1px structural card and row borders |
+| `--border-strong` | `#B6C2D2` | High-emphasis card and input outlines |
+| `--rule` | `#E3E8F0` | Internal `<dl>` key-value divider rules |
+| `--ink` | `#0B1017` | Primary carbon ink (`18.4:1` on `#FFFFFF`) |
+| `--muted` | `#4A5565` | Secondary technical labels (`7.3:1` on `#FFFFFF`) |
+| `--accent` | `#1D4ED8` | Industrial cobalt primary action & active tab indicator |
+| `--accent-ink` | `#1E40AF` | Darker cobalt hover and high-contrast badge ink |
+| `--positive` | `#047857` | Matched / public-tier emerald status (`>= 5.4:1`) |
+| `--notice-bg` | `#FEF7E6` | Warm amber notice surface |
+| `--notice-border` | `#E5C168` | Amber notice border |
+| `--notice-ink` | `#7C4A03` | High-contrast amber disclosure text |
+| `--stage-bg` | `#0B1016` | Obsidian dark masthead, workspace rail, and hero stage |
+| `--stage-surface` | `#121A23` | Recessed dark instrument cards |
+| `--stage-border` | `#233242` | Dark stage structural hairline |
+| `--stage-jade` | `#34D399` | Electrochemical jade CTA & live telemetry accent |
+| `--stage-jade-ink` | `#052E16` | Deep forest ink over `#34D399` buttons (`11.6:1`) |
 
-## Typography
+## Typography (2 Font Families via `next/font/google` with `display: "swap"`)
 
-- **Primary Sans (`--font-space-grotesk`):** `Space Grotesk` (`400`, `500`, `600`, `700`) for product headings, group labels, body copy, and interactive navigation.
-- **Technical Mono (`--font-jetbrains-mono`):** `JetBrains Mono` (`400`, `500`, `600`) for passport IDs, serial numbers, firmware builds, batch codes, digest strings, and demo disclosure tags.
-- **Numerals (`.num`):** All percentages, carbon metrics (`kg CO2e`), voltage/capacity ratings, and timestamps enforce `font-variant-numeric: tabular-nums`.
+- **Primary UI & Display Sans (`--font-space-grotesk` -> `Plus Jakarta Sans`):** Weights `400`, `500`, `600`, `700`. Tight tracking (`-0.025em` to `-0.03em`) on headings, generous `1.6` line-height on body copy.
+- **Technical Monospace (`--font-jetbrains-mono` -> `JetBrains Mono`):** Weights `400`, `500`, `600` for passport IDs, `/p/[slug]` routes, SHA-256 digests, PDF parser trace snippets, and version tags.
+- **Tabular Numerals (`.num`):** `font-variant-numeric: tabular-nums` enforced across all electrical ratings, carbon metrics (`kg CO2e`), percentages, and UTC timestamps.
 
-## Layout
+## Visual Motifs & Interactive Motion Graphics
 
-- **Mobile-first Container:** `max-w-5xl` centered sheet with `px-4 sm:px-6`.
-- **Navigation Pattern:** Sticky compact top identity bar (`Header`) + horizontal tab strip (`#tab-desktop-*`) on `md:` viewports (`>= 768px`), paired with a fixed bottom navigation bar (`#tab-mobile-*`, `min-h-[52px]` touch targets, safe-area inset aware) below `768px` (`pb-24 md:pb-12` on `<main>`).
-- **Row & Grid Rhythm (`PassportDataTab`):** Uniform full-width two-column technical datasheet bands (`md:grid-cols-2 md:divide-x`) stacking cleanly on mobile:
-  - `Identity`: specifications left | accountable Manufacturer & EU responsible person right.
-  - `Integrity`: State of health (`98.4%`), cycle life & ingress left | operating limits, tamper seal & BMS firmware right.
-  - `Care & Repair`: charging/storage/inspection/serviceability specs left | bulleted handling precautions right.
-  - `Impact`: carbon lifecycle bars left | material mass share breakdown right.
+1. **QR Finder Corner Brackets (`CornerBrackets`):** `2px` L-shaped corner ticks framing the hero stage, step cards, and contact panel.
+2. **45° Chamfered Badges & Buttons (`.chamfer-sm`, `.chamfer-card`):** Beveled polygon corners echoing an anodized e-bike battery enclosure.
+3. **Registration Crosshairs (`+`):** Monospace grid markers on section headers and specification cards.
+4. **CSS-Only Motion Graphics (`globals.css`, `prefers-reduced-motion` safe):**
+   - `.hero-enter` / `.hero-enter-delay-1`: Spring-eased entrance transitions (`cubic-bezier(0.16, 1, 0.3, 1)`).
+   - `.qr-scan-line`: Sweeping emerald laser line over the battery casing QR code preview.
+   - `.status-pulse`: Subtle pulsing live indicator dot on passport mastheads and 2.5D repair pins.
+   - `.bar-fill-enter`: Smooth horizontal scale-in on carbon footprint and material mass breakdown bars.
+   - `.pressable` & `.interactive-card`: Tactile hover lift (`-1px` / `-2px`) and active press (`scale(0.98)`).
 
-## Elevation & Depth
+## Surface Architecture Across Routes
 
-- **Zero Drop Shadows:** Cards rely strictly on `1px solid var(--border)` contrast steps (`#FFFFFF` over `#F5F4F0`) and `var(--well)` (`#ECEAE3`) insets.
-- **Hardware Visuals & Vector Overlay:** Local studio product renders (`public/images/battery-pack-studio.jpg`, `public/images/battery-cutaway-25d.jpg`) paired with precision `1px` SVG leader lines and interactive hotspot pins (`RepairViewTab`) rather than heavy WebGL bundles or drop shadows.
-
-## Shapes
-
-- **Structural Cards:** `rounded-[10px]` (`10px`) across all top-level passport panels.
-- **Recessed Wells & Buttons:** `rounded-[8px]` (`8px`) for schematic frames, tab pills, and callout boxes.
-- **Status & Access Badges:** `rounded-full` pills (`Public`, `Restricted (authorities/repairers)`, `Concept demo – fictional data`, `DEMO – no real verification performed`).
-
-## Components
-
-- **Header (`Header.tsx`):** Displays brand eyebrow (`DEMO BRAND`), product title (`DB-36V Battery Pack`), key specs strip, and persistent amber pill `Concept demo – fictional data`.
-- **TabNav (`TabNav.tsx`):** Single source of truth for the 4 tabs (`Passport`, `Repair`, `Journey`, `Authenticity`) across desktop horizontal tabs and mobile fixed bottom bar (`role="tablist"` / `aria-selected`).
-- **PassportDataTab (`PassportDataTab.tsx`):** Four grouped sections (`Identity`, `Integrity`, `Care & Repair`, `Impact`), each stamped with its static visual access tier badge (`Public` or `Restricted (authorities/repairers)`).
-- **RepairViewTab (`RepairViewTab.tsx`):** Local `2.5D` cutaway hardware render + SVG vector leader lines and 4 hotspot pins (`Fuse`, `Latch`, `Cell Pack`, `BMS Board`). Discriminates strictly between `user-repair` (`Fuse`, `Latch`) and `authorised-only` (`Cell Pack`, `BMS Board` -> `"Authorised service only – do not open the pack"` + spare-part placeholder).
-- **SupplyJourneyTab (`SupplyJourneyTab.tsx`):** Static 4-stage vertical/horizontal provenance timeline (`Raw Material Origin` -> `Cell Manufacturing` -> `Pack Assembly` -> `EU Distribution Hub`) using fictional entities and facility IDs.
-- **AuthenticityTab (`AuthenticityTab.tsx`):** Certificate-framed card where status, verification timestamp, and cryptographic digest are each explicitly labeled `"DEMO – no real verification performed"`, followed by EU end-of-life battery return & chemistry recycling rules.
-
-## Do's and Don'ts
-
-- **Do:** Use CSS-only transitions (`.pressable` scale `0.97` on `:active`, `.tab-panel-enter`, `.hotspot-card-enter`) gated behind `prefers-reduced-motion`.
-- **Do:** Keep every tab visibly tagged with `"Concept demo – fictional data"` and every entity fictional.
-- **Don't:** Add third-party animation libraries, drop shadows, purple/blue gradients, real manufacturer names, legal compliance claims, bare `"Verified"` / `"Authentic"` status badges, or DIY pack-opening instructions.
+- **`/` (Landing Page):** Obsidian dark header & hero stage housing `HeroPassportStage` (interactive 4-row Completeness Check with live PDF parser trace + animated QR code + interactive 4-tab Phone Hardware Mockup), followed by `How it works`, `Who it's for`, `PassportPreview`, `#contact`, and disclaimer footer.
+- **`/p/[slug]` (Public Passport):** Obsidian dark identity masthead (`v1`, `/p/[slug]`, electrical spec pills, manufacturer disclaimer), sticky desktop tab bar, frosted dark mobile bottom bar (`min-h-[52px]` touch targets), and high-contrast specification cards. Empty `Repair` and `Supply` tabs remain hidden; restricted fields are stripped server-side.
+- **`/demo` (Concept Demo):** Matches the Hybrid obsidian masthead and sticky mobile bar, featuring the dark-stage 2.5D battery cutaway with glowing SVG leader lines, animated carbon bars, supply route corridor, and `DEMO – no real verification performed` certificate.
+- **`/login` & `/app/*` (Brand Workspace):** Framed-sheet architecture pairing the `#0B1016` dark obsidian navigation rail with a crisp `#FFFFFF` workspace sheet, sticky dark completeness summary bar, and dark QR download panel.

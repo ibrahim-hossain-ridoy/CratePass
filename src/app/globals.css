@@ -14,15 +14,15 @@
   --ink: #0B1017;
   --muted: #4A5565;
 
-  /* Hybrid Accents: Cobalt Blue + Electrochemical Jade + Signal Amber */
-  --accent: #1D4ED8;
-  --accent-ink: #1E40AF;
-  --accent-soft: #EFF6FF;
-  --accent-border: #BFDBFE;
+  /* Hybrid Accents: Bespoke Industrial Cobalt + Electrochemical Jade + Signal Amber */
+  --accent: #1B3FE4;
+  --accent-ink: #1531B8;
+  --accent-soft: #EEF3FF;
+  --accent-border: #BCCDFB;
 
-  --positive: #047857;
-  --positive-bg: #ECFDF5;
-  --positive-border: #A7F3D0;
+  --positive: #0C7A53;
+  --positive-bg: #EAFBF3;
+  --positive-border: #A2E9C8;
 
   --notice-bg: #FEF7E6;
   --notice-border: #E5C168;
@@ -35,9 +35,9 @@
   --stage-border: #233242;
   --stage-ink: #F1F5F9;
   --stage-muted: #94A3B8;
-  --stage-jade: #34D399;
+  --stage-jade: #2FD99B;
   --stage-jade-ink: #052E16;
-  --stage-cobalt: #3B82F6;
+  --stage-cobalt: #2D6AE8;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);

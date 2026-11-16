@@ -10,7 +10,7 @@ import { PassportPreview } from "@/components/landing/PassportPreview";
 
 const STEPS = [
   {
-    number: "01",
+    number: "1",
     code: "INGEST SPEC",
     title: "Upload spec",
     detail:
@@ -18,7 +18,7 @@ const STEPS = [
     badge: "PDF magic-byte + 10 MB check",
   },
   {
-    number: "02",
+    number: "2",
     code: "COMPLETENESS CHECK",
     title: "Check missing fields",
     detail:
@@ -26,7 +26,7 @@ const STEPS = [
     badge: "Found · Missing · Uncertain",
   },
   {
-    number: "03",
+    number: "3",
     code: "HOST & QR",
     title: "Get passport + QR",
     detail:
@@ -37,7 +37,7 @@ const STEPS = [
 
 const WHO_ITS_FOR = [
   {
-    role: "EU E-BIKE & LMT BRANDS",
+    role: "EU E-Bike & LMT Brands",
     title: "Turn supplier PDFs into scannable battery passports",
     description:
       "See which working attributes your pack supplier populated and which are still missing before printing casing QR labels.",
@@ -48,7 +48,7 @@ const WHO_ITS_FOR = [
     ],
   },
   {
-    role: "BATTERY PACK ASSEMBLERS",
+    role: "Battery Pack Assemblers",
     title: "Deliver structured passport packages with every batch",
     description:
       "Standardize technical handoffs across 36 V and 48 V battery lines with versioned snapshots when cell lots change.",
@@ -59,7 +59,7 @@ const WHO_ITS_FOR = [
     ],
   },
   {
-    role: "IMPORTERS & EU REPRESENTATIVES",
+    role: "Importers & EU Representatives",
     title: "Maintain one technical ledger across product lines",
     description:
       "Keep source datasheets, completeness checks, and manufacturer responsibility declarations organized per organization.",
@@ -76,14 +76,14 @@ export default function LandingPage() {
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
       {/* Sticky Dark Obsidian Navigation Bar */}
       <header className="sticky top-0 z-40 border-b border-[#1E2C3A] bg-[#0B1016]/95 text-[#F1F5F9] backdrop-blur">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6">
+        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-2 px-3.5 py-3 sm:gap-4 sm:px-6">
           <Link
             href="/"
-            className="flex min-h-[44px] min-w-0 items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-[#34D399]"
+            className="flex min-h-[44px] min-w-0 items-center gap-2 focus-visible:outline-2 focus-visible:outline-[#2FD99B] sm:gap-2.5"
           >
-            <BrandMark className="h-8 w-8 shrink-0" />
+            <BrandMark className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
             <div className="min-w-0 leading-tight">
-              <span className="block truncate text-[14.5px] font-bold tracking-tight text-white sm:text-[16px]">
+              <span className="block whitespace-nowrap text-[13.5px] font-bold tracking-tight text-white sm:text-[16px]">
                 {siteConfig.siteName}
               </span>
               <span className="hidden font-mono text-[11.5px] text-[#94A3B8] sm:block">
@@ -94,7 +94,7 @@ export default function LandingPage() {
 
           <nav
             aria-label="Primary sections"
-            className="flex shrink-0 items-center gap-2 text-[14px] font-medium sm:gap-5"
+            className="flex shrink-0 items-center gap-1.5 text-[13.5px] font-medium sm:gap-5 sm:text-[14px]"
           >
             <a
               href="#how-it-works"
@@ -122,13 +122,13 @@ export default function LandingPage() {
             </a>
             <Link
               href="/app"
-              className="inline-flex min-h-[44px] items-center px-2 text-[14px] font-medium text-[#CBD5E1] transition-colors hover:text-white"
+              className="inline-flex min-h-[44px] items-center px-1.5 text-[13px] font-medium text-[#CBD5E1] transition-colors hover:text-white sm:px-2 sm:text-[14px]"
             >
               Sign in
             </Link>
             <Link
               href="/demo"
-              className="pressable chamfer-sm inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap bg-[#34D399] px-3.5 text-[13.5px] font-bold text-[#052E16] hover:bg-[#6EE7B7] sm:px-4 sm:text-[14px]"
+              className="pressable chamfer-sm inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap bg-[#2FD99B] px-2.5 text-[13px] font-bold text-[#052E16] hover:bg-[#6EE7B7] sm:px-4 sm:text-[14px]"
             >
               <span className="sm:hidden">Live demo</span>
               <span className="hidden sm:inline">See live demo</span>
@@ -174,23 +174,23 @@ export default function LandingPage() {
             </div>
 
             {/* Key Architecture Counters */}
-            <dl className="relative mt-9 grid grid-cols-3 gap-3 border border-[#1E2C3A] bg-[#0F1720] p-4 font-mono text-[12px]">
-              <CornerBrackets colorClass="border-[#34D399]" />
+            <dl className="relative mt-9 grid grid-cols-3 gap-2.5 border border-[#1E2C3A] bg-[#0F1720] p-3.5 font-mono text-[11.5px] sm:gap-3 sm:p-4 sm:text-[12px]">
+              <CornerBrackets colorClass="border-[#2FD99B]" />
               <div>
                 <dt className="text-[#94A3B8]">SCHEMA</dt>
-                <dd className="num mt-0.5 text-[16px] font-bold text-white">
+                <dd className="num mt-0.5 text-[14px] font-bold text-white sm:text-[16px]">
                   31 fields
                 </dd>
               </div>
               <div>
                 <dt className="text-[#94A3B8]">TIERS</dt>
-                <dd className="mt-0.5 text-[16px] font-bold text-[#6EE7B7]">
+                <dd className="mt-0.5 text-[14px] font-bold text-[#6EE7B7] sm:text-[16px]">
                   Public + Auth
                 </dd>
               </div>
               <div>
                 <dt className="text-[#94A3B8]">ROUTE</dt>
-                <dd className="mt-0.5 text-[16px] font-bold text-white">
+                <dd className="mt-0.5 text-[14px] font-bold text-white sm:text-[16px]">
                   /p/[slug]
                 </dd>
               </div>
@@ -283,10 +283,10 @@ export default function LandingPage() {
                 className="interactive-card chamfer-card flex flex-col justify-between border border-[var(--border-strong)] bg-[var(--surface)] p-6"
               >
                 <div>
-                  <p className="font-mono text-[12px] font-bold uppercase tracking-wider text-[var(--accent)]">
+                  <span className="inline-block rounded bg-[var(--accent-soft)] px-2.5 py-1 text-[13px] font-bold text-[var(--accent)]">
                     {item.role}
-                  </p>
-                  <h3 className="mt-2 text-[20px] font-bold leading-snug text-[var(--ink)]">
+                  </span>
+                  <h3 className="mt-3 text-[20px] font-bold leading-snug text-[var(--ink)]">
                     {item.title}
                   </h3>
                   <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--muted)]">
@@ -354,12 +354,9 @@ export default function LandingPage() {
           <CornerBrackets colorClass="border-[#34D399]" />
           <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
             <div className="md:col-span-7">
-              <p className="font-mono text-[12px] font-bold uppercase tracking-wider text-[#34D399]">
-                + PILOT INTAKE
-              </p>
               <h2
                 id="contact-heading"
-                className="mt-2 text-[26px] font-bold tracking-[-0.02em] text-white sm:text-[32px]"
+                className="text-[26px] font-bold tracking-[-0.02em] text-white sm:text-[32px]"
               >
                 Send your battery spec PDF
               </h2>

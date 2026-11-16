@@ -39,7 +39,7 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[var(--ground)] text-[var(--ink)] font-sans selection:bg-[#10B981]/20 selection:text-[#0B1015]">
+      <body className="min-h-full bg-[var(--ground)] text-[var(--ink)] font-sans selection:bg-[#2FD99B]/20 selection:text-[#0B1015]">
         {children}
       </body>
     </html>
