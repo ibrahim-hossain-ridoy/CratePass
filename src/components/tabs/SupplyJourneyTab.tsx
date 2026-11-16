@@ -20,23 +20,23 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
       className="tab-panel-enter space-y-4"
     >
       {/* Static schematic route overview */}
-      <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5">
+      <div className="rounded-[12px] border border-[#233242] bg-[#0B1016] p-4 text-[#F1F5F9] sm:p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+            <h2 className="text-[17px] font-bold text-white">
               Static Supply Route Schematic
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">
+            <p className="mt-0.5 text-[12.5px] text-[#94A3B8]">
               Fictional four-stage material and assembly chain — static demo data, no map API
             </p>
           </div>
-          <span className="rounded bg-[var(--well)] px-2 py-0.5 text-[12px] font-medium text-[var(--ink)]">
+          <span className="chamfer-sm bg-[#121B24] px-2.5 py-1 font-mono text-[11.5px] font-bold text-[#6EE7B7] border border-[#233242]">
             4 fictional nodes
           </span>
         </div>
 
         {/* Horizontal schematic vector corridor (desktop & tablet) */}
-        <div className="mt-4 hidden sm:block">
+        <div className="mt-5 hidden sm:block">
           <svg
             viewBox="0 0 760 88"
             className="h-auto w-full"
@@ -49,8 +49,8 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               y1="30"
               x2="692"
               y2="30"
-              stroke="#DDD9CE"
-              strokeWidth="3"
+              stroke="#1E2C3A"
+              strokeWidth="4"
               strokeLinecap="round"
             />
             <line
@@ -58,8 +58,8 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               y1="30"
               x2="484"
               y2="30"
-              stroke="#141413"
-              strokeWidth="2"
+              stroke="#3B82F6"
+              strokeWidth="2.2"
               strokeDasharray="6 4"
             />
             <line
@@ -67,8 +67,8 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               y1="30"
               x2="692"
               y2="30"
-              stroke="#EA580C"
-              strokeWidth="2.5"
+              stroke="#34D399"
+              strokeWidth="2.8"
             />
 
             {/* Directional midpoint chevrons */}
@@ -77,8 +77,8 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                 key={mx}
                 points={`${mx - 4},25 ${mx + 3},30 ${mx - 4},35`}
                 fill="none"
-                stroke="#57534E"
-                strokeWidth="1.6"
+                stroke="#94A3B8"
+                strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -92,24 +92,24 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                   <circle
                     cx={cx}
                     cy="30"
-                    r="16"
-                    fill={isFinal ? "#EA580C" : "#141413"}
+                    r="17"
+                    fill={isFinal ? "#34D399" : "#1D4ED8"}
                   />
                   <text
                     x={cx}
                     y="34"
                     textAnchor="middle"
-                    fill="#FFFFFF"
+                    fill={isFinal ? "#052E16" : "#FFFFFF"}
                     fontSize="11"
-                    fontWeight="600"
+                    fontWeight="700"
                   >
                     {REGION_CODES[stage.step]}
                   </text>
                   <text
                     x={cx}
-                    y="66"
+                    y="68"
                     textAnchor="middle"
-                    fill="#141413"
+                    fill="#F1F5F9"
                     fontSize="12.5"
                     fontWeight="600"
                   >
@@ -129,15 +129,15 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
           return (
             <li
               key={stage.step}
-              className="relative rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5"
+              className="interactive-card relative rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] p-4 sm:p-5"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3.5">
                   <span
-                    className={`num flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold ${
+                    className={`num chamfer-sm flex h-7 w-7 shrink-0 items-center justify-center font-mono text-[13px] font-bold ${
                       isFinal
-                        ? "bg-[var(--accent)] text-white"
-                        : "bg-[var(--ink)] text-white"
+                        ? "bg-[var(--positive)] text-white"
+                        : "bg-[var(--accent)] text-white"
                     }`}
                   >
                     {stage.step}

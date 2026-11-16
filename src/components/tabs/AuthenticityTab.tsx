@@ -16,22 +16,22 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
       className="tab-panel-enter grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-start"
     >
       {/* Certificate-style demo record card */}
-      <article className="relative rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] lg:col-span-7">
+      <article className="relative overflow-hidden rounded-[12px] border border-[var(--border-strong)] bg-[var(--surface)] lg:col-span-7">
         {/* Top banner */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--well-soft)] px-4 py-3.5 sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1E2C3A] bg-[#0B1016] px-4 py-4 text-white sm:px-5">
           <div>
-            <h2 className="text-[16px] font-semibold text-[var(--ink)]">
+            <h2 className="text-[17px] font-bold text-white">
               Passport Record Snapshot
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">
+            <p className="mt-0.5 text-[12.5px] text-[#94A3B8]">
               Reference{" "}
-              <code className="font-mono text-[12px] text-[var(--ink)]">
+              <code className="font-mono text-[12px] text-[#6EE7B7]">
                 {authenticity.certificateId}
               </code>
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded border border-[var(--notice-border)] bg-[var(--notice-bg)] px-2.5 py-1 text-[12px] font-semibold text-[var(--notice-ink)]">
-            <InfoIcon className="h-3.5 w-3.5 shrink-0" />
+          <span className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#F59E0B]/40 bg-[#291D09] px-2.5 py-1 text-[12px] font-semibold text-[#FCD34D]">
+            <InfoIcon className="h-3.5 w-3.5 shrink-0 text-[#FBBF24]" />
             <span>DEMO – no real verification performed</span>
           </span>
         </div>

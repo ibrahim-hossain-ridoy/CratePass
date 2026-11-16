@@ -9,16 +9,16 @@ function AccessBadge({ tier }: { tier: AccessTier }) {
   const isPublic = tier === "Public";
   return (
     <span
-      className={`inline-flex flex-none items-center gap-1.5 whitespace-nowrap rounded px-2 py-0.5 text-[12px] font-medium leading-5 ${
+      className={`chamfer-sm inline-flex flex-none items-center gap-1.5 whitespace-nowrap px-2.5 py-1 text-[12px] font-bold leading-5 ${
         isPublic
           ? "border border-[var(--positive-border)] bg-[var(--positive-bg)] text-[var(--positive)]"
-          : "border border-[var(--border-strong)] bg-[var(--well)] text-[var(--ink)]"
+          : "border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-ink)]"
       }`}
     >
       {isPublic ? (
-        <GlobeIcon className="h-3 w-3 shrink-0" />
+        <GlobeIcon className="h-3.5 w-3.5 shrink-0" />
       ) : (
-        <LockIcon className="h-3 w-3 shrink-0" />
+        <LockIcon className="h-3.5 w-3.5 shrink-0" />
       )}
       <span>{tier}</span>
     </span>
@@ -35,13 +35,13 @@ function GroupHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] px-4 py-3.5 sm:px-5">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] bg-[var(--well-soft)] px-4 py-3.5 sm:px-5">
       <div>
-        <h2 className="text-[16px] font-semibold leading-snug text-[var(--ink)]">
+        <h2 className="text-[17px] font-bold leading-snug text-[var(--ink)]">
           {title}
         </h2>
         {subtitle ? (
-          <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">{subtitle}</p>
+          <p className="mt-0.5 text-[13px] text-[var(--muted)]">{subtitle}</p>
         ) : null}
       </div>
       <AccessBadge tier={accessTier} />
@@ -287,14 +287,14 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
                       ({item.kgCo2e.toFixed(1)} kg)
                     </span>
                   </div>
-                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-sm bg-[var(--well)]">
+                  <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-[var(--well)]">
                     <div
-                      className="h-full rounded-sm"
+                      className="bar-fill-enter h-full rounded-full"
                       style={{
                         width: `${item.sharePct}%`,
                         backgroundColor:
                           idx === 0 ? "var(--accent)" : "var(--ink)",
-                        opacity: idx === 0 ? 1 : Math.max(0.28, 0.8 - idx * 0.14),
+                        opacity: idx === 0 ? 1 : Math.max(0.32, 0.85 - idx * 0.14),
                       }}
                     />
                   </div>
@@ -324,9 +324,9 @@ export function PassportDataTab({ data }: PassportDataTabProps) {
                     </span>
                   </div>
                   <div className="mt-1.5 flex items-center gap-3">
-                    <div className="h-2 flex-1 overflow-hidden rounded-sm bg-[var(--well)]">
+                    <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[var(--well)]">
                       <div
-                        className="h-full rounded-sm bg-[var(--positive)]"
+                        className="bar-fill-enter h-full rounded-full bg-[var(--positive)]"
                         style={{ width: `${mat.massSharePct}%` }}
                       />
                     </div>
