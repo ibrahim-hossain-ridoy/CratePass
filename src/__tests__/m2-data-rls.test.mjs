@@ -122,3 +122,20 @@ test("M2 Supabase SQL schema, RLS boundaries, public projection, and service-key
     }
   }
 });
+
+test("M2 normalizeSupabaseUrl strips accidental REST path suffixes and rejects placeholders", async () => {
+  const envMod = await import("../lib/supabase/env.ts");
+  assert.equal(
+    envMod.normalizeSupabaseUrl("https://fcnytdipvxwzfqswdytu.supabase.co/rest/v1/"),
+    "https://fcnytdipvxwzfqswdytu.supabase.co",
+  );
+  assert.equal(
+    envMod.normalizeSupabaseUrl("https://myproj.supabase.co/"),
+    "https://myproj.supabase.co",
+  );
+  assert.equal(
+    envMod.normalizeSupabaseUrl("https://your-project-ref.supabase.co"),
+    null,
+  );
+  assert.equal(envMod.normalizeSupabaseUrl("not-a-url"), null);
+});
