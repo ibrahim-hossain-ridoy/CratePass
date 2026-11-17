@@ -1,61 +1,75 @@
 @import "tailwindcss";
 
 :root {
-  /* Apple-Inspired Warm Stone & Alabaster Surfaces */
-  --ground: #F5F3EE;
-  --surface: #FFFFFF;
-  --well: #EAE6DE;
-  --well-soft: #F9F7F3;
-  --border: #DDD7CC;
-  --border-strong: #C6BEB1;
-  --rule: #E6E1D8;
+  /* Cool Architectural Mineral Stone, Studio Putty & Obsidian Tokens */
+  --ground: #f4f4f2;
+  --surface: #e8e7e3;
+  --surface-elevated: #ffffff;
+  --well: #e0dfda;
+  --well-soft: #f9f9f7;
+  --border: #dcdad4;
+  --border-strong: #c4c1b9;
+  --rule: #e6e4de;
 
-  /* Deep Espresso Typography Ink */
-  --ink: #161412;
-  --ink-secondary: #3B3631;
-  --muted: #625B53;
+  /* Crisp Ink Hierarchy (>= 7:1 body contrast) */
+  --ink: #0f1114;
+  --ink-secondary: #22252a;
+  --muted: #4b4f57;
 
-  /* Burnt-Amber Primary Accent + Forest Emerald + Signal Amber */
-  --accent: #C2410C;
-  --accent-ink: #9A3412;
-  --accent-vivid: #EA580C;
-  --accent-soft: #FFF4ED;
-  --accent-border: #FDBA8C;
+  /* Baltic Petrol Accent + Dark Ink Pairings + Positive Jade + Safety Copper */
+  --accent: #145b6e;
+  --accent-hover: #0e4656;
+  --accent-ink: #0b3c49;
+  --accent-soft: #e6f2f5;
+  --accent-border: #9bc8d4;
 
-  --positive: #15803D;
-  --positive-bg: #F0FDF4;
-  --positive-border: #BBF7D0;
+  --positive: #156d49;
+  --positive-bg: #edf8f2;
+  --positive-border: #a7dfc0;
 
-  --notice-bg: #FEF8EC;
-  --notice-border: #E6BF62;
-  --notice-ink: #78350F;
+  --notice-bg: #fdf6ec;
+  --notice-border: #e0b97a;
+  --notice-ink: #7c380b;
 
-  /* Deep Espresso Hardware Stage Tokens */
-  --stage-bg: #141210;
-  --stage-surface: #1D1A17;
-  --stage-well: #26221E;
-  --stage-border: #332E28;
-  --stage-border-strong: #494139;
-  --stage-ink: #F7F5F0;
-  --stage-muted: #A69E94;
-  --stage-amber: #F97316;
-  --stage-amber-hover: #FB923C;
-  --stage-amber-ink: #1A0902;
-  --stage-jade: #34D399;
-  --stage-jade-ink: #052E16;
+  /* Obsidian Studio & Deep Petrol Chapter Tokens */
+  --stage-bg: #101214;
+  --stage-surface: #171a1e;
+  --stage-well: #20242a;
+  --stage-border: #2c3139;
+  --stage-border-strong: #3e4550;
+  --stage-ink: #f4f3ef;
+  --stage-muted: #b6bac2;
+  --stage-accent: #3eb8cf;
+  --stage-accent-ink: #08181d;
+  --stage-jade: #34d399;
+  --stage-amber: #f59e0b;
 
-  /* Emil Kowalski & Apple Fluid Interface Easing Tokens */
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --petrol-bg: #0c262e;
+  --petrol-surface: #133540;
+  --petrol-ink: #f4f7f8;
+  --petrol-accent: #7ce3f4;
+
+  /* Emil Kowalski & Apple Spring Physics Curves */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Five Sacred Responsive Typographic Steps */
+  --step-display: clamp(1.9rem, 1.2rem + 2.75vw, 4.1rem);
+  --step-head: clamp(1.6rem, 1.18rem + 1.75vw, 2.75rem);
+  --step-lead: clamp(1.15rem, 1.04rem + 0.45vw, 1.4rem);
+  --step-body: clamp(1rem, 0.96rem + 0.16vw, 1.125rem);
+  --step-small: clamp(0.875rem, 0.85rem + 0.08vw, 0.9375rem);
 }
 
 @theme inline {
   --color-background: var(--ground);
   --color-foreground: var(--ink);
-  --font-sans: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-display: var(--font-display), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans: var(--font-sans-ui), "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  /* Monospace var kept strictly for semantic <code> blocks in workspace/passport IDs */
+  --font-mono: var(--font-mono-code), ui-monospace, SFMono-Regular, monospace; /* taste-skill-ignore */
 }
 
 html {
@@ -63,7 +77,6 @@ html {
   color: var(--ink);
   caret-color: var(--accent);
   scrollbar-color: var(--border-strong) var(--ground);
-  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
   font-optical-sizing: auto;
 }
@@ -72,81 +85,103 @@ body {
   background-color: var(--ground);
   color: var(--ink);
   font-family: var(--font-sans);
-  overflow-x: hidden;
+  font-size: var(--step-body);
+  line-height: 1.58;
+  overflow-x: clip;
   text-rendering: optimizeLegibility;
+}
+
+/* Force monospace strictly to real code/pre blocks */
+pre,
+code,
+kbd,
+samp {
+  font-family: var(--font-mono); /* taste-skill-ignore */
 }
 
 :focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 a {
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.22em;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
 }
 
 .num {
   font-variant-numeric: tabular-nums;
 }
 
-/* Fluid Responsive Typography Scales (390px mobile -> 768px tablet -> 1440px desktop) */
+/* Unified Page Frame (Guaranteed Symmetrical Outer Margins at 390 / 768 / 1440) */
+.page-shell {
+  width: 100%;
+  max-width: 1360px;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+/* Five Type Steps */
 .text-display-hero {
-  font-size: clamp(2.125rem, 3.8vw + 0.65rem, 3.35rem);
-  line-height: 1.04;
-  letter-spacing: -0.032em;
-  font-optical-sizing: auto;
+  font-family: var(--font-display);
+  font-size: var(--step-display);
+  line-height: 0.98;
+  letter-spacing: -0.036em;
+  font-weight: 600;
 }
 
 .text-display-section {
-  font-size: clamp(1.55rem, 2.2vw + 0.45rem, 2.15rem);
-  line-height: 1.12;
-  letter-spacing: -0.026em;
-  font-optical-sizing: auto;
+  font-family: var(--font-display);
+  font-size: var(--step-head);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  font-weight: 600;
 }
 
 .text-title-page {
-  font-size: clamp(1.4rem, 1.8vw + 0.4rem, 1.85rem);
-  line-height: 1.15;
-  letter-spacing: -0.022em;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.8vw + 0.4rem, 2rem);
+  line-height: 1.12;
+  letter-spacing: -0.024em;
+  font-weight: 600;
 }
 
-/* Layered Surface Depth & Translucent Chrome */
+/* Tonal Surface Helpers (Zero static drop-shadows; tone & space separate layers) */
 .surface-elevated {
-  background-color: var(--surface);
-  border: 1px solid var(--border-strong);
-  box-shadow:
-    0 1px 2px rgba(22, 20, 18, 0.04),
-    0 8px 24px -6px rgba(22, 20, 18, 0.06);
+  background-color: var(--surface-elevated);
 }
 
 .surface-card-subtle {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(22, 20, 18, 0.03);
+  background-color: var(--surface-elevated);
 }
 
 .stage-card-elevated {
   background-color: var(--stage-surface);
-  border: 1px solid var(--stage-border);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.04) inset,
-    0 14px 34px -8px rgba(0, 0, 0, 0.42);
+}
+
+.framed-workspace-sheet {
+  background-color: var(--surface-elevated);
+  border: 1px solid #e3dfd6; /* taste-skill-ignore */
+  border-radius: 16px;
 }
 
 .input-apple {
   transition:
     border-color 160ms var(--ease-out),
-    box-shadow 160ms var(--ease-out),
     background-color 160ms ease;
 }
 
 .input-apple:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.14);
-  outline: none;
+  outline: 2px solid rgba(20, 91, 110, 0.35);
+  outline-offset: 0;
 }
 
-/* 3D Perspective & Hardware Enclosures */
+/* 3D Perspective Containers */
 .perspective-stage {
   perspective: 1200px;
 }
@@ -155,36 +190,22 @@ a {
   transform-style: preserve-3d;
 }
 
-/* Chamfered hardware badge utility */
-.chamfer-sm {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 8px) 0,
-    100% 8px,
-    100% 100%,
-    8px 100%,
-    0 calc(100% - 8px)
-  );
+/* Accordion Body Container (GPU transform + opacity enter via .accordion-body-enter, zero layout animation) */
+.accordion-content-grid {
+  display: block;
 }
 
-.chamfer-card {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 16px) 0,
-    100% 16px,
-    100% 100%,
-    0 100%
-  );
+.accordion-content-inner {
+  min-height: 0;
 }
 
-/* Tactile button press and interactive card elevation (GPU-composited transform only) */
+/* Tactile Press & Pointer Interaction Physics */
 .pressable {
   transition:
     transform 150ms var(--ease-out),
-    background-color 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
+    background-color 170ms ease,
+    border-color 170ms ease,
+    color 170ms ease;
 }
 
 .pressable:active {
@@ -193,10 +214,9 @@ a {
 
 .interactive-card {
   transition:
-    transform 220ms var(--ease-out),
-    border-color 200ms ease,
+    transform 240ms var(--ease-out),
     background-color 200ms ease,
-    box-shadow 220ms var(--ease-out);
+    border-color 200ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -208,66 +228,97 @@ a {
   }
   .interactive-card:hover {
     transform: translateY(-2px);
-    box-shadow:
-      0 2px 4px rgba(22, 20, 18, 0.04),
-      0 12px 26px -8px rgba(22, 20, 18, 0.08);
   }
 }
 
-/* Smooth Progress Fill & Sliding Pill Indicator */
+/* GPU-Composited Progress Fill & Sliding Indicator */
 .progress-fill-smooth {
   transform-origin: left center;
-  transition: transform 360ms var(--ease-spring);
+  transition: transform 280ms var(--ease-spring);
 }
 
 .sliding-pill {
   transition: transform 240ms var(--ease-spring);
 }
 
-/* Collapsible Accordion Details Styling */
 details > summary::-webkit-details-marker {
   display: none;
 }
 
+/* Sticky Scroll Scene Layout (Activated after hydration when motion allowed) */
+.scene {
+  position: relative;
+}
+
+.scene > .scene-stage {
+  position: relative;
+}
+
+.scene.is-live {
+  height: calc((var(--hold, 2) + 1) * 100svh);
+}
+
+.scene.is-live > .scene-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  contain: layout paint;
+}
+
+/* Lenis smooth scroll overrides */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .hero-enter {
-    animation: heroFadeUp 460ms var(--ease-spring) both;
+  .hero-line-inner {
+    animation: heroLineRise 820ms var(--ease-out) both;
   }
 
-  .hero-enter-delay-1 {
-    animation: heroFadeUp 520ms var(--ease-spring) 80ms both;
+  .hero-line-inner-delay {
+    animation: heroLineRise 820ms var(--ease-out) 110ms both;
   }
 
-  .hero-enter-delay-2 {
-    animation: heroFadeUp 580ms var(--ease-spring) 160ms both;
+  .hero-fade-rise {
+    animation: heroFadeUp 680ms var(--ease-out) 220ms both;
+  }
+
+  .hero-stage-rise {
+    animation: heroStageIn 760ms var(--ease-out) 160ms both;
   }
 
   .tab-panel-enter {
-    animation: panelEnter 220ms var(--ease-out) both;
+    animation: panelEnter 240ms var(--ease-out) both;
   }
 
   .hotspot-card-enter {
-    animation: cardReveal 210ms var(--ease-out) both;
+    animation: cardReveal 220ms var(--ease-out) both;
   }
 
   .accordion-body-enter {
-    animation: panelEnter 200ms var(--ease-out) both;
+    animation: panelEnter 220ms var(--ease-out) both;
   }
 
   .qr-scan-line {
-    animation: qrLaserSweep 3.2s var(--ease-in-out) infinite;
+    animation: qrLaserSweep 3.4s var(--ease-in-out) infinite;
   }
 
   .pdf-scan-beam {
-    animation: pdfBeamSweep 2.8s var(--ease-in-out) infinite;
+    animation: pdfBeamSweep 3s var(--ease-in-out) infinite;
   }
 
   .status-pulse {
-    animation: statusPulse 2.4s ease-in-out infinite;
+    animation: statusPulse 2.6s ease-in-out infinite;
   }
 
   .hotspot-ring-pulse {
-    animation: hotspotSonar 2.2s var(--ease-out) infinite;
+    animation: hotspotSonar 2.3s var(--ease-out) infinite;
   }
 
   .route-dash-flow {
@@ -280,25 +331,47 @@ details > summary::-webkit-details-marker {
     animation: barGrow 560ms var(--ease-spring) both;
   }
 
-  /* Scroll-triggered reveal choreography (progressive enhancement: visible if not armed) */
+  /* Fallback CSS reveal before GSAP mounts */
   .scroll-reveal[data-reveal-armed="true"][data-visible="false"] {
     opacity: 0;
-    transform: translateY(18px) scale(0.985);
+    transform: translateY(20px);
   }
 
   .scroll-reveal[data-reveal-armed="true"][data-visible="true"] {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
     transition:
-      opacity 480ms var(--ease-out),
-      transform 480ms var(--ease-spring);
+      opacity 520ms var(--ease-out),
+      transform 520ms var(--ease-spring);
+  }
+}
+
+@keyframes heroLineRise {
+  from {
+    opacity: 0.01;
+    transform: translateY(108%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes heroFadeUp {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.985);
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroStageIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
   }
   to {
     opacity: 1;
@@ -309,18 +382,18 @@ details > summary::-webkit-details-marker {
 @keyframes panelEnter {
   from {
     opacity: 0;
-    transform: translateY(6px) scale(0.99);
+    transform: translateY(7px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes cardReveal {
   from {
     opacity: 0;
-    transform: translateY(5px) scale(0.985);
+    transform: translateY(6px) scale(0.99);
   }
   to {
     opacity: 1;
@@ -331,11 +404,11 @@ details > summary::-webkit-details-marker {
 @keyframes qrLaserSweep {
   0%,
   100% {
-    transform: translateY(4px);
+    transform: translateY(6px);
     opacity: 0.35;
   }
   50% {
-    transform: translateY(68px);
+    transform: translateY(104px);
     opacity: 0.95;
   }
 }
@@ -344,11 +417,11 @@ details > summary::-webkit-details-marker {
   0%,
   100% {
     transform: translateY(0px);
-    opacity: 0.3;
+    opacity: 0.35;
   }
   50% {
-    transform: translateY(44px);
-    opacity: 0.92;
+    transform: translateY(56px);
+    opacity: 0.9;
   }
 }
 
@@ -366,11 +439,11 @@ details > summary::-webkit-details-marker {
 
 @keyframes hotspotSonar {
   0% {
-    transform: scale(0.92);
+    transform: scale(0.9);
     opacity: 0.75;
   }
   100% {
-    transform: scale(1.65);
+    transform: scale(1.7);
     opacity: 0;
   }
 }
@@ -386,7 +459,7 @@ details > summary::-webkit-details-marker {
 
 @keyframes barGrow {
   from {
-    transform: scaleX(0.15);
+    transform: scaleX(0.12);
     opacity: 0.4;
   }
   to {
@@ -395,24 +468,25 @@ details > summary::-webkit-details-marker {
   }
 }
 
-@media (prefers-reduced-transparency: reduce) {
-  .backdrop-blur,
-  .backdrop-blur-md {
-    backdrop-filter: none !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .scene.is-live {
+    height: auto !important;
+  }
+  .scene.is-live > .scene-stage {
+    position: relative !important;
+    height: auto !important;
   }
   .pressable,
   .interactive-card,
   .progress-fill-smooth,
   .sliding-pill,
-  .hero-enter,
-  .hero-enter-delay-1,
-  .hero-enter-delay-2,
+  .hero-line-inner,
+  .hero-line-inner-delay,
+  .hero-fade-rise,
+  .hero-stage-rise,
   .tab-panel-enter,
   .hotspot-card-enter,
   .accordion-body-enter,
@@ -422,7 +496,8 @@ details > summary::-webkit-details-marker {
   .hotspot-ring-pulse,
   .route-dash-flow,
   .bar-fill-enter,
-  .scroll-reveal {
+  .scroll-reveal,
+  .accordion-content-grid {
     animation: none !important;
     transition: opacity 150ms ease !important;
     transform: none !important;

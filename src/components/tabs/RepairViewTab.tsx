@@ -117,23 +117,23 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-start">
         {/* 2.5D Isometric Diagram Card */}
-        <div className="stage-card-elevated overflow-hidden rounded-[14px] bg-[#141210] text-[#F7F5F0] lg:col-span-7">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2E2924] bg-[#1C1815] px-4 py-3.5 sm:px-5">
+        <div className="stage-card-elevated overflow-hidden rounded-[16px] bg-[#101214] text-[#f4f3ef] lg:col-span-7">
+          <div className="flex flex-wrap items-center justify-between gap-2 bg-[#171a1e] px-5 py-4">
             <div>
-              <h2 className="text-[17px] font-bold text-white">
+              <h2 className="font-display text-[17px] font-semibold text-white">
                 2.5D Component Cutaway
               </h2>
-              <p className="text-[12.5px] text-[#A69E94]">
+              <p className="text-[13px] text-[#c4c8d0]">
                 Select a glowing pin to inspect serviceability and spare-part reference
               </p>
             </div>
-            <div className="flex items-center gap-3 text-[12px] text-[#E6E1D8]">
+            <div className="flex items-center gap-3 text-[13px] text-[#e2e5ea]">
               <span className="inline-flex items-center gap-1.5">
-                <span className="status-pulse h-2.5 w-2.5 rounded-full bg-[#34D399]" />
+                <span className="status-pulse h-2.5 w-2.5 rounded-full bg-[#34d399]" />
                 User
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#F59E0B]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#f59e0b]" />
                 Workshop
               </span>
             </div>
@@ -144,11 +144,11 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
             ref={stageContainerRef}
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
-            className="perspective-stage relative mx-auto w-full bg-[#181512] p-2.5 sm:p-3.5"
+            className="perspective-stage relative mx-auto w-full bg-[#101214] p-3 sm:p-4"
           >
             <div
               ref={stageTiltRef}
-              className="preserve-3d relative mx-auto aspect-[1376/768] w-full overflow-hidden rounded-[12px] border border-[#332E28] bg-[#1D1A17] shadow-[0_18px_36px_-10px_rgba(0,0,0,0.55)]"
+              className="preserve-3d relative mx-auto aspect-[1376/768] w-full overflow-hidden rounded-[12px] bg-[#eae7e0]"
             >
               <Image
                 src="/images/battery-cutaway-25d.jpg"
@@ -169,7 +169,7 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                   const pos = PIN_POSITIONS[spot.id];
                   const isSelected = spot.id === selectedId;
                   const dotColor =
-                    spot.serviceability === "user" ? "#34D399" : "#F97316";
+                    spot.serviceability === "user" ? "#34d399" : "#f59e0b";
                   return (
                     <g key={spot.id}>
                       <line
@@ -177,7 +177,7 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                         y1={pos.y1}
                         x2={pos.x2}
                         y2={pos.y2}
-                        stroke="#141210"
+                        stroke="#101214"
                         strokeOpacity="0.92"
                         strokeWidth={isSelected ? 6 : 3.8}
                       />
@@ -186,7 +186,7 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                         y1={pos.y1}
                         x2={pos.x2}
                         y2={pos.y2}
-                        stroke={isSelected ? dotColor : "#E6E1D8"}
+                        stroke={isSelected ? dotColor : "#f4f3ef"}
                         strokeWidth={isSelected ? 2.8 : 1.7}
                         className={isSelected ? "route-dash-flow" : undefined}
                       />
@@ -205,7 +205,7 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                         cx={pos.x2}
                         cy={pos.y2}
                         r={isSelected ? 12 : 8.5}
-                        fill="#141210"
+                        fill="#101214"
                         stroke={dotColor}
                         strokeWidth="2.5"
                       />
@@ -235,23 +235,23 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                     })`}
                     onClick={() => setSelectedId(spot.id)}
                     style={{ left: pos.left, top: pos.top }}
-                    className="pressable group absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-[#F97316]"
+                    className="pressable group absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-[#3eb8cf]"
                   >
                     {isSelected && (
                       <span
                         aria-hidden="true"
                         className={`hotspot-ring-pulse pointer-events-none absolute h-8 w-16 rounded-full border ${
-                          isUser ? "border-[#34D399]" : "border-[#F97316]"
+                          isUser ? "border-[#34d399]" : "border-[#f59e0b]"
                         }`}
                       />
                     )}
                     <span
-                      className={`relative z-10 flex h-6 sm:h-7 items-center gap-1.5 rounded-full border px-2 sm:px-2.5 text-[11px] sm:text-[11.5px] font-bold ring-2 ring-[#141210]/85 whitespace-nowrap transition-[transform,background-color,border-color] duration-150 ${
+                      className={`relative z-10 flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-semibold ring-2 ring-[#101214]/90 whitespace-nowrap transition-[transform,background-color] duration-150 ${
                         isSelected
                           ? isUser
-                            ? "scale-105 border-[#34D399] bg-[#15803D] text-white"
-                            : "scale-105 border-[#FDBA8C] bg-[#EA580C] text-white"
-                          : "border-[#494139] bg-[#141210]/95 text-[#F7F5F0]"
+                            ? "scale-105 bg-[#156d49] text-white"
+                            : "scale-105 bg-[#9a440c] text-white"
+                          : "bg-[#101214]/95 text-[#f4f3ef]"
                       }`}
                     >
                       <span
@@ -259,8 +259,8 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                           isSelected
                             ? "bg-white"
                             : isUser
-                              ? "bg-[#34D399]"
-                              : "bg-[#F97316]"
+                              ? "bg-[#34d399]"
+                              : "bg-[#f59e0b]"
                         }`}
                       />
                       <span>{spot.shortLabel}</span>
@@ -272,7 +272,7 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
           </div>
 
           {/* Synchronized tactile selector buttons for thumb convenience */}
-          <div className="grid grid-cols-2 gap-2 border-t border-[#2E2924] bg-[#1C1815] p-3 sm:grid-cols-4 sm:px-5">
+          <div className="grid grid-cols-2 gap-2 bg-[#171a1e] p-3 sm:grid-cols-4 sm:px-5">
             {repairView.hotspots.map((spot) => {
               const isSelected = spot.id === selectedId;
               const isUser = spot.serviceability === "user";
@@ -282,20 +282,20 @@ export function RepairViewTab({ repairView }: RepairViewTabProps) {
                   type="button"
                   onClick={() => setSelectedId(spot.id)}
                   aria-pressed={isSelected}
-                  className={`pressable flex min-h-[46px] flex-col items-start justify-center rounded-[8px] border px-3 py-1.5 text-left cursor-pointer ${
+                  className={`pressable flex min-h-[48px] flex-col items-start justify-center rounded-[10px] px-3 py-2 text-left cursor-pointer ${
                     isSelected
                       ? isUser
-                        ? "border-[#34D399] bg-[#132920] text-white"
-                        : "border-[#F97316] bg-[#2B1D14] text-white"
-                      : "border-[#332E28] bg-[#141210] text-[#E6E1D8] hover:border-[#F97316]"
+                        ? "bg-[#133326] text-white"
+                        : "bg-[#332210] text-white"
+                      : "bg-[#101214] text-[#e2e5ea] hover:bg-[#20242a]"
                   }`}
                 >
-                  <span className="text-[13px] font-bold leading-tight">
+                  <span className="text-[13.5px] font-semibold leading-tight">
                     {spot.shortLabel}
                   </span>
                   <span
-                    className={`mt-0.5 text-[11px] font-medium leading-tight ${
-                      isUser ? "text-[#6EE7B7]" : "text-[#FDBA8C]"
+                    className={`mt-0.5 text-[12px] font-medium leading-tight ${
+                      isUser ? "text-[#34d399]" : "text-[#fbbf24]"
                     }`}
                   >
                     {isUser ? "User-serviceable" : "Authorised only"}

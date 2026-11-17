@@ -49,7 +49,7 @@ export default function DemoPassportPage() {
           <AuthenticityTab authenticity={passport.authenticity} />
         )}
 
-        <footer className="mt-6 border-t border-[var(--border)] pt-4 text-[12px] text-[var(--muted)]">
+        <footer className="mt-6 pt-5 text-[13.5px] text-[var(--muted)]">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <span>{passport.meta.disclaimer}</span>
             <span className="shrink-0 font-medium text-[var(--ink)]">

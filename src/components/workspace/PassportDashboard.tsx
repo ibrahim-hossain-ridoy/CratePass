@@ -116,25 +116,25 @@ export function PassportDashboard({
 
       {/* Empty state */}
       {!queryError && passports.length === 0 && (
-        <section className="stage-card-elevated rounded-[14px] bg-[#141210] p-6 text-center text-[#F7F5F0] sm:p-9">
-          <h2 className="text-[20px] font-bold text-white">
+        <section className="rounded-[18px] bg-[#101214] p-7 text-center text-[#f4f3ef] sm:p-10">
+          <h2 className="font-display text-[22px] font-semibold text-white">
             No battery passports created yet
           </h2>
-          <p className="mx-auto mt-2 max-w-[46ch] text-[14.5px] leading-relaxed text-[#A69E94]">
+          <p className="mx-auto mt-2.5 max-w-[46ch] text-[15px] leading-relaxed text-[#c4c8d0]">
             Upload an OEM battery spec PDF to inspect missing fields, review
             technical details, and publish a mobile QR page at{" "}
-            <code className="font-mono text-[13px] text-[#FB923C]">/p/[slug]</code>.
+            <code className="text-[14px] text-[#3eb8cf]">/p/[slug]</code>.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/app/new"
-              className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[#F97316] px-5 py-2.5 text-[14px] font-bold text-[#1A0902] hover:bg-[#FB923C]"
+              className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[10px] bg-[#145b6e] px-5 py-2.5 text-[14.5px] font-semibold text-white hover:bg-[#1a748b]"
             >
               Upload first spec PDF
             </Link>
             <Link
               href="/demo"
-              className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-[#332E28] bg-[#1E1B17] px-4 py-2 text-[14px] font-semibold text-white hover:border-[#F97316]"
+              className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[10px] bg-[#1d2229] px-4.5 py-2 text-[14.5px] font-semibold text-white hover:bg-[#262d36]"
             >
               Inspect /demo output
             </Link>

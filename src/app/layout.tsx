@@ -1,32 +1,37 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-space-grotesk",
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans-ui",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono-code",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Battery Passport Host · EU Battery Passport from your spec PDF",
+  title: "Battery Passport Host — EU Battery Passport from Spec PDFs",
   description:
-    "Technical hosting infrastructure for EU battery passports: upload a spec PDF, run a missing-field completeness check, and publish a mobile-first QR passport page.",
+    "Turn battery spec PDFs into structured EU Digital Product Passports, 71-point Annex XIII completeness checks, and hosted mobile QR passport links.",
 };
 
 export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-  themeColor: "#141210",
+  themeColor: "#e8e7e3",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
@@ -37,9 +42,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[var(--ground)] text-[var(--ink)] font-sans selection:bg-[#EA580C]/20 selection:text-[#161412]">
+      <body className="min-h-full bg-[var(--ground)] text-[var(--ink)] font-sans selection:bg-[#145b6e]/18 selection:text-[#0f1114]">
         {children}
       </body>
     </html>

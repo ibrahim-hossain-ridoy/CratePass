@@ -18,12 +18,12 @@ export function BrandMark({ className = "w-8 h-8" }: IconProps) {
         width="25"
         height="20"
         rx="4"
-        fill="#141413"
+        fill="#101214"
       />
-      <rect x="27" y="12" width="3" height="8" rx="1.5" fill="#EA580C" />
-      <rect x="6" y="10" width="5" height="12" rx="1.5" fill="#F5F4F0" />
-      <rect x="13" y="10" width="5" height="12" rx="1.5" fill="#F5F4F0" />
-      <rect x="20" y="10" width="3" height="12" rx="1.5" fill="#EA580C" />
+      <rect x="27" y="12" width="3" height="8" rx="1.5" fill="#145b6e" />
+      <rect x="6" y="10" width="5" height="12" rx="1.5" fill="#f4f3ef" />
+      <rect x="13" y="10" width="5" height="12" rx="1.5" fill="#f4f3ef" />
+      <rect x="20" y="10" width="3" height="12" rx="1.5" fill="#3eb8cf" />
     </svg>
   );
 }
@@ -200,6 +200,67 @@ export function WheeledBinIcon({ className = "w-10 h-10" }: IconProps) {
       <path d="M8 33 32 9" strokeWidth={1.9} />
       <path d="M8 9 32 33" strokeWidth={1.9} />
       <path d="M12 36h16" strokeWidth={2} />
+    </svg>
+  );
+}
+
+export function ArrowRightIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+export function PdfFileIcon({ className = "w-5 h-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.7}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 13h6" />
+      <path d="M9 17h4" />
+    </svg>
+  );
+}
+
+export function QrGridIcon({ className = "w-8 h-8" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.7}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="3" height="3" />
+      <rect x="18" y="18" width="3" height="3" />
+      <path d="M18 14h3" />
+      <path d="M14 18v3" />
     </svg>
   );
 }

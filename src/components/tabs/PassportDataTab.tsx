@@ -60,13 +60,9 @@ function SpecRow({
 }) {
   return (
     <div className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-      <dt className="shrink-0 text-[13px] text-[var(--muted)]">{label}</dt>
-      <dd
-        className={`text-[14px] font-semibold text-[var(--ink)] sm:text-right ${
-          mono ? "font-mono text-[13px]" : "num"
-        }`}
-      >
-        {value}
+      <dt className="shrink-0 text-[13.5px] text-[var(--muted)]">{label}</dt>
+      <dd className="num text-[14.5px] font-semibold text-[var(--ink)] sm:text-right">
+        {mono ? <code className="text-[13.5px]">{value}</code> : value}
       </dd>
     </div>
   );

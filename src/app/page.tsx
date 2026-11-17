@@ -1,447 +1,179 @@
 import Link from "next/link";
 import { WORKING_FIELD_LIST_NOTICE } from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
-import { BrandMark } from "@/components/Icons";
-import {
-  CornerBrackets,
-  HeroPassportStage,
-} from "@/components/landing/HeroPassportStage";
+import { ArrowRightIcon } from "@/components/Icons";
+import { AudienceIndexSection } from "@/components/landing/AudienceIndexSection";
+import { HeroPassportStage } from "@/components/landing/HeroPassportStage";
+import { LandingNav } from "@/components/landing/LandingNav";
+import { LandingSmoothScroll } from "@/components/landing/LandingSmoothScroll";
 import { PassportPreview } from "@/components/landing/PassportPreview";
-import { ScrollReveal } from "@/components/landing/ScrollReveal";
-
-const STEPS = [
-  {
-    number: "1",
-    code: "INGEST SPEC",
-    title: "Upload spec",
-    detail:
-      "Send your existing OEM battery datasheet or technical spec PDF without reformatting into custom spreadsheets.",
-    badge: "PDF magic-byte + 10 MB check",
-  },
-  {
-    number: "2",
-    code: "COMPLETENESS CHECK",
-    title: "Check missing fields",
-    detail:
-      "Run an automated 71-point completeness check that flags empty, ambiguous, or inconsistent product and safety attributes.",
-    badge: "Found · Missing · Uncertain",
-  },
-  {
-    number: "3",
-    code: "HOST & QR",
-    title: "Get passport + QR",
-    detail:
-      "Publish a fast, mobile-first hosted Digital Product Passport paired with a print-ready QR destination link.",
-    badge: "Immutable v1/v2 + SVG/PNG QR",
-  },
-] as const;
-
-const WHO_ITS_FOR = [
-  {
-    role: "EU E-Bike & LMT Brands",
-    title: "Turn supplier PDFs into scannable battery passports",
-    description:
-      "See which working attributes your pack supplier populated and which are still missing before printing casing QR labels.",
-    bullets: [
-      "Hosted mobile pages at /p/[slug] with fast first paint",
-      "3-tier access: Public, Legitimate Interest, and Authorities Only",
-      "Downloadable vector SVG and PNG QR codes",
-    ],
-  },
-  {
-    role: "Battery Pack Assemblers",
-    title: "Deliver structured passport packages with every batch",
-    description:
-      "Standardize technical handoffs across LMT, EV, and Industrial battery lines with versioned snapshots when cell lots change.",
-    bullets: [
-      "71 official Annex XIII points (51 static + 21 dynamic BMS)",
-      "Immutable version history (v1, v2) anchored to declarations",
-      "Portable organization JSON export anytime",
-    ],
-  },
-  {
-    role: "Importers & EU Representatives",
-    title: "Maintain one technical ledger across product lines",
-    description:
-      "Keep source datasheets, completeness checks, and manufacturer responsibility declarations organized per organization.",
-    bullets: [
-      "Clear user-safe fuse/latch care vs workshop-only cell warnings",
-      "Explicit WEEE & EU battery take-back instructions",
-      "Append-only audit trail for every published snapshot",
-    ],
-  },
-] as const;
+import { PipelineScrollScene } from "@/components/landing/PipelineScrollScene";
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      {/* Sticky Deep Espresso Navigation Bar */}
-      <header className="sticky top-0 z-40 border-b border-[#2E2924] bg-[#141210]/95 text-[#F7F5F0] backdrop-blur">
-        <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-2 px-3.5 py-3 sm:gap-4 sm:px-6">
-          <Link
-            href="/"
-            className="flex min-h-[44px] min-w-0 items-center gap-2 focus-visible:outline-2 focus-visible:outline-[#F97316] sm:gap-2.5"
-          >
-            <BrandMark className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
-            <div className="min-w-0 leading-tight">
-              <span className="block whitespace-nowrap text-[13.5px] font-bold tracking-tight text-white sm:text-[16px]">
-                {siteConfig.siteName}
-              </span>
-              <span className="hidden font-mono text-[11.5px] text-[#A69E94] sm:block">
-                EU DPP TECHNICAL HOSTING
-              </span>
-            </div>
-          </Link>
+    <div className="min-h-svh bg-[#e8e7e3] text-[#0f1114]">
+      <LandingSmoothScroll />
+      <LandingNav />
 
-          <nav
-            aria-label="Primary sections"
-            className="flex shrink-0 items-center gap-1.5 text-[13.5px] font-medium sm:gap-5 sm:text-[14px]"
-          >
-            <a
-              href="#how-it-works"
-              className="hidden text-[#A69E94] transition-colors hover:text-white md:inline-block"
-            >
-              How it works
-            </a>
-            <a
-              href="#who-its-for"
-              className="hidden text-[#A69E94] transition-colors hover:text-white md:inline-block"
-            >
-              Who it&rsquo;s for
-            </a>
-            <a
-              href="#preview"
-              className="hidden text-[#A69E94] transition-colors hover:text-white md:inline-block"
-            >
-              Preview
-            </a>
-            <a
-              href="#contact"
-              className="hidden text-[#A69E94] transition-colors hover:text-white md:inline-block"
-            >
-              Contact
-            </a>
-            <Link
-              href="/app"
-              className="inline-flex min-h-[44px] items-center px-1.5 text-[13px] font-medium text-[#E6E1D8] transition-colors hover:text-white sm:px-2 sm:text-[14px]"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/demo"
-              className="pressable chamfer-sm inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap bg-[#F97316] px-2.5 text-[13px] font-bold text-[#1A0902] hover:bg-[#FB923C] sm:px-4 sm:text-[14px]"
-            >
-              <span className="sm:hidden">Live demo</span>
-              <span className="hidden sm:inline">See live demo</span>
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero Stage: Deep Espresso Telemetry & Interactive 3D Phone + QR Pipeline */}
-      <section
-        aria-labelledby="hero-heading"
-        className="border-b border-[var(--border-strong)] bg-[#141210] text-[#F7F5F0]"
-      >
-        <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-10 px-4 py-10 sm:px-6 sm:py-16 lg:grid-cols-12 lg:items-center">
-          <div className="hero-enter lg:col-span-5">
-            <h1
-              id="hero-heading"
-              className="text-display-hero max-w-[16ch] font-bold text-white"
-            >
-              EU Battery Passport from your spec PDF
-            </h1>
-
-            <p className="mt-4 max-w-[50ch] text-[16.5px] leading-[1.6] text-[#A69E94]">
-              Turn battery technical datasheets into structured Digital Product
-              Passports built to open fast from a casing QR scan — with a clear
-              completeness check showing which fields are populated and which need
-              attention.
-            </p>
-
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link
-                href="/demo"
-                className="pressable chamfer-sm inline-flex min-h-[48px] items-center justify-center bg-[#F97316] px-6 py-2.5 text-[15px] font-bold text-[#1A0902] hover:bg-[#FB923C]"
-              >
-                See live demo
-              </Link>
-              <a
-                href="#contact"
-                className="pressable inline-flex min-h-[48px] items-center justify-center rounded-[8px] border border-[#3D352E] bg-[#1E1B17] px-6 py-2.5 text-[15px] font-semibold text-white hover:border-[#F97316]"
-              >
-                Send your spec PDF
-              </a>
-            </div>
-
-            {/* Key Architecture Counters */}
-            <dl className="relative mt-9 grid grid-cols-3 gap-2.5 border border-[#2E2924] bg-[#1A1714] p-3.5 font-mono text-[11.5px] sm:gap-3 sm:p-4 sm:text-[12px]">
-              <CornerBrackets colorClass="border-[#F97316]" />
-              <div>
-                <dt className="text-[#A69E94]">SCHEMA</dt>
-                <dd className="num mt-0.5 text-[14px] font-bold text-white sm:text-[16px]">
-                  71 points
-                </dd>
+      <main>
+        {/* Act 1: Studio Hardware & Poster-Scale Hero (#e8e7e3 neutral putty) */}
+        <section className="pb-16 pt-8 sm:pt-12 lg:pb-24 lg:pt-16">
+          <div className="page-shell grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            {/* Left Copy & Actions */}
+            <div className="lg:col-span-6">
+              <div className="overflow-hidden">
+                <h1 className="text-display-hero hero-line-inner max-w-[19ch] text-[#0f1114]">
+                  EU Battery Passport from your spec PDF
+                </h1>
               </div>
-              <div>
-                <dt className="text-[#A69E94]">TIERS</dt>
-                <dd className="mt-0.5 text-[14px] font-bold text-[#6EE7B7] sm:text-[16px]">
-                  3-tier access
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[#A69E94]">ROUTE</dt>
-                <dd className="mt-0.5 text-[14px] font-bold text-white sm:text-[16px]">
-                  /p/[slug]
-                </dd>
-              </div>
-            </dl>
-          </div>
 
-          <div className="hero-enter-delay-1 lg:col-span-7">
-            <HeroPassportStage
-              title="Completeness check"
-              badgeLabel="Sample output – illustrative"
-            />
-          </div>
-        </div>
-      </section>
+              <p className="hero-fade-rise mt-6 max-w-[46ch] text-[17px] leading-relaxed text-[#22252a]">
+                Turn battery technical datasheets into structured Digital Product
+                Passports built to open fast from a casing QR scan, showing every
+                populated attribute and flagged disclosure gap.
+              </p>
 
-      <main className="mx-auto w-full max-w-[1240px] flex-1 space-y-16 px-4 py-12 sm:px-6 sm:py-16">
-        {/* 3 Steps: How It Works */}
-        <section id="how-it-works" aria-labelledby="steps-heading">
-          <ScrollReveal>
-            <div className="mb-6 flex flex-col justify-between gap-2 border-b border-[var(--border-strong)] pb-4 sm:flex-row sm:items-end">
-              <div>
-                <h2
-                  id="steps-heading"
-                  className="text-display-section font-bold text-[var(--ink)]"
+              <div className="hero-fade-rise mt-8 flex flex-wrap items-center gap-3.5">
+                <Link
+                  href="/demo"
+                  className="pressable inline-flex items-center gap-2 rounded-[10px] bg-[#145b6e] px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
                 >
-                  Three-step intake workflow
-                </h2>
-                <p className="mt-1 text-[16px] text-[var(--muted)]">
-                  From engineering datasheet PDF to a live mobile QR passport page.
-                </p>
+                  <span>See live demo</span>
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+                <a
+                  href="#contact"
+                  className="pressable inline-flex items-center justify-center rounded-[10px] bg-[#dad8d1] px-6 py-3.5 text-[15px] font-semibold text-[#0f1114] transition-colors hover:bg-[#cfccc4]"
+                >
+                  Send your spec PDF
+                </a>
               </div>
-              <p className="font-mono text-[12.5px] font-medium text-[var(--accent)]">
-                {WORKING_FIELD_LIST_NOTICE}
+
+              <p className="hero-fade-rise num mt-9 text-[15px] font-medium text-[#22252a]">
+                71 Annex XIII points · 3 access tiers · Hosted QR route (/p/[slug])
               </p>
             </div>
-          </ScrollReveal>
 
-          <ol className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {STEPS.map((step, index) => (
-              <li key={step.number} className="h-full">
-                <ScrollReveal delayMs={index * 70} className="h-full">
-                  <div className="interactive-card surface-elevated relative flex h-full flex-col justify-between rounded-[14px] p-6">
-                    <CornerBrackets colorClass="border-[var(--accent)]" />
-                    <div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="chamfer-sm bg-[var(--accent)] px-2.5 py-1 font-mono text-[12px] font-bold text-white">
-                          {step.number} · {step.code}
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          className="font-mono text-[14px] font-bold text-[var(--accent)]"
-                        >
-                          +
-                        </span>
-                      </div>
-                      <h3 className="mt-4 text-[20px] font-bold text-[var(--ink)]">
-                        {step.title}
-                      </h3>
-                      <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted)]">
-                        {step.detail}
-                      </p>
-                    </div>
-
-                    <p className="mt-6 border-t border-[var(--rule)] pt-3 font-mono text-[12px] font-medium text-[var(--muted)]">
-                      {step.badge}
-                    </p>
-                  </div>
-                </ScrollReveal>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* Who It's For */}
-        <section id="who-its-for" aria-labelledby="who-heading">
-          <ScrollReveal>
-            <div className="mb-6 border-b border-[var(--border-strong)] pb-4">
-              <h2
-                id="who-heading"
-                className="text-display-section font-bold text-[var(--ink)]"
-              >
-                Who it&rsquo;s for
-              </h2>
-              <p className="mt-1 text-[16px] text-[var(--muted)]">
-                Built for B2B battery and e-mobility teams preparing structured
-                technical product passports.
-              </p>
+            {/* Right Interactive 3D Hardware & Pipeline Switcher */}
+            <div className="lg:col-span-6">
+              <HeroPassportStage
+                title="Completeness check"
+                badgeLabel="Sample output – illustrative"
+              />
             </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-            {WHO_ITS_FOR.map((item, index) => (
-              <ScrollReveal key={item.role} delayMs={index * 70} className="h-full">
-                <div className="interactive-card chamfer-card surface-elevated flex h-full flex-col justify-between p-6">
-                  <div>
-                    <span className="inline-block rounded border border-[var(--accent-border)] bg-[var(--accent-soft)] px-2.5 py-1 text-[13px] font-bold text-[var(--accent-ink)]">
-                      {item.role}
-                    </span>
-                    <h3 className="mt-3 text-[20px] font-bold leading-snug text-[var(--ink)]">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--muted)]">
-                      {item.description}
-                    </p>
-
-                    <ul className="mt-4 space-y-2 border-t border-[var(--rule)] pt-4 text-[14px] text-[var(--ink)]">
-                      {item.bullets.map((b) => (
-                        <li key={b} className="flex items-start gap-2.5">
-                          <span
-                            aria-hidden="true"
-                            className="mt-1.5 h-2 w-2 shrink-0 bg-[var(--positive)]"
-                          />
-                          <span>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-6 pt-3">
-                    <Link
-                      href="/app/new"
-                      className="pressable inline-flex items-center font-mono text-[13px] font-bold text-[var(--accent)] hover:underline"
-                    >
-                      Try PDF completeness check →
-                    </Link>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
           </div>
         </section>
 
-        {/* Embedded Demo UI Preview */}
-        <section id="preview" aria-labelledby="preview-heading">
-          <ScrollReveal>
-            <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+        {/* Act 2: Held Sticky Obsidian Scroll Scene (#101214) */}
+        <PipelineScrollScene />
+
+        {/* Act 3: Asymmetric Chalk Audience Index (#ffffff) */}
+        <AudienceIndexSection />
+
+        {/* Act 4: Live Embedded Specimen Stage (#e8e7e3 studio putty) */}
+        <section id="preview" className="bg-[#e8e7e3] py-20 text-[#0f1114] lg:py-28">
+          <div className="page-shell">
+            <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <h2
-                  id="preview-heading"
-                  className="text-display-section font-bold text-[var(--ink)]"
-                >
+                <h2 className="text-display-section max-w-[20ch] text-[#0f1114]">
                   Passport interface preview
                 </h2>
-                <p className="mt-1 text-[16px] text-[var(--muted)]">
-                  4-tab fictional concept passport with interactive 2.5D repair
-                  cutaway and supply route.
+                <p className="mt-3 max-w-[54ch] text-[17px] leading-relaxed text-[#22252a]">
+                  Four interactive views matching the hosted mobile route, with{" "}
+                  {WORKING_FIELD_LIST_NOTICE.toLowerCase()}
                 </p>
               </div>
               <Link
                 href="/demo"
-                className="pressable font-mono text-[14px] font-bold text-[var(--accent)] underline-offset-4 hover:underline"
+                className="pressable inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-semibold text-[#145b6e] transition-colors hover:text-[#0e4656]"
               >
-                Launch full /demo view →
+                <span>Launch full demo view</span>
+                <ArrowRightIcon className="h-4 w-4" />
               </Link>
             </div>
 
             <PassportPreview />
-          </ScrollReveal>
+          </div>
         </section>
 
-        {/* Contact / Intake CTA */}
-        <ScrollReveal>
-          <section
-            id="contact"
-            aria-labelledby="contact-heading"
-            className="stage-card-elevated relative overflow-hidden rounded-[16px] bg-[#141210] p-6 text-[#F7F5F0] sm:p-9"
-          >
-            <CornerBrackets colorClass="border-[#F97316]" />
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-center">
-              <div className="md:col-span-7">
-                <h2
-                  id="contact-heading"
-                  className="text-display-section font-bold text-white"
-                >
-                  Send your battery spec PDF
-                </h2>
-                <p className="mt-3 max-w-[54ch] text-[16px] leading-relaxed text-[#A69E94]">
-                  <strong className="font-bold text-[#FB923C]">
-                    Free pilot for the first few brands.
-                  </strong>{" "}
-                  Share an example e-bike or light-EV battery spec sheet. We run a
-                  structured missing-field completeness check and return a hosted
-                  mobile preview alongside QR routing links.
-                </p>
-              </div>
+        {/* Act 5: Deep Baltic Petrol Closing Invitation (#0c262e) */}
+        <section id="contact" className="bg-[#0c262e] py-24 text-[#f4f7f8] lg:py-32">
+          <div className="page-shell grid grid-cols-1 items-end gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <h2 className="text-display-hero max-w-[16ch] text-white">
+                Send your battery spec PDF
+              </h2>
+              <p className="mt-6 max-w-[52ch] text-[17px] leading-relaxed text-[#e6f0f3]">
+                Free pilot for the first few brands. Share an example e-bike or
+                light-EV battery specification sheet. We run a structured
+                missing-field completeness check and return a hosted preview alongside
+                QR routing links.
+              </p>
+            </div>
 
-              <div className="flex flex-col gap-3 rounded-[12px] border border-[#332E28] bg-[#1D1A17] p-5 md:col-span-5">
+            <div className="flex flex-col items-start gap-5 lg:col-span-4 lg:items-end">
+              <div className="flex flex-wrap gap-3">
                 <a
                   href={siteConfig.formUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="pressable chamfer-sm inline-flex min-h-[46px] w-full items-center justify-center bg-[#F97316] px-4 py-2.5 text-[15px] font-bold text-[#1A0902] hover:bg-[#FB923C]"
+                  className="pressable inline-flex items-center gap-2 whitespace-nowrap rounded-[10px] bg-white px-6 py-3.5 text-[15px] font-semibold text-[#0c262e] transition-colors hover:bg-[#e6f2f5]"
                 >
-                  Open spec intake form
+                  <span>Open spec intake form</span>
+                  <ArrowRightIcon className="h-4 w-4" />
                 </a>
-
-                <div className="border-t border-[#2E2924] pt-3 text-[14.5px]">
-                  <p className="text-[#A69E94]">Or email your spec PDF to</p>
-                  <a
-                    href={`mailto:${siteConfig.contactEmail}`}
-                    className="mt-0.5 inline-flex min-h-[44px] items-center font-mono font-bold text-white underline decoration-[#F97316] underline-offset-4"
-                  >
-                    <code>{siteConfig.contactEmail}</code>
-                  </a>
-                </div>
+                <Link
+                  href="/app/new"
+                  className="pressable inline-flex items-center justify-center whitespace-nowrap rounded-[10px] bg-[#16404d] px-5 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#1c4f5f]"
+                >
+                  Open workspace
+                </Link>
               </div>
+              <p className="text-[15px] text-[#d9e7ea]">
+                Direct email:{" "}
+                <a
+                  href={`mailto:${siteConfig.contactEmail}`}
+                  className="font-semibold text-[#7ce3f4] underline"
+                >
+                  {siteConfig.contactEmail}
+                </a>
+              </p>
             </div>
-          </section>
-        </ScrollReveal>
+          </div>
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-[#2E2924] bg-[#141210] text-[#A69E94]">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-3 px-4 py-6 text-[14.5px] sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p className="font-medium text-white">
-            Not legal advice. We provide technical hosting infrastructure, not
-            compliance certification.
-          </p>
-          <div className="flex flex-wrap shrink-0 items-center gap-5">
-            <Link
-              href="/demo"
-              className="font-medium text-[#E6E1D8] underline-offset-4 hover:text-white hover:underline"
-            >
-              Live demo (/demo)
+      {/* Act 6: Single Calm Architectural Footer (#0d0f12) */}
+      <footer className="bg-[#0d0f12] py-10 text-[14px] text-[#c4c8d0]">
+        <div className="page-shell flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
+          <div className="space-y-1.5">
+            <p className="font-medium text-[#e4e6eb]">
+              Not legal advice. We provide technical hosting infrastructure, not
+              compliance certification.
+            </p>
+            <p className="text-[14px] text-[#b6bac2]">{WORKING_FIELD_LIST_NOTICE}</p>
+          </div>
+
+          <nav
+            aria-label="Footer navigation"
+            className="flex flex-wrap items-center gap-6 font-medium text-[#f4f3ef]"
+          >
+            <Link href="/demo" className="transition-colors hover:text-[#7ce3f4]">
+              Live demo
             </Link>
-            <a
-              href="#contact"
-              className="font-medium text-[#E6E1D8] underline-offset-4 hover:text-white hover:underline"
-            >
-              Send spec PDF
-            </a>
-            <Link
-              href="/terms"
-              className="text-[#A69E94] underline-offset-4 hover:text-white hover:underline"
-            >
+            <Link href="/login" className="transition-colors hover:text-[#7ce3f4]">
+              Workspace
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-[#7ce3f4]">
               Terms
             </Link>
-            <Link
-              href="/privacy"
-              className="text-[#A69E94] underline-offset-4 hover:text-white hover:underline"
-            >
+            <Link href="/privacy" className="transition-colors hover:text-[#7ce3f4]">
               Privacy
             </Link>
-            <Link
-              href="/disclaimer"
-              className="text-[#A69E94] underline-offset-4 hover:text-white hover:underline"
-            >
+            <Link href="/disclaimer" className="transition-colors hover:text-[#7ce3f4]">
               Disclaimer
             </Link>
-          </div>
+          </nav>
         </div>
       </footer>
     </div>

@@ -110,7 +110,10 @@ export function LoginForm({
   }
 
   return (
-    <div className="hero-enter-delay-1 surface-elevated rounded-[16px] p-5 sm:p-6">
+    <div
+      data-ui="login-card"
+      className="hero-enter-delay-1 surface-elevated rounded-[16px] p-5 sm:p-6"
+    >
       {!supabaseConfigured && (
         <div
           role="status"
@@ -137,7 +140,7 @@ export function LoginForm({
           style={{
             transform: mode === "password" ? "translateX(0%)" : "translateX(100%)",
           }}
-          className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/2)] rounded-[8px] bg-[#141210] shadow-sm"
+          className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/2)] rounded-[8px] bg-[#145b6e]"
         />
         <button
           type="button"

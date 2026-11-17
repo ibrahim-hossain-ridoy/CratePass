@@ -121,15 +121,14 @@ export function TabNav({ activeTab, onChange }: TabNavProps) {
             );
           })}
 
-          {/* Sliding active-tab underline indicator */}
+          {/* Sliding active-tab underline indicator (GPU transform only) */}
           {indicator.ready && (
             <span
               aria-hidden="true"
               style={{
-                width: `${indicator.width}px`,
-                transform: `translateX(${indicator.left}px)`,
+                transform: `translateX(${indicator.left}px) scaleX(${indicator.width / 100})`,
               }}
-              className="sliding-pill pointer-events-none absolute bottom-0 left-0 h-[2.5px] rounded-full bg-[var(--accent)]"
+              className="sliding-pill pointer-events-none absolute bottom-0 left-0 h-[2.5px] w-[100px] origin-left rounded-full bg-[var(--accent)]"
             />
           )}
         </div>
@@ -138,7 +137,7 @@ export function TabNav({ activeTab, onChange }: TabNavProps) {
       {/* Mobile fixed bottom navigation bar with sliding pill transition */}
       <nav
         aria-label="Passport sections mobile"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#2E2924] bg-[#141210]/95 text-[#F7F5F0] backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 bg-[#101214]/96 text-[#f4f3ef] backdrop-blur md:hidden"
         style={{ paddingBottom: "max(0.4rem, env(safe-area-inset-bottom))" }}
       >
         <div
@@ -151,7 +150,7 @@ export function TabNav({ activeTab, onChange }: TabNavProps) {
             style={{
               transform: `translateX(${activeIndex * 100}%)`,
             }}
-            className="sliding-pill pointer-events-none absolute inset-y-1.5 left-2 w-[calc((100%-1rem)/4)] rounded-[10px] bg-[#F97316]"
+            className="sliding-pill pointer-events-none absolute inset-y-1.5 left-2 w-[calc((100%-1rem)/4)] rounded-[10px] bg-[#145b6e]"
           />
           {TABS.map((tab) => {
             const Icon = tab.icon;
@@ -165,15 +164,15 @@ export function TabNav({ activeTab, onChange }: TabNavProps) {
                 aria-selected={selected}
                 aria-controls={`panel-${tab.id}`}
                 onClick={() => onChange(tab.id)}
-                className={`pressable relative z-10 flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[10px] px-1 py-1.5 text-[11.5px] font-bold leading-none cursor-pointer ${
+                className={`pressable relative z-10 flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[10px] px-1 py-1.5 text-[12px] font-semibold leading-none cursor-pointer ${
                   selected
-                    ? "text-[#1A0902]"
-                    : "text-[#A69E94] hover:text-white"
+                    ? "text-white"
+                    : "text-[#c4c8d0] hover:text-white"
                 }`}
               >
                 <Icon
                   className={`h-[18px] w-[18px] ${
-                    selected ? "text-[#1A0902]" : "text-[#A69E94]"
+                    selected ? "text-white" : "text-[#c4c8d0]"
                   }`}
                 />
                 <span>{tab.mobileLabel}</span>

@@ -349,24 +349,24 @@ export function PassportReviewWorkspace({
         </div>
 
         {/* Downloadable QR card */}
-        <div className="stage-card-elevated rounded-[14px] bg-[#141210] p-4 text-[#F7F5F0] sm:p-5 lg:col-span-5">
+        <div className="rounded-[18px] bg-[#101214] p-5 text-[#f4f3ef] lg:col-span-5">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h2 className="text-[16px] font-bold text-white">
+              <h2 className="font-display text-[17px] font-semibold text-white">
                 QR label download
               </h2>
-              <p className="mt-0.5 text-[12.5px] text-[#A69E94]">
+              <p className="mt-0.5 text-[13px] text-[#c4c8d0]">
                 Encodes permanent public route
               </p>
             </div>
-            <span className="rounded border border-[#34D399]/40 bg-[#0A2921] px-2 py-0.5 font-mono text-[11px] font-bold text-[#6EE7B7]">
+            <span className="rounded-md bg-[#0a2921] px-2.5 py-0.5 text-[12px] font-semibold text-[#6ee7b7]">
               {isPublished ? "LIVE" : "DRAFT"}
             </span>
           </div>
 
-          <div className="mt-4 flex flex-col items-center rounded-[12px] border border-[#332E28] bg-[#1D1A17] p-4">
+          <div className="mt-4 flex flex-col items-center rounded-[14px] bg-[#171a1e] p-4">
             {qrAssets ? (
-              <div className="rounded-[8px] bg-white p-2">
+              <div className="rounded-[10px] bg-white p-2.5">
                 <Image
                   src={qrAssets.pngDataUrl}
                   alt={`QR code pointing to ${publicUrl}`}
@@ -377,18 +377,18 @@ export function PassportReviewWorkspace({
                 />
               </div>
             ) : (
-              <div className="flex h-[168px] w-[168px] items-center justify-center rounded-[8px] bg-[#141210] text-[12px] text-[#A69E94]">
+              <div className="flex h-[168px] w-[168px] items-center justify-center rounded-[10px] bg-[#101214] text-[13px] text-[#b6bac2]">
                 Generating QR...
               </div>
             )}
 
-            <p className="mt-3 max-w-full break-all text-center font-mono text-[11.5px] text-[#FB923C]">
-              {publicUrl}
+            <p className="mt-3 max-w-full break-all text-center text-[13px] text-[#3eb8cf]">
+              <code>{publicUrl}</code>
             </p>
           </div>
 
           {!isPublished && (
-            <p className="mt-2.5 text-[12px] text-[#FCD34D]">
+            <p className="mt-2.5 text-[13px] text-[#fbbf24]">
               Approve &amp; Publish before printing so scanners resolve the live page
               instead of 404.
             </p>
@@ -399,7 +399,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadSvg}
-              className="pressable chamfer-sm inline-flex min-h-[42px] items-center justify-center bg-[#F97316] px-3 text-[13px] font-bold text-[#1A0902] hover:bg-[#FB923C] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[10px] bg-[#145b6e] px-3 text-[13.5px] font-semibold text-white hover:bg-[#1a748b] disabled:opacity-50 cursor-pointer"
             >
               Download SVG
             </button>
@@ -407,7 +407,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadPng}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[8px] border border-[#332E28] bg-[#1E1B17] px-3 text-[13px] font-bold text-white hover:border-[#F97316] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[10px] bg-[#20242a] px-3 text-[13.5px] font-semibold text-white hover:bg-[#2c3139] disabled:opacity-50 cursor-pointer"
             >
               Download PNG
             </button>

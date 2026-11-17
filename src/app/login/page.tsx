@@ -39,39 +39,36 @@ export default function LoginPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   return (
-    <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      <header className="border-b border-[#2E2924] bg-[#141210] text-white">
-        <div className="mx-auto flex max-w-[1040px] items-center justify-between px-4 py-3.5 sm:px-6">
-          <Link href="/" className="flex min-h-[44px] items-center gap-2.5">
+    <div className="flex min-h-svh flex-col bg-[#e8e7e3] text-[#0f1114]">
+      <header className="bg-[#101214] text-white">
+        <div className="page-shell flex items-center justify-between py-4">
+          <Link href="/" className="flex min-h-[44px] items-center gap-3">
             <BrandMark className="h-8 w-8 shrink-0" />
             <div>
-              <span className="block text-[15px] font-bold tracking-tight text-white">
+              <span className="font-display block text-[15.5px] font-semibold tracking-tight text-white">
                 {siteConfig.siteName}
               </span>
-              <span className="block font-mono text-[11.5px] text-[#A69E94]">
-                BRAND WORKSPACE SIGN-IN
+              <span className="block text-[13px] text-[#c4c8d0]">
+                Brand workspace sign-in
               </span>
             </div>
           </Link>
 
           <Link
             href="/demo"
-            className="pressable text-[14px] font-semibold text-[#E6E1D8] hover:text-white"
+            className="pressable text-[14.5px] font-semibold text-[#e2e5ea] hover:text-white"
           >
             Concept demo (/demo)
           </Link>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[456px] flex-1 flex-col justify-center px-4 py-10">
+      <main className="mx-auto flex w-full max-w-[468px] flex-1 flex-col justify-center px-5 py-12">
         <div className="hero-enter mb-6">
-          <p className="font-mono text-[11.5px] font-bold uppercase tracking-wider text-[var(--accent)]">
-            Brand Workspace
-          </p>
-          <h1 className="text-title-page mt-1 font-bold text-[var(--ink)]">
+          <h1 className="text-title-page font-semibold text-[#0f1114]">
             Open your brand workspace
           </h1>
-          <p className="mt-1.5 text-[14.5px] leading-relaxed text-[var(--muted)]">
+          <p className="mt-2 text-[15.5px] leading-relaxed text-[#26292e]">
             Upload a battery spec PDF, inspect completeness status, and publish a
             hosted QR passport page. Your personal workspace is created on first sign-in.
           </p>
@@ -79,23 +76,23 @@ export default function LoginPage({
 
         <Suspense
           fallback={
-            <div className="surface-elevated h-[260px] rounded-[14px] p-6" />
+            <div className="h-[260px] rounded-[16px] bg-white p-6" />
           }
         >
           <LoginContent searchParamsPromise={searchParams} />
         </Suspense>
 
-        <p className="mt-5 text-center text-[12.5px] text-[var(--muted)]">
+        <p className="mt-6 text-center text-[13.5px] text-[#52565e]">
           Technical hosting infrastructure only — not legal advice or regulatory certification.
         </p>
-        <div className="mt-2 flex items-center justify-center gap-4 text-[12.5px] text-[var(--muted)]">
-          <Link href="/terms" className="hover:text-[var(--ink)] hover:underline">
+        <div className="mt-2.5 flex items-center justify-center gap-5 text-[13.5px] text-[#26292e]">
+          <Link href="/terms" className="hover:text-[#145b6e] hover:underline">
             Terms
           </Link>
-          <Link href="/privacy" className="hover:text-[var(--ink)] hover:underline">
+          <Link href="/privacy" className="hover:text-[#145b6e] hover:underline">
             Privacy
           </Link>
-          <Link href="/disclaimer" className="hover:text-[var(--ink)] hover:underline">
+          <Link href="/disclaimer" className="hover:text-[#145b6e] hover:underline">
             Disclaimer
           </Link>
         </div>

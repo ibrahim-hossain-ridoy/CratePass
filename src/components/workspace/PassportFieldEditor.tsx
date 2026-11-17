@@ -307,7 +307,7 @@ export function PassportFieldEditor({
                 style={{
                   transform: `translateX(${activeCategoryIndex * 100}%)`,
                 }}
-                className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/3)] rounded-[8px] bg-[#141210] shadow-sm"
+                className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/3)] rounded-[8px] bg-[#145b6e]"
               />
               {BATTERY_CATEGORIES.map((cat) => {
                 const active = batteryCategory === cat.id;
@@ -497,7 +497,9 @@ export function PassportFieldEditor({
               </div>
             </summary>
 
-            <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
+            <div className="accordion-content-grid">
+              <div className="accordion-content-inner">
+                <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
               {sortedFields.map((field) => {
                 const status = getFieldVisualStatus(field);
                 const isReqForCat = isFieldRequiredForCategory(
@@ -544,7 +546,7 @@ export function PassportFieldEditor({
 
                       <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium">
                         {isReqForCat ? (
-                          <span className="rounded bg-[#141210] px-2 py-0.5 font-semibold text-white">
+                          <span className="rounded bg-[#145b6e] px-2 py-0.5 font-semibold text-white">
                             Required for {batteryCategory}
                           </span>
                         ) : (
@@ -625,6 +627,8 @@ export function PassportFieldEditor({
                   </div>
                 );
               })}
+                </div>
+              </div>
             </div>
           </details>
         );
@@ -655,7 +659,9 @@ export function PassportFieldEditor({
           </div>
         </summary>
 
-        <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
+        <div className="accordion-content-grid">
+          <div className="accordion-content-inner">
+            <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
           {DYNAMIC_BMS_FIELDS.map((field) => {
             const inputId = `field-${field.key}`;
             return (
@@ -708,6 +714,8 @@ export function PassportFieldEditor({
               </div>
             );
           })}
+            </div>
+          </div>
         </div>
       </details>
 
@@ -729,24 +737,24 @@ export function PassportFieldEditor({
         </div>
       )}
 
-      <div className="stage-card-elevated sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-[14px] bg-[#141210] px-4 py-3 text-white">
+      <div className="sticky bottom-3 z-20 flex flex-wrap items-center justify-between gap-3 rounded-[14px] bg-[#101214] px-5 py-3.5 text-white">
         <div className="min-w-[200px] flex-1">
-          <p className="num font-mono text-[12.5px] text-[#E6E1D8]">
+          <p className="num text-[13px] font-medium text-[#e2e5ea]">
             {summary.populatedRequiredStatic} / {summary.totalRequiredStatic}{" "}
             required static fields for {batteryCategory} ·{" "}
             {summary.missingRequiredStatic + summary.uncertainStatic} flagged
           </p>
-          <div className="mt-1.5 h-1.5 w-full max-w-[320px] overflow-hidden rounded-full bg-[#26221E]">
+          <div className="mt-1.5 h-1.5 w-full max-w-[320px] overflow-hidden rounded-full bg-[#20242a]">
             <div
               style={{ transform: `scaleX(${requiredProgressRatio})` }}
-              className="progress-fill-smooth h-full w-full rounded-full bg-[#F97316]"
+              className="progress-fill-smooth h-full w-full rounded-full bg-[#3eb8cf]"
             />
           </div>
         </div>
         <button
           type="submit"
           disabled={saving}
-          className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[#F97316] px-5 py-2 text-[14px] font-bold text-[#1A0902] hover:bg-[#FB923C] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[10px] bg-[#145b6e] px-5 py-2 text-[14px] font-semibold text-white hover:bg-[#1a748b] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {saving ? "Saving..." : primarySaveLabel}
         </button>

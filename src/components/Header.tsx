@@ -10,39 +10,39 @@ interface HeaderProps {
 
 export function Header({ meta, passportId, specLine }: HeaderProps) {
   return (
-    <header className="border-b border-[#2E2924] bg-[#141210] text-[#F7F5F0]">
-      <div className="mx-auto max-w-[1040px] px-4 py-5 sm:px-6">
+    <header className="bg-[#101214] text-[#f4f3ef]">
+      <div className="mx-auto max-w-[1040px] px-5 py-6 sm:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3.5">
             <Link
               href="/"
               aria-label="Return to landing page"
-              className="pressable mt-0.5 shrink-0 rounded-[8px]"
+              className="pressable mt-0.5 shrink-0 rounded-[10px]"
             >
               <BrandMark className="h-9 w-9" />
             </Link>
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#A69E94]">
+              <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium text-[#c4c8d0]">
                 <span
                   aria-hidden="true"
-                  className="status-pulse h-2 w-2 rounded-full bg-[#34D399]"
+                  className="status-pulse h-2 w-2 rounded-full bg-[#34d399]"
                 />
-                <span className="uppercase tracking-wider text-[#E6E1D8]">
+                <span className="font-semibold text-white">
                   {meta.brand}
                 </span>
                 <span aria-hidden="true">·</span>
                 <span>Digital Product Passport</span>
               </div>
 
-              <h1 className="text-title-page mt-1 font-bold text-white">
+              <h1 className="text-title-page mt-1 text-white">
                 {meta.product}
               </h1>
 
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px]">
-                <code className="rounded border border-[#332E28] bg-[#1E1B17] px-2 py-0.5 font-mono text-[12px] font-semibold text-[#FB923C]">
+              <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[13px]">
+                <code className="rounded-md bg-[#1d2229] px-2.5 py-0.5 text-[13px] font-medium text-[#3eb8cf]">
                   {passportId}
                 </code>
-                <span className="num rounded border border-[#332E28] bg-[#1E1B17] px-2.5 py-0.5 font-semibold text-[#F7F5F0]">
+                <span className="num rounded-md bg-[#171a1e] px-2.5 py-0.5 font-medium text-[#f4f3ef]">
                   {specLine}
                 </span>
               </div>
@@ -52,9 +52,9 @@ export function Header({ meta, passportId, specLine }: HeaderProps) {
           <div className="flex shrink-0 items-center self-start sm:self-center">
             <span
               data-testid="demo-badge"
-              className="inline-flex items-center gap-2 whitespace-nowrap rounded-[8px] border border-[#F59E0B]/40 bg-[#2C1E0A] px-3 py-2 text-[12.5px] font-semibold text-[#FCD34D]"
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-[10px] bg-[#2a2114] px-3.5 py-2 text-[13px] font-semibold text-[#fbbf24]"
             >
-              <InfoIcon className="h-4 w-4 shrink-0 text-[#FBBF24]" />
+              <InfoIcon className="h-4 w-4 shrink-0 text-[#fbbf24]" />
               <span>{meta.badgeText}</span>
             </span>
           </div>

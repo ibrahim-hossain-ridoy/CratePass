@@ -31,17 +31,17 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
       className="tab-panel-enter space-y-4"
     >
       {/* Interactive schematic route overview with animated progression */}
-      <div className="stage-card-elevated rounded-[14px] bg-[#141210] p-4 text-[#F7F5F0] sm:p-5">
+      <div className="stage-card-elevated rounded-[16px] bg-[#101214] p-5 text-[#f4f3ef]">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h2 className="text-[17px] font-bold text-white">
+            <h2 className="font-display text-[17px] font-semibold text-white">
               Static Supply Route Schematic
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[#A69E94]">
+            <p className="mt-0.5 text-[13px] text-[#c4c8d0]">
               Fictional four-stage material and assembly chain — select any node to trace route progression
             </p>
           </div>
-          <span className="chamfer-sm border border-[#332E28] bg-[#1E1B17] px-2.5 py-1 font-mono text-[11.5px] font-bold text-[#FB923C]">
+          <span className="rounded-md bg-[#1d2229] px-3 py-1 text-[13px] font-semibold text-[#3eb8cf]">
             4 fictional nodes
           </span>
         </div>
@@ -60,7 +60,7 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               y1="32"
               x2="692"
               y2="32"
-              stroke="#2E2924"
+              stroke="#20242a"
               strokeWidth="5"
               strokeLinecap="round"
             />
@@ -70,7 +70,7 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               y1="32"
               x2={activeEndX}
               y2="32"
-              stroke="#F97316"
+              stroke="#3eb8cf"
               strokeWidth="3.5"
               strokeLinecap="round"
             />
@@ -80,7 +80,7 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               y1="32"
               x2="692"
               y2="32"
-              stroke="#34D399"
+              stroke="#34d399"
               strokeWidth="2.2"
               className="route-dash-flow"
             />
@@ -93,7 +93,7 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                   key={mx}
                   points={`${mx - 4},26 ${mx + 4},32 ${mx - 4},38`}
                   fill="none"
-                  stroke={reached ? "#FB923C" : "#A69E94"}
+                  stroke={reached ? "#3eb8cf" : "#b6bac2"}
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -118,8 +118,8 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                       cy="32"
                       r="24"
                       fill="none"
-                      stroke={isFinal ? "#34D399" : "#F97316"}
-                      strokeOpacity="0.5"
+                      stroke={isFinal ? "#34d399" : "#3eb8cf"}
+                      strokeOpacity="0.55"
                       strokeWidth="2"
                     />
                   )}
@@ -129,20 +129,20 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                     r="18"
                     fill={
                       isFinal && isReached
-                        ? "#34D399"
+                        ? "#34d399"
                         : isReached
-                          ? "#EA580C"
-                          : "#26221E"
+                          ? "#145b6e"
+                          : "#20242a"
                     }
-                    stroke={isSelected ? "#FFFFFF" : "#332E28"}
+                    stroke={isSelected ? "#ffffff" : "#2c3139"}
                     strokeWidth={isSelected ? "2.2" : "1.5"}
                   />
                   <text
                     x={cx}
                     y="36"
                     textAnchor="middle"
-                    fill={isFinal && isReached ? "#052E16" : "#FFFFFF"}
-                    fontSize="11"
+                    fill={isFinal && isReached ? "#08181d" : "#ffffff"}
+                    fontSize="11.5"
                     fontWeight="700"
                   >
                     {REGION_CODES[stage.step]}
@@ -151,7 +151,7 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                     x={cx}
                     y="72"
                     textAnchor="middle"
-                    fill={isSelected ? "#FB923C" : "#F7F5F0"}
+                    fill={isSelected ? "#7ce3f4" : "#f4f3ef"}
                     fontSize="12.5"
                     fontWeight={isSelected ? "700" : "600"}
                   >
@@ -173,16 +173,16 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
                 type="button"
                 onClick={() => setActiveStep(stage.step)}
                 aria-pressed={isSelected}
-                className={`pressable flex items-center justify-between rounded-[8px] border px-2.5 py-2 text-left text-[12px] cursor-pointer ${
+                className={`pressable flex items-center justify-between rounded-[10px] px-3 py-2.5 text-left text-[13px] cursor-pointer ${
                   isSelected
-                    ? "border-[#F97316] bg-[#281C14] text-white"
-                    : "border-[#2E2924] bg-[#1C1815] text-[#A69E94] hover:text-white"
+                    ? "bg-[#145b6e] text-white"
+                    : "bg-[#171a1e] text-[#c4c8d0] hover:text-white"
                 }`}
               >
                 <span className="truncate font-semibold">
                   {stage.step}. {stage.stage}
                 </span>
-                <span className="ml-1.5 shrink-0 font-mono text-[10.5px] font-bold text-[#FB923C]">
+                <span className="ml-1.5 shrink-0 text-[12px] font-semibold text-[#7ce3f4]">
                   {REGION_CODES[stage.step]}
                 </span>
               </button>

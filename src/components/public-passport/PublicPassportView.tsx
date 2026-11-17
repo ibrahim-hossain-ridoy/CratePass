@@ -146,40 +146,40 @@ export function PublicPassportView({
 
   return (
     <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      {/* Deep Espresso Hardware Identity Masthead */}
-      <header className="border-b border-[#2E2924] bg-[#141210] text-[#F7F5F0]">
-        <div className="mx-auto max-w-[1040px] px-4 py-5 sm:px-6">
+      {/* Obsidian Hardware Identity Masthead */}
+      <header className="bg-[#101214] text-[#f4f3ef]">
+        <div className="mx-auto max-w-[1040px] px-5 py-6 sm:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3.5">
               <BrandMark className="mt-0.5 h-9 w-9 shrink-0" />
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-[#A69E94]">
+                <div className="flex flex-wrap items-center gap-2 text-[13px] font-medium text-[#c4c8d0]">
                   <span
                     aria-hidden="true"
-                    className="status-pulse h-2 w-2 rounded-full bg-[#34D399]"
+                    className="status-pulse h-2 w-2 rounded-full bg-[#34d399]"
                   />
-                  <span className="uppercase tracking-wider text-[#E6E1D8]">
+                  <span className="font-semibold text-white">
                     {manufacturer}
                   </span>
                   <span aria-hidden="true">·</span>
                   <span>Digital Battery Passport</span>
                 </div>
 
-                <h1 className="text-title-page mt-1 font-bold text-white">
+                <h1 className="text-title-page mt-1 text-white">
                   {modelName}
                 </h1>
 
-                <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[12.5px]">
-                  <code className="rounded border border-[#332E28] bg-[#1E1B17] px-2 py-0.5 font-mono text-[12px] font-semibold text-[#FB923C]">
+                <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[13px]">
+                  <code className="rounded-md bg-[#1d2229] px-2.5 py-0.5 text-[13px] font-medium text-[#3eb8cf]">
                     /p/{slug}
                   </code>
-                  <span className="num rounded border border-[#34D399]/40 bg-[#0A2921] px-2 py-0.5 font-mono text-[11.5px] font-bold text-[#6EE7B7]">
+                  <span className="num rounded-md bg-[#0a2921] px-2.5 py-0.5 font-semibold text-[#6ee7b7]">
                     v{versionNumber}
                   </span>
                   {specPieces.map((piece) => (
                     <span
                       key={piece}
-                      className="num rounded border border-[#332E28] bg-[#1E1B17] px-2.5 py-0.5 font-semibold text-[#F7F5F0]"
+                      className="num rounded-md bg-[#171a1e] px-2.5 py-0.5 font-medium text-[#f4f3ef]"
                     >
                       {piece}
                     </span>
@@ -189,8 +189,8 @@ export function PublicPassportView({
             </div>
 
             <div className="flex shrink-0 items-center self-start sm:self-center">
-              <span className="inline-flex items-center gap-2 rounded-[8px] border border-[#F59E0B]/40 bg-[#2C1E0A] px-3 py-2 text-[12.5px] font-semibold text-[#FCD34D]">
-                <InfoIcon className="h-4 w-4 shrink-0 text-[#FBBF24]" />
+              <span className="inline-flex items-center gap-2 rounded-[10px] bg-[#2a2114] px-3.5 py-2 text-[13px] font-semibold text-[#fbbf24]">
+                <InfoIcon className="h-4 w-4 shrink-0 text-[#fbbf24]" />
                 <span>{PUBLIC_MANUFACTURER_NOTICE}</span>
               </span>
             </div>
@@ -244,10 +244,9 @@ export function PublicPassportView({
             <span
               aria-hidden="true"
               style={{
-                width: `${indicator.width}px`,
-                transform: `translateX(${indicator.left}px)`,
+                transform: `translateX(${indicator.left}px) scaleX(${indicator.width / 100})`,
               }}
-              className="sliding-pill pointer-events-none absolute bottom-0 left-0 h-[2.5px] rounded-full bg-[var(--accent)]"
+              className="sliding-pill pointer-events-none absolute bottom-0 left-0 h-[2.5px] w-[100px] origin-left rounded-full bg-[var(--accent)]"
             />
           )}
         </div>
@@ -256,7 +255,7 @@ export function PublicPassportView({
       {/* Sticky Mobile Bottom Tab Bar with Sliding Pill */}
       <nav
         aria-label="Battery passport sections mobile"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-[#2E2924] bg-[#141210]/95 text-[#F7F5F0] backdrop-blur md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 bg-[#101214]/96 text-[#f4f3ef] backdrop-blur md:hidden"
         style={{ paddingBottom: "max(0.4rem, env(safe-area-inset-bottom))" }}
       >
         <div
@@ -269,7 +268,7 @@ export function PublicPassportView({
               width: `calc((100% - 1rem) / ${Math.max(1, visibleTabs.length)})`,
               transform: `translateX(${activeIndex * 100}%)`,
             }}
-            className="sliding-pill pointer-events-none absolute inset-y-1.5 left-2 rounded-[10px] bg-[#F97316]"
+            className="sliding-pill pointer-events-none absolute inset-y-1.5 left-2 rounded-[10px] bg-[#145b6e]"
           />
           {visibleTabs.map((tabId) => {
             const def = TAB_DEFS[tabId];
@@ -282,15 +281,15 @@ export function PublicPassportView({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActiveTab(tabId)}
-                className={`pressable relative z-10 flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[10px] px-1.5 py-1.5 text-[11.5px] font-bold leading-none cursor-pointer ${
+                className={`pressable relative z-10 flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-[10px] px-1.5 py-1.5 text-[12px] font-semibold leading-none cursor-pointer ${
                   selected
-                    ? "text-[#1A0902]"
-                    : "text-[#A69E94] hover:text-white"
+                    ? "text-white"
+                    : "text-[#c4c8d0] hover:text-white"
                 }`}
               >
                 <Icon
                   className={`h-[18px] w-[18px] ${
-                    selected ? "text-[#1A0902]" : "text-[#A69E94]"
+                    selected ? "text-white" : "text-[#c4c8d0]"
                   }`}
                 />
                 <span>{def.mobileLabel}</span>

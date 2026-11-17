@@ -4,40 +4,40 @@ import { siteConfig } from "@/config/site";
 
 export default function PublicPassportNotFound() {
   return (
-    <div className="flex min-h-svh flex-col bg-[var(--ground)] text-[var(--ink)]">
-      <header className="border-b border-[#2E2924] bg-[#141210] text-white">
-        <div className="mx-auto flex max-w-[1040px] items-center justify-between px-4 py-3.5 sm:px-6">
-          <Link href="/" className="flex min-h-[44px] items-center gap-2.5">
+    <div className="flex min-h-svh flex-col bg-[#e8e7e0] text-[#0f1114]">
+      <header className="bg-[#101214] text-white">
+        <div className="mx-auto flex max-w-[1040px] items-center justify-between px-5 py-4 sm:px-8">
+          <Link href="/" className="flex min-h-[44px] items-center gap-3">
             <BrandMark className="h-8 w-8 shrink-0" />
-            <span className="text-[15px] font-bold tracking-tight">
+            <span className="font-display text-[15.5px] font-semibold tracking-tight">
               {siteConfig.siteName}
             </span>
           </Link>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[560px] flex-1 flex-col justify-center px-4 py-12">
-        <div className="surface-elevated rounded-[14px] p-6 sm:p-8">
-          <p className="font-mono text-[12px] font-bold text-[var(--accent)]">
-            404 · PASSPORT UNAVAILABLE
+      <main className="mx-auto flex w-full max-w-[560px] flex-1 flex-col justify-center px-5 py-12">
+        <div className="rounded-[18px] bg-white p-7 sm:p-9">
+          <p className="text-[13.5px] font-semibold text-[#145b6e]">
+            404 · Passport unavailable
           </p>
-          <h1 className="text-title-page mt-2 font-bold text-[var(--ink)]">
+          <h1 className="text-title-page mt-2 text-[#0f1114]">
             Battery passport not found or unpublished
           </h1>
-          <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--muted)]">
+          <p className="mt-3 text-[15.5px] leading-relaxed text-[#26292e]">
             The manufacturer may not have published this Digital Product Passport yet,
             or the record has been withdrawn to draft status.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/demo"
-              className="pressable chamfer-sm inline-flex min-h-[44px] items-center bg-[var(--accent)] px-5 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)]"
+              className="pressable inline-flex min-h-[44px] items-center rounded-[10px] bg-[#145b6e] px-5 text-[14.5px] font-semibold text-white hover:bg-[#0e4656]"
             >
               View sample (/demo)
             </Link>
             <Link
               href="/"
-              className="pressable inline-flex min-h-[44px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[44px] items-center rounded-[10px] bg-[#eae7e0] px-4.5 text-[14.5px] font-semibold text-[#0f1114] hover:bg-[#dcd8cf]"
             >
               Return home
             </Link>

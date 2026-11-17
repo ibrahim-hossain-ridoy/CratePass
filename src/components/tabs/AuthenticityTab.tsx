@@ -18,20 +18,20 @@ export function AuthenticityTab({ authenticity }: AuthenticityTabProps) {
       {/* Certificate-style demo record card */}
       <article className="surface-elevated relative overflow-hidden rounded-[12px] lg:col-span-7">
         {/* Top banner */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#2E2924] bg-[#141210] px-4 py-4 text-white sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 bg-[#101214] px-5 py-4 text-white">
           <div>
-            <h2 className="text-[17px] font-bold text-white">
+            <h2 className="font-display text-[17px] font-semibold text-white">
               Passport Record Snapshot
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[#A69E94]">
+            <p className="mt-0.5 text-[13px] text-[#c4c8d0]">
               Reference{" "}
-              <code className="font-mono text-[12px] text-[#FB923C]">
+              <code className="text-[13px] text-[#3eb8cf]">
                 {authenticity.certificateId}
               </code>
             </p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#F59E0B]/40 bg-[#2C1E0A] px-2.5 py-1 text-[12px] font-semibold text-[#FCD34D]">
-            <InfoIcon className="h-3.5 w-3.5 shrink-0 text-[#FBBF24]" />
+          <span className="inline-flex items-center gap-1.5 rounded-[8px] bg-[#2a2114] px-3 py-1 text-[13px] font-semibold text-[#fbbf24]">
+            <InfoIcon className="h-3.5 w-3.5 shrink-0 text-[#fbbf24]" />
             <span>DEMO – no real verification performed</span>
           </span>
         </div>

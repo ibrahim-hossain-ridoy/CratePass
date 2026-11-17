@@ -1,88 +1,37 @@
----
-impeccable:design-schema: 1
-mode: operate
-surface: apple-warm-stone-espresso-telemetry
-palette:
-  ground: "#F5F3EE"
-  surface: "#FFFFFF"
-  well: "#EAE6DE"
-  wellSoft: "#F9F7F3"
-  border: "#DDD7CC"
-  borderStrong: "#C6BEB1"
-  rule: "#E6E1D8"
-  ink: "#161412"
-  muted: "#625B53"
-  accent: "#C2410C"
-  accentInk: "#9A3412"
-  accentVivid: "#EA580C"
-  accentSoft: "#FFF4ED"
-  accentBorder: "#FDBA8C"
-  positive: "#15803D"
-  positiveBg: "#F0FDF4"
-  positiveBorder: "#BBF7D0"
-  noticeBg: "#FEF8EC"
-  noticeBorder: "#E6BF62"
-  noticeInk: "#78350F"
-  stageBg: "#141210"
-  stageSurface: "#1D1A17"
-  stageBorder: "#332E28"
-  stageInk: "#F7F5F0"
-  stageMuted: "#A69E94"
-  stageAmber: "#F97316"
-  stageJade: "#34D399"
-  stageJadeInk: "#052E16"
-typography:
-  sans: "Plus Jakarta Sans"
-  mono: "JetBrains Mono"
-  tabularNumerals: true
-radius:
-  card: "14px"
-  well: "10px"
-  pill: "9999px"
----
+# Battery Passport Host — Design System Specification
 
-# DESIGN.md — Battery Passport Host (Apple-Inspired Warm Stone, Deep Espresso & Burnt-Amber Telemetry)
+## Surface Modes
+- **Marketing (`/`) — `Persuade`**: Mineral Putty (`#eae7e0`) hardware studio opening chapter, Deep Obsidian (`#101214`) interactive telemetry pinned stage, Crisp Chalk (`#ffffff`) asymmetric audience index, Putty (`#eae7e0`) embedded specimen preview, and Baltic Petrol (`#0c262e`) closing invitation. Zero static card boxes or cream/terracotta tells.
+- **Interactive Specifier (`/demo`) & Workspace (`/app/*`, `/login`) — `Operate`**: `framed-sheet` precision workspace architecture (`#eae7e0` mineral frame surrounding `#ffffff` crisp sheets with `16px` sheet corners, zero rest shadows, and `#145b6e` Petrol active indicator).
+- **QR Mobile Passport (`/p/[slug]`) — `Operate / Read`**: Zero-JS-heavy ultra-fast paint on mobile QR scans with pure CSS spring transitions and full-contrast mineral/chalk typography.
+- **Legal (`/terms`, `/privacy`, `/disclaimer`) — `Read`**: Narrow `68ch` editorial reading column on `#f3f1ed` ground with structured headings and untouched notice hooks.
 
-## Overview
+## Color Tokens
+- `--ground`: `#f3f1ed` (low-chroma mineral paper)
+- `--surface`: `#eae7e0` (studio putty — matches product photography seamless backdrop)
+- `--surface-elevated`: `#ffffff` (crisp sheet fill)
+- `--obsidian`: `#101214` (low-key hardware studio backdrop matching `bms-cells-obsidian.jpg`)
+- `--petrol`: `#0c262e` (deep architectural slate-teal field)
+- `--ink`: `#0f1114` (> 15:1 contrast on paper/putty)
+- `--ink-secondary`: `#2e3238` (> 9.5:1 full-contrast body ink)
+- `--muted`: `#555961` (> 5.5:1 captions & footnotes)
+- `--accent`: `#145b6e` (Baltic Petrol primary action, > 6.8:1 on white)
+- `--accent-bright`: `#3eb8cf` (high-visibility highlight on obsidian scenes)
+- `--signal-warn`: `#9a440c` (authorised-only safety warning)
 
-The design system pairs **Warm Stone & Alabaster Ledger Surfaces (`#F5F3EE` / `#FFFFFF`)** with **Deep Espresso Hardware Enclosures (`#141210`)**, **Burnt-Amber Industrial Accents (`#C2410C` / `#F97316`)**, and **Electrochemical Forest Emerald (`#15803D` / `#34D399`)** status signals.
+## Typography
+- **Display (`Bricolage Grotesque`)**: `500 / 600 / 700` with `font-optical-sizing: auto`, `-0.036em` tracking for headlines (`>= 56px` desktop).
+- **UI & Running Text (`IBM Plex Sans`)**: `400 / 500 / 600` with `tabular-nums` alignment across numeric specifications. No monospace micro-labels; `IBM Plex Mono` is scoped strictly to literal `<code>` / `<pre>` technical identifiers.
+- **Scale**:
+  - `--step-display`: `clamp(1.9rem, 1.25rem + 2.75vw, 4.1rem)`
+  - `--step-head`: `clamp(1.6rem, 1.2rem + 1.75vw, 2.75rem)`
+  - `--step-lead`: `clamp(1.15rem, 1.04rem + 0.48vw, 1.4rem)`
+  - `--step-body`: `clamp(1rem, 0.96rem + 0.16vw, 1.125rem)` (never below 16px body)
+  - `--step-small`: `clamp(0.875rem, 0.85rem + 0.08vw, 0.9375rem)` (minimum readable text `>= 14px`)
 
-Every screen is engineered for fast mobile QR-scan sessions and scannable B2B technical workflows while maintaining strict AA+ contrast, 44px+ touch targets, GPU-composited `transform`/`opacity` animations, and full `prefers-reduced-motion` support.
-
-## Color System
-
-| Token | Hex | Role |
-| :--- | :--- | :--- |
-| `--ground` | `#F5F3EE` | Warm stone / alabaster ledger canvas |
-| `--surface` | `#FFFFFF` | High-contrast specification cards & workspace sheet |
-| `--well` | `#EAE6DE` | Recessed warm stone wells and progress tracks |
-| `--well-soft` | `#F9F7F3` | Card headers and subtle inset callouts |
-| `--border` | `#DDD7CC` | 1px precision card and row borders |
-| `--border-strong` | `#C6BEB1` | High-emphasis card and input outlines |
-| `--rule` | `#E6E1D8` | Internal `<dl>` key-value divider rules |
-| `--ink` | `#161412` | Primary deep espresso ink (`17.8:1` on `#FFFFFF`) |
-| `--muted` | `#625B53` | Warm stone-taupe technical labels (`6.2:1` on `#FFFFFF`) |
-| `--accent` | `#C2410C` | Burnt-amber primary action & active tab indicator |
-| `--accent-ink` | `#9A3412` | Deep burnt sienna hover & high-contrast badge ink |
-| `--positive` | `#15803D` | Matched / public-tier forest emerald status (`>= 5.1:1`) |
-| `--notice-bg` | `#FEF8EC` | Warm amber notice surface |
-| `--notice-border` | `#E6BF62` | Amber notice border |
-| `--notice-ink` | `#78350F` | High-contrast amber disclosure text |
-| `--stage-bg` | `#141210` | Deep espresso masthead, workspace rail, and 3D hero stage |
-| `--stage-surface` | `#1D1A17` | Elevated dark espresso instrument cards |
-| `--stage-border` | `#332E28` | Warm bronze-espresso structural hairline |
-| `--stage-amber` | `#F97316` | Luminous burnt-amber CTA & live pipeline highlight |
-| `--stage-jade` | `#34D399` | Live emerald telemetry indicator |
-
-## Typography & Fluid Scales
-
-- **Primary UI & Display Sans (`--font-space-grotesk` -> `Plus Jakarta Sans`):** Weights `400`, `500`, `600`, `700`. Fluid responsive scales (`.text-display-hero`, `.text-display-section`, `.text-title-page`) with optical sizing and tight negative tracking (`-0.022em` to `-0.032em`).
-- **Technical Monospace (`--font-jetbrains-mono` -> `JetBrains Mono`):** Weights `400`, `500`, `600` for passport IDs, `/p/[slug]` routes, SHA-256 digests, PDF parser traces, and version tags.
-- **Tabular Numerals (`.num`):** `font-variant-numeric: tabular-nums` enforced across all electrical ratings, carbon metrics (`kg CO2e`), percentages, and UTC timestamps.
-
-## Motion & Micro-Interactions (`globals.css`, `prefers-reduced-motion` safe)
-
-- **Easing Tokens:** `--ease-out: cubic-bezier(0.23, 1, 0.32, 1)`, `--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)`, `--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1)`, `--ease-spring: cubic-bezier(0.16, 1, 0.3, 1)`.
-- **Ref-Driven 3D Tilt Stage:** Pointer-tracked `rotateX` / `rotateY` via `requestAnimationFrame` writing directly to `ref.current.style.transform` with zero React re-renders per frame (`HeroPassportStage` & `RepairViewTab`).
-- **Sliding Active Indicators (`.sliding-pill`):** Composite `transform: translateX(...)` underline and segmented-control pills across `/`, `/demo`, `/p/[slug]`, `/login`, and `/app/passports/[id]`.
-- **Smooth Progress Bars (`.progress-fill-smooth`):** Composite `transform: scaleX(...)` progress fills across 71-point field groups and quota bars.
+## Motion & Choreography
+- **Hero Load**: Masked vertical line-rise on display headline (`820ms cubic-bezier(0.22, 1, 0.36, 1)`) staggered by `90ms`, followed by pointer-tracked 3D hardware studio tilt (`@media (hover: hover)`) and live 3-step PDF-to-QR telemetry switcher.
+- **Scroll Choreography (GSAP + ScrollTrigger + Lenis)**:
+  - Held sticky `100svh` pipeline stage (`bg-[#101214]`) scrubbing through OEM PDF extraction -> 71-point Annex XIII completeness diff -> casing QR print pack.
+  - Scroll-parallax hardware studio photography and staggered asymmetric list reveals (`transform` + `opacity` + `clip-path` only).
+- **Reduced Motion & Mobile QR Budget**: `prefers-reduced-motion: reduce` disables GSAP scrubbing, Lenis smoothing, and infinite keyframes immediately, presenting every section in its clean completed state. `/p/[slug]` imports zero animation libraries.
