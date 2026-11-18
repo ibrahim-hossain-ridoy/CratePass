@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowRightIcon, PdfFileIcon } from "@/components/Icons";
 import { PassportFieldEditor } from "./PassportFieldEditor";
 import {
   BATTERY_CATEGORIES,
@@ -146,7 +147,6 @@ export function NewPassportFlow({
         return;
       }
 
-      // Blank drafts make 0 LLM calls and do not consume the org daily extraction cap
       setResult(json as ExtractApiSuccess);
     } catch {
       setErrorMsg(
@@ -160,23 +160,26 @@ export function NewPassportFlow({
   const mandatoryRatio = categoryStats.totalMandatory / 71;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 border-b border-[var(--rule)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+    <div data-ui className="space-y-8">
+      {/* Step Header Row */}
+      <div className="flex flex-col gap-4 pb-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[var(--accent)]">
-            Step 1 of 2 · PDF Spec Intake
-          </p>
-          <h1 className="text-title-page mt-0.5 font-bold text-[var(--ink)]">
+          <span className="inline-flex items-center gap-2 rounded-md bg-[#e6f2f5] px-2.5 py-1 text-[13px] font-semibold text-[#0b3c49]">
+            {result
+              ? "Step 2 of 2 · 71-Point Completeness Review"
+              : "Step 1 of 2 · PDF Spec Intake"}
+          </span>
+          <h1 className="text-title-page mt-2 text-[#0f1114]">
             New Battery Passport
           </h1>
-          <p className="mt-1 text-[13.5px] text-[var(--muted)]">
+          <p className="mt-1 text-[14.5px] text-[#4b4f57]">
             {WORKING_FIELD_LIST_NOTICE}
           </p>
         </div>
 
-        <div className="rounded-[8px] border border-[var(--border)] bg-[var(--well-soft)] px-3 py-1.5 text-[12.5px]">
-          <span className="text-[var(--muted)]">Org daily PDF cap </span>
-          <span className="num font-semibold text-[var(--ink)]">
+        <div className="rounded-[12px] bg-[#f4f4f2] px-4 py-2.5 text-[13.5px]">
+          <span className="text-[#4b4f57]">Org daily PDF cap: </span>
+          <span className="num font-semibold text-[#0f1114]">
             {usedCount} / {dailyLimit}
           </span>
         </div>
@@ -185,17 +188,17 @@ export function NewPassportFlow({
       {!result && (
         <form
           onSubmit={handleUpload}
-          className="surface-elevated space-y-5 rounded-[14px] bg-[var(--well-soft)] p-5 sm:p-6"
+          className="space-y-6 rounded-[20px] bg-[#f4f4f2] p-6 sm:p-8"
         >
-          {/* Battery Category Selector (LMT default) with tactile state-switch animation */}
+          {/* Battery Category Selector (LMT default) */}
           <div>
-            <label className="block text-[13px] font-bold text-[var(--ink)]">
-              Battery category (Regulation (EU) 2023/1542 Annex XIII)
+            <label className="font-display block text-[17px] font-semibold text-[#0f1114]">
+              1. Select battery category (Regulation (EU) 2023/1542 Annex XIII)
             </label>
             <div
               role="radiogroup"
               aria-label="Battery category"
-              className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-3"
+              className="mt-3 grid grid-cols-1 gap-3.5 sm:grid-cols-3"
             >
               {BATTERY_CATEGORIES.map((cat) => {
                 const selected = batteryCategory === cat.id;
@@ -206,23 +209,33 @@ export function NewPassportFlow({
                     role="radio"
                     aria-checked={selected}
                     onClick={() => setBatteryCategory(cat.id)}
-                    className={`pressable flex flex-col items-start rounded-[12px] border p-3.5 text-left cursor-pointer ${
+                    className={`pressable flex cursor-pointer flex-col items-start rounded-[14px] p-4 text-left transition-colors ${
                       selected
-                        ? "border-[var(--accent)] bg-[var(--surface)] ring-2 ring-[var(--accent)]/20 shadow-sm"
-                        : "border-[var(--border-strong)] bg-[var(--surface)]/75 hover:border-[var(--ink)]"
+                        ? "bg-[#101214] text-white"
+                        : "bg-white text-[#0f1114] hover:bg-[#e8e7e3]"
                     }`}
                   >
-                    <div className="flex w-full items-center justify-between">
-                      <span className="text-[14px] font-bold text-[var(--ink)]">
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <span className="font-display text-[16px] font-semibold">
                         {cat.label}
                       </span>
                       {cat.id === "LMT" && (
-                        <span className="rounded border border-[var(--accent-border)] bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10.5px] font-bold text-[var(--accent-ink)]">
+                        <span
+                          className={`rounded-md px-2 py-0.5 text-[12px] font-semibold ${
+                            selected
+                              ? "bg-[#3eb8cf] text-[#08181d]"
+                              : "bg-[#e6f2f5] text-[#0b3c49]"
+                          }`}
+                        >
                           Default
                         </span>
                       )}
                     </div>
-                    <span className="mt-1 text-[12px] leading-snug text-[var(--muted)]">
+                    <span
+                      className={`mt-1.5 text-[13.5px] leading-snug ${
+                        selected ? "text-[#c4c8d0]" : "text-[#4b4f57]"
+                      }`}
+                    >
                       {cat.description}
                     </span>
                   </button>
@@ -230,128 +243,175 @@ export function NewPassportFlow({
               })}
             </div>
 
-            {/* Animated Category Mandatory Point Bar */}
-            <div className="mt-3 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] p-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 text-[12.5px]">
-                <span className="text-[var(--muted)]">
-                  Selected <strong className="text-[var(--ink)]">{batteryCategory}</strong>:{" "}
-                  <span className="num font-bold text-[var(--ink)]">
+            {/* Live Animated Category Mandatory Point Bar */}
+            <div className="mt-4 rounded-[14px] bg-white p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[14px]">
+                <span className="text-[#22252a]">
+                  Category <strong>{batteryCategory}</strong> activates{" "}
+                  <strong className="num text-[#145b6e]">
                     {categoryStats.totalMandatory}
-                  </span>{" "}
+                  </strong>{" "}
                   mandatory Annex XIII points (
-                  <span className="num">{categoryStats.reqPublic}</span> public ·{" "}
-                  <span className="num">{categoryStats.reqLegit}</span> legitimate
-                  interest · <span className="num">{categoryStats.reqAuth}</span>{" "}
-                  authorities only)
+                  <span className="num font-semibold text-[#156d49]">
+                    {categoryStats.reqPublic} public
+                  </span>{" "}
+                  ·{" "}
+                  <span className="num font-semibold text-[#0b3c49]">
+                    {categoryStats.reqLegit} legitimate interest
+                  </span>{" "}
+                  ·{" "}
+                  <span className="num font-semibold text-[#7c380b]">
+                    {categoryStats.reqAuth} authorities only
+                  </span>
+                  )
                 </span>
-                <span className="num font-mono text-[11.5px] font-semibold text-[var(--accent)]">
-                  {categoryStats.totalMandatory} / 71 pts
+                <span className="num font-semibold text-[#145b6e]">
+                  {categoryStats.totalMandatory} / 71 points
                 </span>
               </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--well)]">
+              <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-[#e8e7e3]">
                 <div
                   style={{ transform: `scaleX(${mandatoryRatio})` }}
-                  className="progress-fill-smooth h-full w-full rounded-full bg-[var(--accent)]"
+                  className="progress-fill-smooth h-full w-full rounded-full bg-[#145b6e]"
                 />
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor="new-product-name"
-                className="block text-[13px] font-semibold text-[var(--ink)]"
-              >
-                Product name (optional override)
-              </label>
-              <input
-                id="new-product-name"
-                type="text"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                placeholder="e.g. Alpine 36V-504 Downtube Pack"
-                className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)]"
-              />
-            </div>
+          {/* Product Identification Overrides */}
+          <div>
+            <p className="font-display text-[17px] font-semibold text-[#0f1114]">
+              2. Product label &amp; model code
+            </p>
+            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="new-product-name"
+                  className="block text-[14px] font-semibold text-[#0f1114]"
+                >
+                  Product name (optional override)
+                </label>
+                <input
+                  id="new-product-name"
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  placeholder="e.g. Alpine 36V-504 Downtube Pack"
+                  className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dcdad4] bg-white px-4 py-3 text-[15px] text-[#0f1114] placeholder:text-[#4b4f57]"
+                />
+              </div>
 
-            <div>
-              <label
-                htmlFor="new-model-code"
-                className="block text-[13px] font-semibold text-[var(--ink)]"
-              >
-                Model / SKU code (optional)
-              </label>
-              <input
-                id="new-model-code"
-                type="text"
-                value={modelCode}
-                onChange={(e) => setModelCode(e.target.value)}
-                placeholder="e.g. LMT-48V-14AH-PRO"
-                className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 font-mono text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]"
-              />
+              <div>
+                <label
+                  htmlFor="new-model-code"
+                  className="block text-[14px] font-semibold text-[#0f1114]"
+                >
+                  Model / SKU code (optional)
+                </label>
+                <input
+                  id="new-model-code"
+                  type="text"
+                  value={modelCode}
+                  onChange={(e) => setModelCode(e.target.value)}
+                  placeholder="e.g. LMT-48V-14AH-PRO"
+                  className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dcdad4] bg-white px-4 py-3 text-[15px] text-[#0f1114] placeholder:text-[#4b4f57]"
+                />
+              </div>
             </div>
           </div>
 
+          {/* Interactive PDF Intake Dropzone */}
           <div>
             <label
               htmlFor="spec-pdf-file"
-              className="block text-[13px] font-semibold text-[var(--ink)]"
+              className="font-display block text-[17px] font-semibold text-[#0f1114]"
             >
-              Battery datasheet PDF (max {maxUploadMb} MB)
+              3. Battery datasheet PDF (max {maxUploadMb} MB)
             </label>
-            <input
-              id="spec-pdf-file"
-              type="file"
-              accept=".pdf,application/pdf"
-              required
-              onChange={(e) => {
-                setErrorMsg(null);
-                setFile(e.target.files?.[0] ?? null);
-              }}
-              className="input-apple mt-1.5 block w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-3 text-[14px] text-[var(--ink)] file:mr-3 file:rounded-[6px] file:border file:border-[var(--border-strong)] file:bg-[var(--well)] file:px-3 file:py-1.5 file:text-[13px] file:font-semibold file:text-[var(--ink)] cursor-pointer"
-            />
-            <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--muted)]">
-              Stored privately in your organization bucket. Text is extracted and
-              parsed strictly as untrusted datasheet data; no compliance
-              verification is implied.
-            </p>
+
+            <div className="relative mt-3 overflow-hidden rounded-[14px] bg-white p-5">
+              {uploading && (
+                <div
+                  aria-hidden="true"
+                  className="pdf-scan-beam pointer-events-none absolute inset-x-0 top-2 h-0.5 bg-[#145b6e]"
+                />
+              )}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3.5">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-[#e6f2f5] text-[#145b6e]">
+                    <PdfFileIcon className="h-6 w-6" />
+                  </span>
+                  <div>
+                    <p className="text-[15px] font-semibold text-[#0f1114]">
+                      {file ? file.name : "Choose an OEM battery specification PDF"}
+                    </p>
+                    <p className="text-[13.5px] text-[#4b4f57]">
+                      {file
+                        ? `${(file.size / (1024 * 1024)).toFixed(2)} MB · Ready for magic-byte check & extraction`
+                        : "Supports cell, BMS, or pack datasheets up to 10 MB"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <input
+                id="spec-pdf-file"
+                type="file"
+                accept=".pdf,application/pdf"
+                required
+                onChange={(e) => {
+                  setErrorMsg(null);
+                  setFile(e.target.files?.[0] ?? null);
+                }}
+                data-ui className="input-apple mt-4 block w-full cursor-pointer rounded-[10px] border border-[#dcdad4] bg-[#f9f9f7] px-3.5 py-2.5 text-[14px] text-[#0f1114] file:mr-3 file:cursor-pointer file:rounded-[8px] file:border-0 file:bg-[#145b6e] file:px-3.5 file:py-1.5 file:text-[13.5px] file:font-semibold file:text-white"
+              />
+
+              <p className="mt-3 text-[13px] leading-relaxed text-[#4b4f57]">
+                Stored privately in your organization bucket. Text is extracted and
+                parsed strictly as untrusted datasheet data; no compliance
+                verification is implied.
+              </p>
+            </div>
           </div>
 
           {errorMsg && (
             <div
               role="alert"
-              className="tab-panel-enter rounded-[8px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
+              className="tab-panel-enter rounded-[12px] bg-red-50 px-4 py-3 text-[14px] font-medium text-red-900"
             >
               {errorMsg}
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-3 pt-1">
+          <div className="flex flex-wrap items-center gap-3.5 pt-2">
             <button
               type="submit"
               disabled={uploading || creatingBlank || usedCount >= dailyLimit}
-              className="pressable chamfer-sm inline-flex min-h-[46px] items-center justify-center bg-[var(--accent)] px-6 py-2.5 text-[14.5px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+              className="pressable inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {uploading
-                ? "Extracting datasheet fields..."
-                : usedCount >= dailyLimit
-                  ? `Daily limit reached (${dailyLimit}/day)`
-                  : "Upload PDF & run completeness check"}
+              <span>
+                {uploading
+                  ? "Extracting datasheet fields..."
+                  : usedCount >= dailyLimit
+                    ? `Daily limit reached (${dailyLimit}/day)`
+                    : "Upload PDF & run completeness check"}
+              </span>
+              {!uploading && <ArrowRightIcon className="btn-arrow h-4 w-4" />}
             </button>
 
             <button
               type="button"
               disabled={uploading || creatingBlank}
               onClick={handleStartBlankDraft}
-              className="pressable inline-flex min-h-[46px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-5 py-2.5 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--well)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+              className="pressable inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-[10px] bg-white px-5 py-3 text-[14.5px] font-semibold text-[#0f1114] transition-colors hover:bg-[#e8e7e3] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {creatingBlank
                 ? "Creating blank draft..."
                 : "No PDF? Start blank passport draft"}
             </button>
           </div>
-          <p className="text-[12px] text-[var(--muted)]">
+
+          <p className="text-[13px] text-[#4b4f57]">
             Starting a blank passport draft makes zero LLM calls, does not count
             against your daily PDF extraction cap, and opens the same completeness
             check and field editor.
@@ -360,10 +420,10 @@ export function NewPassportFlow({
       )}
 
       {result && (
-        <div className="tab-panel-enter space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]">
+        <div className="tab-panel-enter space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[16px] bg-[#edf8f2] p-5 text-[14px] text-[#156d49]">
             <div>
-              <p className="font-semibold">
+              <p className="font-display text-[17px] font-semibold">
                 {result.blankDraft ? (
                   <>
                     Blank draft created ({result.batteryCategory}) · Ready for
@@ -377,29 +437,29 @@ export function NewPassportFlow({
                   </>
                 )}
               </p>
-              <p className="text-[12.5px]">
-                Extractor mode:{" "}
-                <code className="font-mono">{result.extraction.usage.model}</code>{" "}
-                · Red boxes below mark missing required or uncertain static fields
-                for manual input.
+              <p className="mt-1 text-[13.5px]">
+                Extractor mode: <code>{result.extraction.usage.model}</code> ·
+                Flagged cards below mark missing required or uncertain static
+                fields for manual input.
               </p>
             </div>
             <button
               type="button"
               onClick={() => router.push(`/app/passports/${result.passportId}`)}
-              className="pressable inline-flex min-h-[38px] items-center rounded-[6px] border border-[var(--positive)] bg-[var(--surface)] px-3.5 text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--well-soft)] cursor-pointer"
+              className="pressable inline-flex min-h-[42px] cursor-pointer items-center gap-1.5 rounded-[10px] bg-white px-4 text-[13.5px] font-semibold text-[#0f1114] hover:bg-[#e8e7e3]"
             >
-              Skip to Review &amp; Publish
+              <span>Skip to Review &amp; Publish</span>
+              <ArrowRightIcon className="btn-arrow h-4 w-4" />
             </button>
           </div>
 
           {result.lowTextWarning && (
             <div
               role="status"
-              className="rounded-[8px] border border-red-400 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
+              className="rounded-[12px] bg-red-50 px-4 py-3 text-[14px] font-medium text-red-900"
             >
               Very little selectable text was found in this PDF (it may be scanned
-              images). Fill in the red boxes manually below before publishing.
+              images). Fill in the flagged fields manually below before publishing.
             </div>
           )}
 

@@ -53,67 +53,79 @@ export function PrivacyWorkspace({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-[var(--rule)] pb-5">
-        <p className="font-mono text-[12px] font-semibold uppercase tracking-wider text-[var(--accent)]">
+    <div data-ui className="space-y-6">
+      <div className="pb-2">
+        <span className="inline-flex items-center rounded-md bg-[#e8f3f6] px-2.5 py-0.5 text-[12px] font-semibold text-[#0b3c49]">
           {orgName}
-        </p>
-        <h1 className="text-title-page mt-0.5 font-bold text-[var(--ink)]">
+        </span>
+        <h1 className="font-display mt-2 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
           Privacy, GDPR Export &amp; Legal Drafts
         </h1>
-        <p className="mt-1 text-[13.5px] text-[var(--muted)]">
+        <p className="mt-1 text-[13.5px] text-[#505660]">
           Export your workspace records in JSON or remove unpublished draft PDFs and
           records.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         {/* GDPR JSON export card */}
-        <section className="surface-elevated rounded-[14px] p-5 lg:col-span-6">
-          <h2 className="text-[16px] font-bold text-[var(--ink)]">
-            Export organization records (JSON)
-          </h2>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--muted)]">
-            Download a portable JSON snapshot of{" "}
-            <code className="font-mono text-[var(--ink)]">{orgSlug}</code> including
-            products, working drafts, immutable version snapshots, PDF file metadata,
-            and recent audit events.
-          </p>
-          <div className="mt-4">
+        <section className="flex flex-col justify-between rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6 lg:col-span-6">
+          <div>
+            <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
+              Export organization records (JSON)
+            </h2>
+            <p className="mt-2 text-[13.5px] leading-relaxed text-[#505660]">
+              Download a portable JSON snapshot of{" "}
+              <code className="rounded bg-white px-1.5 py-0.5 text-[#0f1114]">
+                {orgSlug}
+              </code>{" "}
+              including products, working drafts, immutable version snapshots, PDF
+              file metadata, and recent audit events.
+            </p>
+          </div>
+          <div className="mt-5">
             <a
               href="/api/org/export"
-              className="pressable chamfer-sm inline-flex min-h-[42px] items-center justify-center bg-[var(--accent)] px-4 py-2 text-[13.5px] font-bold text-white hover:bg-[var(--accent-ink)]"
+              className="pressable group inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-[#0e4250]"
             >
-              Download JSON export
+              <span>Download JSON export</span>
+              <span aria-hidden="true" className="btn-arrow">
+                ↓
+              </span>
             </a>
           </div>
         </section>
 
         {/* Draft legal documents summary */}
-        <section className="surface-elevated rounded-[14px] bg-[var(--well-soft)] p-5 lg:col-span-6">
-          <h2 className="text-[16px] font-bold text-[var(--ink)]">
-            Legal &amp; EU data-processing drafts
-          </h2>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--muted)]">
-            Review the placeholder policies published on the public site (marked{" "}
-            <strong className="text-[var(--ink)]">TODO: lawyer review</strong>):
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2.5">
+        <section className="flex flex-col justify-between rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6 lg:col-span-6">
+          <div>
+            <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
+              Legal &amp; EU data-processing drafts
+            </h2>
+            <p className="mt-2 text-[13.5px] leading-relaxed text-[#505660]">
+              Review the placeholder policies published on the public site (marked{" "}
+              <strong className="font-semibold text-[#0f1114]">
+                TODO: lawyer review
+              </strong>
+              ):
+            </p>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2.5">
             <Link
               href="/terms"
-              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
             >
               Terms (Draft)
             </Link>
             <Link
               href="/privacy"
-              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
             >
               Privacy &amp; GDPR (Draft)
             </Link>
             <Link
               href="/disclaimer"
-              className="pressable inline-flex min-h-[38px] items-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]"
+              className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
             >
               Disclaimer (Draft)
             </Link>
@@ -122,17 +134,17 @@ export function PrivacyWorkspace({
       </div>
 
       {/* Deletable unpublished drafts */}
-      <section className="surface-elevated rounded-[14px] p-5">
-        <h2 className="text-[16px] font-bold text-[var(--ink)]">
+      <section className="rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6">
+        <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
           Delete unpublished drafts &amp; source PDFs
         </h2>
-        <p className="mt-1 text-[13.5px] text-[var(--muted)]">
+        <p className="mt-1 text-[13.5px] leading-relaxed text-[#505660]">
           Drafts with zero published snapshots can be deleted immediately along with
           their private spec PDF objects. Records with immutable published versions must
           first be unpublished from public view; contact{" "}
           <a
             href={`mailto:${siteConfig.contactEmail}`}
-            className="font-medium text-[var(--ink)] underline underline-offset-4"
+            className="font-semibold text-[#0f1114] underline underline-offset-4"
           >
             {siteConfig.contactEmail}
           </a>{" "}
@@ -142,7 +154,7 @@ export function PrivacyWorkspace({
         {errorMsg && (
           <div
             role="alert"
-            className="tab-panel-enter mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+            className="tab-panel-enter mt-3.5 rounded-[10px] border border-red-300 bg-red-50 px-4 py-3 text-[13px] text-red-900"
           >
             {errorMsg}
           </div>
@@ -151,31 +163,31 @@ export function PrivacyWorkspace({
         {feedback && (
           <div
             role="status"
-            className="tab-panel-enter mt-3 rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
+            className="tab-panel-enter mt-3.5 rounded-[10px] border border-[#9fd4b9] bg-[#edf8f2] px-4 py-3 text-[13px] font-medium text-[#156d49]"
           >
             {feedback}
           </div>
         )}
 
         {candidates.length === 0 ? (
-          <p className="mt-4 text-[13.5px] text-[var(--muted)]">
+          <div className="mt-4 rounded-[12px] bg-white px-4 py-5 text-[13.5px] text-[#505660]">
             No passport records in this workspace yet.
-          </p>
+          </div>
         ) : (
-          <ul className="mt-4 divide-y divide-[var(--rule)] border-t border-[var(--rule)]">
+          <ul className="mt-4 space-y-2">
             {candidates.map((item) => {
               const deletable = item.versionCount === 0;
               return (
                 <li
                   key={item.id}
-                  className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 rounded-[12px] bg-white px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
-                    <p className="text-[14px] font-semibold text-[var(--ink)]">
+                    <p className="text-[14px] font-semibold text-[#0f1114]">
                       {item.productName}
                     </p>
-                    <p className="font-mono text-[12px] text-[var(--muted)]">
-                      /p/{item.slug} · {item.versionCount} published version
+                    <p className="mt-0.5 text-[12.5px] text-[#505660]">
+                      <code>/p/{item.slug}</code> · {item.versionCount} published version
                       {item.versionCount === 1 ? "" : "s"}
                     </p>
                   </div>
@@ -185,14 +197,14 @@ export function PrivacyWorkspace({
                       type="button"
                       disabled={deletingId === item.id}
                       onClick={() => handleDeleteDraft(item)}
-                      className="pressable inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[8px] border border-red-300 bg-red-50 px-3 text-[13px] font-semibold text-red-900 hover:bg-red-100 disabled:opacity-50 cursor-pointer"
+                      className="pressable inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[10px] border border-red-300 bg-red-50 px-3.5 text-[13px] font-semibold text-red-900 hover:bg-red-100 disabled:opacity-50 cursor-pointer"
                     >
                       {deletingId === item.id ? "Deleting..." : "Delete draft & PDF"}
                     </button>
                   ) : (
                     <Link
                       href={`/app/passports/${item.id}`}
-                      className="pressable inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[8px] border border-[var(--border-strong)] px-3 text-[13px] font-medium text-[var(--muted)] hover:text-[var(--ink)]"
+                      className="pressable inline-flex min-h-[38px] shrink-0 items-center justify-center rounded-[10px] border border-[#dad9d3] bg-[#f4f4f2] px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
                     >
                       Manage published status
                     </Link>

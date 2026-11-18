@@ -45,20 +45,20 @@ const GROUP_ORDER: FieldGroupId[] = [
 function TierBadge({ tier }: { tier: FieldAccessTier }) {
   if (tier === "public") {
     return (
-      <span className="rounded border border-[var(--positive-border)] bg-[var(--positive-bg)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--positive)]">
+      <span className="rounded bg-[#edf8f2] px-2 py-0.5 text-[11px] font-semibold text-[#156d49]">
         Public
       </span>
     );
   }
   if (tier === "authorities_only") {
     return (
-      <span className="rounded border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold text-amber-900">
+      <span className="rounded bg-[#fdf6ec] px-2 py-0.5 text-[11px] font-semibold text-[#7c380b]">
         Authorities only
       </span>
     );
   }
   return (
-    <span className="rounded border border-[var(--accent-border)] bg-[var(--accent-soft)] px-1.5 py-0.5 text-[11px] font-semibold text-[var(--accent-ink)]">
+    <span className="rounded bg-[#e8f3f6] px-2 py-0.5 text-[11px] font-semibold text-[#0b3c49]">
       Legitimate interest
     </span>
   );
@@ -74,7 +74,7 @@ function AccordionChevron() {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className="h-4 w-4 shrink-0 text-[var(--muted)] transition-transform duration-200 group-open:rotate-180"
+      className="h-4 w-4 shrink-0 text-[#505660] transition-transform duration-200 group-open:rotate-180"
     >
       <path d="m5 7.5 5 5 5-5" />
     </svg>
@@ -246,28 +246,28 @@ export function PassportFieldEditor({
   );
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
+    <form data-ui onSubmit={handleSave} className="space-y-6">
       {/* Completeness summary + Battery Category Selector */}
       <section
         aria-label="Completeness check summary"
-        className="surface-elevated rounded-[14px] bg-[var(--well-soft)] p-4 sm:p-5"
+        className="rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-[17px] font-bold text-[var(--ink)]">
+            <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
               Completeness check summary (71-point Annex XIII schema)
             </h2>
-            <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">
+            <p className="mt-0.5 text-[12.5px] text-[#505660]">
               {WORKING_FIELD_LIST_NOTICE}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setFlaggedOnly((prev) => !prev)}
-            className={`pressable min-h-[38px] rounded-[8px] border px-3 text-[12.5px] font-semibold cursor-pointer ${
+            className={`pressable min-h-[38px] rounded-[10px] border px-3.5 text-[12.5px] font-semibold cursor-pointer ${
               flaggedOnly
                 ? "border-red-500 bg-red-50 text-red-900"
-                : "border-[var(--border-strong)] bg-[var(--surface)] text-[var(--ink)] hover:border-[var(--ink)]"
+                : "border-[#dad9d3] bg-white text-[#0f1114] hover:border-[#0f1114]"
             }`}
           >
             {flaggedOnly
@@ -277,14 +277,14 @@ export function PassportFieldEditor({
         </div>
 
         {/* Category selector bar with tactile sliding pill */}
-        <div className="mt-4 rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-3.5">
+        <div className="mt-4 rounded-[14px] bg-white p-4 sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[13px] font-bold text-[var(--ink)]">
+              <p className="text-[13.5px] font-semibold text-[#0f1114]">
                 Battery category ({batteryCategory})
               </p>
-              <p className="mt-0.5 text-[12px] text-[var(--muted)]">
-                <span className="num font-semibold text-[var(--ink)]">
+              <p className="mt-0.5 text-[12.5px] text-[#505660]">
+                <span className="num font-semibold text-[#0f1114]">
                   {summary.mandatoryTotal71}
                 </span>{" "}
                 mandatory Annex XIII points for {batteryCategory} (
@@ -300,7 +300,7 @@ export function PassportFieldEditor({
             <div
               role="group"
               aria-label="Battery category selector"
-              className="relative grid grid-cols-3 gap-1 rounded-[10px] border border-[var(--border-strong)] bg-[var(--well)] p-1"
+              className="relative grid grid-cols-3 gap-1 rounded-[10px] bg-[#f4f4f2] p-1"
             >
               <span
                 aria-hidden="true"
@@ -322,10 +322,10 @@ export function PassportFieldEditor({
                         battery_category: cat.id,
                       }));
                     }}
-                    className={`pressable relative z-10 min-h-[36px] rounded-[8px] px-3 text-[12.5px] font-bold cursor-pointer ${
+                    className={`pressable relative z-10 min-h-[36px] rounded-[8px] px-3 text-[12.5px] font-semibold cursor-pointer ${
                       active
                         ? "text-white"
-                        : "text-[var(--muted)] hover:text-[var(--ink)]"
+                        : "text-[#505660] hover:text-[#0f1114]"
                     }`}
                   >
                     {cat.shortLabel}
@@ -336,68 +336,90 @@ export function PassportFieldEditor({
           </div>
 
           {/* Animated Required Completeness Progress Bar */}
-          <div className="mt-3 border-t border-[var(--rule)] pt-3">
-            <div className="flex items-center justify-between text-[12px]">
-              <span className="font-medium text-[var(--muted)]">
+          <div className="mt-4 rounded-[10px] bg-[#f9f9f7] p-3">
+            <div className="flex items-center justify-between text-[12.5px]">
+              <span className="font-medium text-[#505660]">
                 Required static completeness ({batteryCategory})
               </span>
-              <span className="num font-mono font-bold text-[var(--ink)]">
+              <span className="num font-semibold text-[#0f1114]">
                 {Math.round(requiredProgressRatio * 100)}% (
                 {summary.populatedRequiredStatic} / {summary.totalRequiredStatic})
               </span>
             </div>
-            <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-[var(--well)]">
+            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#e8e7e3]">
               <div
                 style={{ transform: `scaleX(${requiredProgressRatio})` }}
-                className="progress-fill-smooth h-full w-full rounded-full bg-[var(--positive)]"
+                className="progress-fill-smooth h-full w-full rounded-full bg-[#156d49]"
               />
             </div>
           </div>
         </div>
 
         <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5">
-            <dt className="text-[12px] text-[var(--muted)]">
+          <div className="rounded-[12px] bg-white px-4 py-3">
+            <dt className="text-[12px] font-medium text-[#505660]">
               Static populated
             </dt>
-            <dd className="num mt-0.5 text-[20px] font-bold text-[var(--positive)]">
+            <dd className="num font-display mt-1 text-[22px] font-bold text-[#156d49]">
               {summary.populatedStatic}
-              <span className="text-[13px] font-normal text-[var(--muted)]">
+              <span className="text-[13px] font-normal text-[#505660]">
                 {" "}
                 / {summary.totalStatic}
               </span>
             </dd>
           </div>
-          <div className="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5">
-            <dt className="text-[12px] text-[var(--muted)]">
+          <div className="rounded-[12px] bg-white px-4 py-3">
+            <dt className="text-[12px] font-medium text-[#505660]">
               Required for {batteryCategory} (static)
             </dt>
-            <dd className="num mt-0.5 text-[20px] font-bold text-[var(--ink)]">
+            <dd className="num font-display mt-1 text-[22px] font-bold text-[#0f1114]">
               {summary.populatedRequiredStatic}
-              <span className="text-[13px] font-normal text-[var(--muted)]">
+              <span className="text-[13px] font-normal text-[#505660]">
                 {" "}
                 / {summary.totalRequiredStatic}
               </span>
             </dd>
           </div>
-          <div className="rounded-[10px] border border-red-300 bg-red-50 px-3 py-2.5">
-            <dt className="text-[12px] text-red-900">
+          <div className="rounded-[12px] border border-red-200 bg-red-50 px-4 py-3">
+            <dt className="text-[12px] font-medium text-red-900">
               Missing required ({batteryCategory})
             </dt>
-            <dd className="num mt-0.5 text-[20px] font-bold text-red-800">
+            <dd className="num font-display mt-1 text-[22px] font-bold text-red-800">
               {summary.missingRequiredStatic}
             </dd>
           </div>
-          <div className="rounded-[10px] border border-red-300 bg-red-50 px-3 py-2.5">
-            <dt className="text-[12px] text-red-900">Uncertain</dt>
-            <dd className="num mt-0.5 text-[20px] font-bold text-red-800">
+          <div className="rounded-[12px] border border-red-200 bg-red-50 px-4 py-3">
+            <dt className="text-[12px] font-medium text-red-900">Uncertain</dt>
+            <dd className="num font-display mt-1 text-[22px] font-bold text-red-800">
               {summary.uncertainStatic}
             </dd>
           </div>
         </dl>
 
-        <p className="mt-3 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[12px] text-[var(--muted)]">
-          <strong className="font-semibold text-[var(--ink)]">
+        {/* Quick Group Jump Bar */}
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span className="text-[12px] font-medium text-[#505660]">
+            Jump to group:
+          </span>
+          {GROUP_ORDER.map((gid) => (
+            <a
+              key={gid}
+              href={`#group-${gid}`}
+              className="rounded-md bg-white px-2.5 py-1 text-[12px] font-medium text-[#0f1114] hover:bg-[#e8f3f6] hover:text-[#0b3c49]"
+            >
+              {FIELD_GROUP_META[gid].title}
+            </a>
+          ))}
+          <a
+            href="#group-bms"
+            className="rounded-md bg-white px-2.5 py-1 text-[12px] font-medium text-[#0f1114] hover:bg-[#e8f3f6] hover:text-[#0b3c49]"
+          >
+            Dynamic BMS (51–71)
+          </a>
+        </div>
+
+        <p className="mt-3 rounded-[10px] bg-white px-3.5 py-2.5 text-[12px] leading-relaxed text-[#505660]">
+          <strong className="font-semibold text-[#0f1114]">
             3-Tier Access Notice:
           </strong>{" "}
           {RESTRICTED_TIER_NOTICE}
@@ -405,11 +427,11 @@ export function PassportFieldEditor({
       </section>
 
       {/* Product title & model code */}
-      <section className="surface-card-subtle grid grid-cols-1 gap-4 rounded-[12px] p-4 sm:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 rounded-[18px] bg-[#f4f4f2] p-5 sm:grid-cols-2 sm:p-6">
         <div>
           <label
             htmlFor="editor-product-name"
-            className="block text-[13px] font-semibold text-[var(--ink)]"
+            className="block text-[13px] font-semibold text-[#0f1114]"
           >
             Product title (workspace label)
           </label>
@@ -419,13 +441,13 @@ export function PassportFieldEditor({
             required
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)]"
+            className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dad9d3] bg-white px-3.5 py-2.5 text-[14px] text-[#0f1114]"
           />
         </div>
         <div>
           <label
             htmlFor="editor-model-code"
-            className="block text-[13px] font-semibold text-[var(--ink)]"
+            className="block text-[13px] font-semibold text-[#0f1114]"
           >
             Model SKU / code
           </label>
@@ -434,7 +456,7 @@ export function PassportFieldEditor({
             type="text"
             value={modelCode}
             onChange={(e) => setModelCode(e.target.value)}
-            className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 font-mono text-[13.5px] text-[var(--ink)]"
+            className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dad9d3] bg-white px-3.5 py-2.5 text-[13.5px] text-[#0f1114]"
           />
         </div>
       </section>
@@ -471,26 +493,27 @@ export function PassportFieldEditor({
         return (
           <details
             key={groupId}
+            id={`group-${groupId}`}
             open
-            className="surface-elevated group overflow-hidden rounded-[14px]"
+            className="group overflow-hidden rounded-[18px] bg-[#f4f4f2]"
           >
-            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--well-soft)] px-4 py-3.5 transition-colors hover:bg-[var(--well)]/60 sm:px-5">
+            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 bg-[#eae7e0]/65 px-5 py-4 transition-colors hover:bg-[#eae7e0]">
               <div>
-                <h3 className="text-[16px] font-bold text-[var(--ink)]">
+                <h3 className="font-display text-[16px] font-semibold text-[#0f1114]">
                   {groupMeta.title}
                 </h3>
-                <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">
+                <p className="mt-0.5 text-[12.5px] text-[#505660]">
                   {groupMeta.subtitle}
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-[var(--well)] sm:block">
+                <div className="hidden h-1.5 w-24 overflow-hidden rounded-full bg-[#dad9d3] sm:block">
                   <div
                     style={{ transform: `scaleX(${groupRatio})` }}
-                    className="progress-fill-smooth h-full w-full rounded-full bg-[var(--positive)]"
+                    className="progress-fill-smooth h-full w-full rounded-full bg-[#156d49]"
                   />
                 </div>
-                <span className="num rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 py-1 font-mono text-[12px] font-bold text-[var(--ink)]">
+                <span className="num rounded-md bg-white px-2.5 py-1 text-[12px] font-semibold text-[#0f1114]">
                   {populatedInGroup} / {staticGroupFields.length} populated
                 </span>
                 <AccordionChevron />
@@ -500,133 +523,134 @@ export function PassportFieldEditor({
             <div className="accordion-content-grid">
               <div className="accordion-content-inner">
                 <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
-              {sortedFields.map((field) => {
-                const status = getFieldVisualStatus(field);
-                const isReqForCat = isFieldRequiredForCategory(
-                  field,
-                  batteryCategory,
-                );
-                const isFlagged =
-                  (status === "missing" && isReqForCat) ||
-                  status === "uncertain";
-                const extractionMeta = extractionFields?.[field.key];
-                const inputId = `field-${field.key}`;
-                const isRestrictedTier = field.tier !== "public";
+                  {sortedFields.map((field) => {
+                    const status = getFieldVisualStatus(field);
+                    const isReqForCat = isFieldRequiredForCategory(
+                      field,
+                      batteryCategory,
+                    );
+                    const isFlagged =
+                      (status === "missing" && isReqForCat) ||
+                      status === "uncertain";
+                    const extractionMeta = extractionFields?.[field.key];
+                    const inputId = `field-${field.key}`;
+                    const isRestrictedTier = field.tier !== "public";
 
-                return (
-                  <div
-                    key={field.key}
-                    className={`rounded-[10px] border p-3.5 transition-colors duration-150 ${
-                      isFlagged
-                        ? "border-red-500 bg-red-50/60"
-                        : "border-[var(--border)] bg-[var(--surface)]"
-                    } ${field.type === "textarea" ? "md:col-span-2" : ""}`}
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div>
-                        <label
-                          htmlFor={inputId}
-                          className="text-[13.5px] font-bold text-[var(--ink)]"
-                        >
-                          {field.pointNumber ? `#${field.pointNumber} · ` : ""}
-                          {field.label}
-                          {field.unit && (
-                            <span className="ml-1 font-mono text-[12px] font-normal text-[var(--muted)]">
-                              ({field.unit})
+                    return (
+                      <div
+                        key={field.key}
+                        className={`rounded-[12px] border p-4 transition-colors duration-150 ${
+                          isFlagged
+                            ? "border-red-400 bg-red-50/75"
+                            : "border-transparent bg-white"
+                        } ${field.type === "textarea" ? "md:col-span-2" : ""}`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div>
+                            <label
+                              htmlFor={inputId}
+                              className="text-[13.5px] font-semibold text-[#0f1114]"
+                            >
+                              {field.pointNumber ? `#${field.pointNumber} · ` : ""}
+                              {field.label}
+                              {field.unit && (
+                                <span className="ml-1 text-[12px] font-normal text-[#505660]">
+                                  ({field.unit})
+                                </span>
+                              )}
+                            </label>
+                            <p className="mt-0.5 text-[11.5px] text-[#505660]">
+                              <code>{field.annexRef}</code>
+                              {field.enforcementNote
+                                ? ` · ${field.enforcementNote}`
+                                : ""}
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium">
+                            {isReqForCat ? (
+                              <span className="rounded bg-[#145b6e] px-2 py-0.5 font-semibold text-white">
+                                Required for {batteryCategory}
+                              </span>
+                            ) : (
+                              <span className="rounded bg-[#f4f4f2] px-2 py-0.5 text-[#505660]">
+                                Optional / Postponed for {batteryCategory}
+                              </span>
+                            )}
+                            <TierBadge tier={field.tier} />
+                            <span
+                              className={`rounded px-2 py-0.5 font-semibold ${
+                                status === "ok"
+                                  ? "bg-[#edf8f2] text-[#156d49]"
+                                  : isFlagged
+                                    ? "bg-red-100 text-red-900"
+                                    : "bg-[#f4f4f2] text-[#505660]"
+                              }`}
+                            >
+                              {status === "ok"
+                                ? "Found"
+                                : status === "uncertain"
+                                  ? "Uncertain"
+                                  : "Missing"}
                             </span>
-                          )}
-                        </label>
-                        <p className="mt-0.5 font-mono text-[11px] text-[var(--muted)]">
-                          {field.annexRef}
-                          {field.enforcementNote
-                            ? ` · ${field.enforcementNote}`
-                            : ""}
-                        </p>
-                      </div>
+                          </div>
+                        </div>
 
-                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium">
-                        {isReqForCat ? (
-                          <span className="rounded bg-[#145b6e] px-2 py-0.5 font-semibold text-white">
-                            Required for {batteryCategory}
-                          </span>
+                        {field.type === "textarea" ? (
+                          <textarea
+                            id={inputId}
+                            rows={2}
+                            maxLength={field.maxChars ?? 4000}
+                            value={values[field.key] ?? ""}
+                            onChange={(e) =>
+                              setValues((prev) => ({
+                                ...prev,
+                                [field.key]: e.target.value,
+                              }))
+                            }
+                            placeholder={field.placeholder ?? ""}
+                            className={`input-apple mt-2.5 w-full rounded-[8px] border bg-[#f9f9f7] px-3 py-2 text-[14px] text-[#0f1114] placeholder:text-[#505660]/70 focus:bg-white ${
+                              isFlagged
+                                ? "border-red-400 focus:border-red-600"
+                                : "border-[#dad9d3]"
+                            }`}
+                          />
                         ) : (
-                          <span className="rounded bg-[var(--well)] px-2 py-0.5 text-[var(--muted)]">
-                            Optional / Postponed for {batteryCategory}
-                          </span>
+                          <input
+                            id={inputId}
+                            type="text"
+                            inputMode={field.type === "number" ? "decimal" : "text"}
+                            value={values[field.key] ?? ""}
+                            onChange={(e) =>
+                              setValues((prev) => ({
+                                ...prev,
+                                [field.key]: e.target.value,
+                              }))
+                            }
+                            placeholder={field.placeholder ?? ""}
+                            className={`input-apple mt-2.5 w-full rounded-[8px] border bg-[#f9f9f7] px-3 py-2 text-[14px] text-[#0f1114] placeholder:text-[#505660]/70 focus:bg-white ${
+                              isFlagged
+                                ? "border-red-400 focus:border-red-600"
+                                : "border-[#dad9d3]"
+                            }`}
+                          />
                         )}
-                        <TierBadge tier={field.tier} />
-                        <span
-                          className={`rounded px-1.5 py-0.5 font-semibold ${
-                            status === "ok"
-                              ? "border border-[var(--positive-border)] bg-[var(--positive-bg)] text-[var(--positive)]"
-                              : isFlagged
-                                ? "border border-red-400 bg-red-100 text-red-900"
-                                : "border border-[var(--border)] bg-[var(--well-soft)] text-[var(--muted)]"
-                          }`}
-                        >
-                          {status === "ok"
-                            ? "Found"
-                            : status === "uncertain"
-                              ? "Uncertain"
-                              : "Missing"}
-                        </span>
+
+                        {isRestrictedTier && (
+                          <p className="mt-1.5 text-[11.5px] font-medium text-[#0b3c49]">
+                            {RESTRICTED_TIER_NOTICE}
+                          </p>
+                        )}
+
+                        {extractionMeta?.sourceSnippet && (
+                          <p className="mt-1 truncate text-[11.5px] text-[#505660]">
+                            PDF snippet:{" "}
+                            <code>&ldquo;{extractionMeta.sourceSnippet}&rdquo;</code>
+                          </p>
+                        )}
                       </div>
-                    </div>
-
-                    {field.type === "textarea" ? (
-                      <textarea
-                        id={inputId}
-                        rows={2}
-                        maxLength={field.maxChars ?? 4000}
-                        value={values[field.key] ?? ""}
-                        onChange={(e) =>
-                          setValues((prev) => ({
-                            ...prev,
-                            [field.key]: e.target.value,
-                          }))
-                        }
-                        placeholder={field.placeholder ?? ""}
-                        className={`input-apple mt-2 w-full rounded-[6px] border bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)] ${
-                          isFlagged
-                            ? "border-red-400 focus:border-red-600"
-                            : "border-[var(--border-strong)]"
-                        }`}
-                      />
-                    ) : (
-                      <input
-                        id={inputId}
-                        type="text"
-                        inputMode={field.type === "number" ? "decimal" : "text"}
-                        value={values[field.key] ?? ""}
-                        onChange={(e) =>
-                          setValues((prev) => ({
-                            ...prev,
-                            [field.key]: e.target.value,
-                          }))
-                        }
-                        placeholder={field.placeholder ?? ""}
-                        className={`input-apple mt-2 w-full rounded-[6px] border bg-[var(--surface)] px-3 py-2 text-[14px] text-[var(--ink)] placeholder:text-[var(--muted)] ${
-                          isFlagged
-                            ? "border-red-400 focus:border-red-600"
-                            : "border-[var(--border-strong)]"
-                        }`}
-                      />
-                    )}
-
-                    {isRestrictedTier && (
-                      <p className="mt-1.5 text-[11.5px] font-medium text-[var(--accent-ink)]">
-                        {RESTRICTED_TIER_NOTICE}
-                      </p>
-                    )}
-
-                    {extractionMeta?.sourceSnippet && (
-                      <p className="mt-1 truncate font-mono text-[11.5px] text-[var(--muted)]">
-                        PDF snippet: &ldquo;{extractionMeta.sourceSnippet}&rdquo;
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -635,19 +659,22 @@ export function PassportFieldEditor({
       })}
 
       {/* Collapsible Dynamic BMS Telemetry Section (Points 51–71) */}
-      <details className="surface-elevated group overflow-hidden rounded-[14px]">
-        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 border-b border-[var(--rule)] bg-[var(--well-soft)] px-4 py-3.5 transition-colors hover:bg-[var(--well)]/60 sm:px-5">
+      <details
+        id="group-bms"
+        className="group overflow-hidden rounded-[18px] bg-[#f4f4f2]"
+      >
+        <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 bg-[#eae7e0]/65 px-5 py-4 transition-colors hover:bg-[#eae7e0]">
           <div>
-            <h3 className="text-[16px] font-bold text-[var(--ink)]">
+            <h3 className="font-display text-[16px] font-semibold text-[#0f1114]">
               Dynamic BMS &amp; In-Service Telemetry (Points 51–71)
             </h3>
-            <p className="mt-0.5 text-[12.5px] text-[var(--muted)]">
+            <p className="mt-0.5 text-[12.5px] text-[#505660]">
               {DYNAMIC_BMS_NOTICE} · Never counted as blocking for PDF extraction
               or initial publication
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="num rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] px-2.5 py-1 font-mono text-[12px] font-bold text-[var(--muted)]">
+            <span className="num rounded-md bg-white px-2.5 py-1 text-[12px] font-semibold text-[#505660]">
               {
                 DYNAMIC_BMS_FIELDS.filter((f) =>
                   Boolean((values[f.key] ?? "").trim()),
@@ -662,58 +689,58 @@ export function PassportFieldEditor({
         <div className="accordion-content-grid">
           <div className="accordion-content-inner">
             <div className="accordion-body-enter grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2">
-          {DYNAMIC_BMS_FIELDS.map((field) => {
-            const inputId = `field-${field.key}`;
-            return (
-              <div
-                key={field.key}
-                className="rounded-[10px] border border-[var(--border)] bg-[var(--well-soft)]/50 p-3.5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <label
-                      htmlFor={inputId}
-                      className="text-[13.5px] font-bold text-[var(--ink)]"
-                    >
-                      #{field.pointNumber} · {field.label}
-                      {field.unit && (
-                        <span className="ml-1 font-mono text-[12px] font-normal text-[var(--muted)]">
-                          ({field.unit})
+              {DYNAMIC_BMS_FIELDS.map((field) => {
+                const inputId = `field-${field.key}`;
+                return (
+                  <div
+                    key={field.key}
+                    className="rounded-[12px] bg-white p-4"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div>
+                        <label
+                          htmlFor={inputId}
+                          className="text-[13.5px] font-semibold text-[#0f1114]"
+                        >
+                          #{field.pointNumber} · {field.label}
+                          {field.unit && (
+                            <span className="ml-1 text-[12px] font-normal text-[#505660]">
+                              ({field.unit})
+                            </span>
+                          )}
+                        </label>
+                        <p className="mt-0.5 text-[11.5px] text-[#505660]">
+                          <code>{field.annexRef}</code>
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                        <span className="rounded bg-[#f4f4f2] px-2 py-0.5 font-semibold text-[#505660]">
+                          {DYNAMIC_BMS_NOTICE}
                         </span>
-                      )}
-                    </label>
-                    <p className="mt-0.5 font-mono text-[11px] text-[var(--muted)]">
-                      {field.annexRef}
+                        <TierBadge tier={field.tier} />
+                      </div>
+                    </div>
+
+                    <input
+                      id={inputId}
+                      type="text"
+                      value={values[field.key] ?? ""}
+                      onChange={(e) =>
+                        setValues((prev) => ({
+                          ...prev,
+                          [field.key]: e.target.value,
+                        }))
+                      }
+                      placeholder={DYNAMIC_BMS_NOTICE}
+                      className="input-apple mt-2.5 w-full rounded-[8px] border border-[#dad9d3] bg-[#f9f9f7] px-3 py-2 text-[13.5px] text-[#0f1114] placeholder:text-[#505660]/70 focus:bg-white"
+                    />
+                    <p className="mt-1.5 text-[11.5px] text-[#505660]">
+                      {RESTRICTED_TIER_NOTICE}
                     </p>
                   </div>
-
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                    <span className="rounded border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-0.5 font-semibold text-[var(--muted)]">
-                      {DYNAMIC_BMS_NOTICE}
-                    </span>
-                    <TierBadge tier={field.tier} />
-                  </div>
-                </div>
-
-                <input
-                  id={inputId}
-                  type="text"
-                  value={values[field.key] ?? ""}
-                  onChange={(e) =>
-                    setValues((prev) => ({
-                      ...prev,
-                      [field.key]: e.target.value,
-                    }))
-                  }
-                  placeholder={DYNAMIC_BMS_NOTICE}
-                  className="input-apple mt-2 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[13.5px] text-[var(--ink)] placeholder:text-[var(--muted)]"
-                />
-                <p className="mt-1.5 text-[11.5px] text-[var(--muted)]">
-                  {RESTRICTED_TIER_NOTICE}
-                </p>
-              </div>
-            );
-          })}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -722,7 +749,7 @@ export function PassportFieldEditor({
       {saveError && (
         <div
           role="alert"
-          className="tab-panel-enter rounded-[8px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
+          className="tab-panel-enter rounded-[10px] border border-red-300 bg-red-50 px-4 py-3 text-[13.5px] text-red-900"
         >
           {saveError}
         </div>
@@ -731,7 +758,7 @@ export function PassportFieldEditor({
       {saveMessage && (
         <div
           role="status"
-          className="tab-panel-enter rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-4 py-3 text-[13.5px] text-[var(--positive)]"
+          className="tab-panel-enter rounded-[10px] border border-[#9fd4b9] bg-[#edf8f2] px-4 py-3 text-[13.5px] font-medium text-[#156d49]"
         >
           {saveMessage}
         </div>

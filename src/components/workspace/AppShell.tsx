@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BrandMark } from "@/components/Icons";
+import { ArrowRightIcon, BrandMark } from "@/components/Icons";
 import { siteConfig } from "@/config/site";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
@@ -15,10 +16,10 @@ interface AppShellProps {
 }
 
 const NAV_ITEMS = [
-  { href: "/app", label: "Passports" },
-  { href: "/app/new", label: "New passport" },
-  { href: "/app/billing", label: "Plan & billing" },
-  { href: "/app/privacy", label: "Privacy & GDPR" },
+  { href: "/app", label: "Passports", tag: "Ledger" },
+  { href: "/app/new", label: "New passport", tag: "PDF / Blank" },
+  { href: "/app/billing", label: "Plan & billing", tag: "Pilot" },
+  { href: "/app/privacy", label: "Privacy & GDPR", tag: "JSON" },
 ] as const;
 
 export function AppShell({
@@ -46,24 +47,46 @@ export function AppShell({
     }
   }
 
+  const currentSectionLabel =
+    pathname === "/app"
+      ? "Passports ledger"
+      : pathname.startsWith("/app/new")
+        ? "New battery passport"
+        : pathname.startsWith("/app/passports")
+          ? "Review & publish"
+          : pathname.startsWith("/app/billing")
+            ? "Plan & billing"
+            : pathname.startsWith("/app/privacy")
+              ? "Privacy & GDPR"
+              : "Workspace";
+
+  const avatarInitial = (userEmail?.trim()?.[0] || orgName?.[0] || "B").toUpperCase();
+
   return (
     <div className="min-h-svh bg-[#e8e7e3] text-[#0f1114] md:flex">
-      {/* Desktop Tinted Frame L-Rail (framed-sheet) */}
-      <aside className="hidden w-[240px] shrink-0 flex-col justify-between p-4 text-[#0f1114] md:flex">
-        <div>
-          <Link href="/" className="flex items-center gap-2.5 px-2 py-1.5">
+      {/* Desktop L-Frame Left Rail (framed-sheet architecture) */}
+      <aside className="hidden w-[256px] shrink-0 flex-col justify-between p-4 text-[#0f1114] md:flex">
+        <div className="space-y-6">
+          <Link
+            href="/"
+            className="pressable flex items-center gap-3 rounded-[12px] px-2.5 py-2 transition-colors hover:bg-[#dedcd6]"
+          >
             <BrandMark className="h-8 w-8 shrink-0" />
             <div className="min-w-0">
               <span className="font-display block truncate text-[15px] font-semibold tracking-tight text-[#0f1114]">
                 {siteConfig.siteName}
               </span>
-              <span className="block truncate text-[13px] text-[#52565e]">
-                {orgName}
+              <span className="flex items-center gap-1.5 truncate text-[13px] font-medium text-[#4b4f57]">
+                <span
+                  aria-hidden="true"
+                  className="status-pulse h-2 w-2 shrink-0 rounded-full bg-[#156d49]"
+                />
+                <span className="truncate">{orgName}</span>
               </span>
             </div>
           </Link>
 
-          <nav aria-label="Workspace navigation" className="mt-7 space-y-1">
+          <nav aria-label="Workspace navigation" className="space-y-1">
             {NAV_ITEMS.map((item) => {
               const active =
                 item.href === "/app"
@@ -73,42 +96,89 @@ export function AppShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`pressable flex min-h-[42px] items-center rounded-[10px] px-3 py-2 text-[14px] ${
+                  className={`pressable relative flex min-h-[44px] items-center justify-between rounded-[11px] px-3.5 py-2 text-[14px] transition-colors ${
                     active
                       ? "bg-white font-semibold text-[#145b6e]"
-                      : "font-medium text-[#26292e] hover:bg-[#dedad1] hover:text-[#0f1114]"
+                      : "font-medium text-[#22252a] hover:bg-[#dedcd6] hover:text-[#0f1114]"
                   }`}
                 >
-                  {item.label}
+                  <span className="flex items-center gap-2.5">
+                    {active && (
+                      <span
+                        aria-hidden="true"
+                        className="h-4 w-1 rounded-full bg-[#145b6e]"
+                      />
+                    )}
+                    <span>{item.label}</span>
+                  </span>
+                  <span
+                    className={`rounded-md px-2 py-0.5 text-[12px] font-medium ${
+                      active
+                        ? "bg-[#e6f2f5] text-[#0b3c49]"
+                        : "text-[#4b4f57]"
+                    }`}
+                  >
+                    {item.tag}
+                  </span>
                 </Link>
               );
             })}
+          </nav>
+
+          {/* Hardware Specimen Quick Card */}
+          <div className="overflow-hidden rounded-[14px] bg-[#101214] p-3.5 text-[#f4f3ef]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[9px] bg-[#e8e7e3]">
+              <Image
+                src="/images/battery-pack-studio.jpg"
+                alt="DB-36V reference battery pack"
+                fill
+                sizes="220px"
+                className="object-cover"
+              />
+            </div>
+            <p className="font-display mt-3 text-[14px] font-semibold text-white">
+              Reference DB-36V Pack
+            </p>
+            <p className="mt-0.5 text-[12.5px] text-[#c4c8d0]">
+              4-tab public QR specimen
+            </p>
             <Link
               href="/demo"
-              className="pressable flex min-h-[42px] items-center rounded-[10px] px-3 py-2 text-[14px] font-medium text-[#52565e] hover:bg-[#dedad1] hover:text-[#0f1114]"
+              className="pressable mt-2.5 inline-flex w-full items-center justify-between rounded-[8px] bg-[#1d2229] px-3 py-2 text-[13px] font-semibold text-[#3eb8cf] transition-colors hover:bg-[#282e37]"
             >
-              Sample passport (/demo)
+              <span>Inspect live /demo</span>
+              <ArrowRightIcon className="btn-arrow h-3.5 w-3.5" />
             </Link>
-          </nav>
+          </div>
         </div>
 
-        <div className="space-y-2 pt-3.5 text-[13px]">
+        <div className="space-y-3 pt-4 text-[13px]">
           {billingLabel && (
-            <p className="px-2 text-[13px] font-semibold text-[#145b6e]">
+            <div className="rounded-[10px] bg-[#dedcd6] px-3 py-2 font-semibold text-[#0b3c49]">
               {billingLabel}
-            </p>
+            </div>
           )}
+
           {userEmail && (
-            <p className="truncate px-2 text-[13px] text-[#52565e]">
-              {userEmail}
-            </p>
+            <div className="flex items-center gap-2.5 px-2">
+              <span
+                aria-hidden="true"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#145b6e] text-[12px] font-bold text-white"
+              >
+                {avatarInitial}
+              </span>
+              <span className="truncate text-[13px] font-medium text-[#22252a]">
+                {userEmail}
+              </span>
+            </div>
           )}
+
           {userEmail && (
             <button
               type="button"
               disabled={signingOut}
               onClick={handleSignOut}
-              className="pressable flex min-h-[38px] w-full items-center rounded-[8px] px-2 text-left text-[13.5px] font-medium text-[#26292e] hover:bg-[#dedad1] cursor-pointer"
+              className="pressable flex min-h-[38px] w-full cursor-pointer items-center rounded-[9px] px-3 text-left text-[13.5px] font-medium text-[#4b4f57] transition-colors hover:bg-[#dedcd6] hover:text-[#0f1114]"
             >
               {signingOut ? "Signing out..." : "Sign out"}
             </button>
@@ -116,21 +186,21 @@ export function AppShell({
         </div>
       </aside>
 
-      {/* Mobile compact 52px chrome top bar */}
-      <header className="bg-[#eae7e0] text-[#0f1114] md:hidden">
-        <div className="flex h-13 items-center justify-between gap-2 px-3">
+      {/* Mobile Compact Top Bar */}
+      <header className="bg-[#e8e7e3] text-[#0f1114] md:hidden">
+        <div className="flex h-14 items-center justify-between gap-2 px-4">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle workspace menu"
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="pressable inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-white text-[16px] font-bold text-[#0f1114] cursor-pointer"
+              className="pressable inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-[9px] bg-white text-[16px] font-bold text-[#0f1114]"
             >
               {mobileMenuOpen ? "×" : "≡"}
             </button>
             <div className="min-w-0">
-              <span className="block truncate text-[14px] font-semibold text-[#0f1114]">
+              <span className="font-display block truncate text-[14.5px] font-semibold text-[#0f1114]">
                 {orgName}
               </span>
             </div>
@@ -138,7 +208,7 @@ export function AppShell({
 
           <Link
             href="/app/new"
-            className="pressable inline-flex min-h-[38px] shrink-0 items-center rounded-[8px] bg-[#145b6e] px-3.5 text-[13px] font-semibold text-white"
+            className="pressable inline-flex min-h-[38px] shrink-0 items-center rounded-[9px] bg-[#145b6e] px-3.5 text-[13.5px] font-semibold text-white"
           >
             New passport
           </Link>
@@ -147,22 +217,23 @@ export function AppShell({
         {mobileMenuOpen && (
           <nav
             aria-label="Mobile workspace links"
-            className="tab-panel-enter space-y-1 bg-[#eae7e0] px-3 py-2.5 text-[14px]"
+            className="tab-panel-enter space-y-1 bg-[#e8e7e3] px-4 pb-3 pt-1 text-[14px]"
           >
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex min-h-[42px] items-center rounded-[8px] px-2.5 font-semibold text-[#0f1114] hover:bg-white"
+                className="flex min-h-[42px] items-center justify-between rounded-[9px] px-3 font-semibold text-[#0f1114] hover:bg-white"
               >
-                {item.label}
+                <span>{item.label}</span>
+                <span className="text-[12px] text-[#4b4f57]">{item.tag}</span>
               </Link>
             ))}
             <Link
               href="/demo"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex min-h-[42px] items-center rounded-[8px] px-2.5 text-[#52565e] hover:bg-white hover:text-[#0f1114]"
+              className="flex min-h-[42px] items-center rounded-[9px] px-3 text-[#4b4f57] hover:bg-white hover:text-[#0f1114]"
             >
               Concept demo (/demo)
             </Link>
@@ -170,7 +241,7 @@ export function AppShell({
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="flex min-h-[42px] w-full items-center rounded-[8px] px-2.5 text-left text-[#52565e] hover:bg-white hover:text-[#0f1114] cursor-pointer"
+                className="flex min-h-[42px] w-full cursor-pointer items-center rounded-[9px] px-3 text-left text-[#4b4f57] hover:bg-white hover:text-[#0f1114]"
               >
                 Sign out ({userEmail})
               </button>
@@ -179,9 +250,31 @@ export function AppShell({
         )}
       </header>
 
-      {/* Main Crisp White Framed Workspace Sheet */}
-      <div className="min-w-0 flex-1 md:p-2 md:pl-0">
-        <main className="framed-workspace-sheet min-h-[calc(100svh-3.25rem)] px-4 py-6 text-[#0f1114] sm:px-6 md:min-h-[calc(100svh-1rem)] md:p-7">
+      {/* Main Framed Workspace Column (48px Top Bar + Crisp White Inset Sheet) */}
+      <div className="flex min-w-0 flex-1 flex-col md:p-2.5 md:pl-0">
+        {/* Desktop 48px Top Command Bar on the Tinted Frame */}
+        <div className="hidden h-[46px] items-center justify-between px-4 text-[13.5px] md:flex">
+          <div className="flex items-center gap-2 text-[#4b4f57]">
+            <span className="font-medium text-[#0f1114]">{orgName}</span>
+            <span>/</span>
+            <span>{currentSectionLabel}</span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-[13px] text-[#4b4f57]">
+              EU Regulation 2023/1542 · Annex XIII (71 points)
+            </span>
+            <Link
+              href="/app/new"
+              className="pressable inline-flex items-center gap-1.5 rounded-[8px] bg-[#145b6e] px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
+            >
+              <span>+ New passport</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Crisp White Framed Workspace Sheet */}
+        <main className="framed-workspace-sheet min-h-[calc(100svh-3.5rem)] flex-1 px-4 py-6 text-[#0f1114] sm:px-7 md:min-h-[calc(100svh-4.25rem)] md:p-8">
           {children}
         </main>
       </div>

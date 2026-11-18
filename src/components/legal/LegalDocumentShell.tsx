@@ -83,20 +83,20 @@ export function LegalDocumentShell({
           </p>
         </div>
 
-        <article className="surface-elevated rounded-[14px] p-6 sm:p-8">
-          <header className="border-b border-[var(--rule)] pb-5">
-            <h1 className="text-display-section font-bold text-[var(--ink)]">
+        <article className="rounded-[18px] bg-white p-6 sm:p-8">
+          <header className="border-b border-[#e4e3dd] pb-5">
+            <h1 className="text-display-section font-bold text-[#0f1114]">
               {title}
             </h1>
-            <p className="mt-2 max-w-[66ch] text-[15px] leading-relaxed text-[var(--muted)]">
+            <p className="mt-2 max-w-[66ch] text-[15px] leading-relaxed text-[#505660]">
               {subtitle}
             </p>
-            <p className="mt-2 font-mono text-[12.5px] font-medium text-[var(--muted)]">
+            <p className="mt-2 text-[12.5px] font-medium text-[#505660]">
               {lastUpdatedLabel}
             </p>
           </header>
 
-          <div className="mt-6 max-w-[70ch] space-y-6 text-[15px] leading-[1.68] text-[var(--ink)]">
+          <div className="mt-6 max-w-[70ch] space-y-6 text-[15px] leading-[1.68] text-[#0f1114]">
             {children}
           </div>
         </article>

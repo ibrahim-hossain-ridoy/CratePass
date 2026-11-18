@@ -182,35 +182,48 @@ export function PassportReviewWorkspace({
   const isPublished = status === "published";
 
   return (
-    <div className="space-y-6">
+    <div data-ui className="space-y-6">
       {/* Breadcrumb & header */}
-      <div className="flex flex-col gap-3 border-b border-[var(--rule)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[12.5px] text-[var(--muted)]">
-            <Link href="/app" className="hover:text-[var(--ink)] hover:underline">
+          <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-[#505660]">
+            <Link
+              href="/app"
+              className="font-medium text-[#505660] hover:text-[#0f1114] hover:underline"
+            >
               Passports
             </Link>
-            <span>/</span>
-            <code className="font-mono text-[var(--ink)]">{slug}</code>
+            <span className="text-[#c8c7c1]">/</span>
+            <code className="rounded bg-[#f4f4f2] px-2 py-0.5 text-[12px] font-medium text-[#0f1114]">
+              {slug}
+            </code>
+            <span className="rounded bg-[#e8f3f6] px-2 py-0.5 text-[11.5px] font-semibold text-[#0b3c49]">
+              {batteryCategory}
+            </span>
           </div>
-          <h1 className="text-title-page mt-1 font-bold text-[var(--ink)]">
+          <h1 className="font-display mt-2 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
             {productName}
           </h1>
           {modelCode && (
-            <p className="mt-0.5 font-mono text-[12.5px] text-[var(--muted)]">
-              SKU: {modelCode}
+            <p className="mt-1 text-[13px] font-medium text-[#505660]">
+              SKU: <code className="text-[#0f1114]">{modelCode}</code>
             </p>
           )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           <span
-            className={`inline-flex rounded px-2.5 py-1 text-[12.5px] font-semibold ${
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-semibold ${
               isPublished
-                ? "border border-[var(--positive-border)] bg-[var(--positive-bg)] text-[var(--positive)]"
-                : "border border-[var(--notice-border)] bg-[var(--notice-bg)] text-[var(--notice-ink)]"
+                ? "bg-[#edf8f2] text-[#156d49]"
+                : "bg-[#fdf6ec] text-[#7c380b]"
             }`}
           >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isPublished ? "bg-[#156d49]" : "bg-[#b45309]"
+              }`}
+            />
             {isPublished
               ? `Published${latestVersionNumber ? ` v${latestVersionNumber}` : ""}`
               : "Draft"}
@@ -220,41 +233,52 @@ export function PassportReviewWorkspace({
             <Link
               href={`/p/${slug}`}
               target="_blank"
-              className="pressable inline-flex min-h-[40px] items-center rounded-[8px] border border-[var(--positive)] bg-[var(--surface)] px-3.5 text-[13.5px] font-semibold text-[var(--positive)] hover:bg-[var(--positive-bg)]"
+              className="pressable group inline-flex min-h-[40px] items-center gap-1.5 rounded-[10px] border border-[#9fd4b9] bg-[#edf8f2] px-3.5 text-[13.5px] font-semibold text-[#156d49] hover:bg-[#dcf2e6]"
             >
-              Open /p/{slug}
+              <span>Open /p/{slug}</span>
+              <span aria-hidden="true" className="btn-arrow">
+                ↗
+              </span>
             </Link>
           )}
         </div>
       </div>
 
       {/* Publish & QR controls grid */}
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <section className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         {/* Publish & declaration control */}
-        <div className="surface-elevated rounded-[14px] p-4 sm:p-5 lg:col-span-7">
-          <h2 className="text-[16px] font-bold text-[var(--ink)]">
-            Review declaration &amp; publish controls
-          </h2>
-          <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--muted)]">
-            Save any field adjustments below, confirm responsibility for accuracy,
-            and publish an immutable public snapshot. Restricted fields stay omitted from{" "}
-            <code className="font-mono text-[var(--ink)]">/p/{slug}</code>.
-          </p>
+        <div className="rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6 lg:col-span-7">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
+                Review declaration &amp; publish controls
+              </h2>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-[#505660]">
+                Save any field adjustments below, confirm responsibility for
+                accuracy, and publish an immutable public snapshot. Restricted
+                fields stay omitted from{" "}
+                <code className="rounded bg-white px-1.5 py-0.5 text-[12.5px] text-[#0f1114]">
+                  /p/{slug}
+                </code>
+                .
+              </p>
+            </div>
+          </div>
 
           <label
-            className={`mt-4 flex cursor-pointer items-start gap-3 rounded-[10px] border p-3.5 text-[13.5px] text-[var(--ink)] transition-colors duration-150 ${
+            className={`mt-4 flex cursor-pointer items-start gap-3 rounded-[12px] border p-4 text-[13.5px] text-[#0f1114] transition-colors duration-150 ${
               declarationChecked
-                ? "border-[var(--accent)] bg-[var(--accent-soft)]/50"
-                : "border-[var(--border-strong)] bg-[var(--well-soft)]"
+                ? "border-[#145b6e] bg-[#e8f3f6]/75"
+                : "border-[#dad9d3] bg-white hover:border-[#0f1114]/40"
             }`}
           >
             <input
               type="checkbox"
               checked={declarationChecked}
               onChange={(e) => setDeclarationChecked(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent-ink)]"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[#145b6e]"
             />
-            <span className="font-medium leading-snug">
+            <span className="font-medium leading-snug text-[#0f1114]">
               {ACCURACY_DECLARATION_TEXT}
             </span>
           </label>
@@ -262,7 +286,7 @@ export function PassportReviewWorkspace({
           {actionError && (
             <div
               role="alert"
-              className="tab-panel-enter mt-3 rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+              className="tab-panel-enter mt-3.5 rounded-[10px] border border-red-300 bg-red-50 px-4 py-3 text-[13px] text-red-900"
             >
               <p>{actionError}</p>
               {billingRequiredError && (
@@ -279,13 +303,13 @@ export function PassportReviewWorkspace({
           {actionNotice && (
             <div
               role="status"
-              className="tab-panel-enter mt-3 rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
+              className="tab-panel-enter mt-3.5 rounded-[10px] border border-[#9fd4b9] bg-[#edf8f2] px-4 py-3 text-[13px] font-medium text-[#156d49]"
             >
               {actionNotice}
             </div>
           )}
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             {!isPublished ? (
               <button
                 type="button"
@@ -295,9 +319,14 @@ export function PassportReviewWorkspace({
                     versions.length > 0 ? "publish_new_version" : "publish",
                   )
                 }
-                className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[var(--accent)] px-5 py-2 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:opacity-60 cursor-pointer"
+                className="pressable group inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:opacity-60 cursor-pointer"
               >
-                {submittingAction ? "Publishing..." : "Approve & Publish"}
+                <span>
+                  {submittingAction ? "Publishing..." : "Approve & Publish"}
+                </span>
+                <span aria-hidden="true" className="btn-arrow">
+                  →
+                </span>
               </button>
             ) : (
               <>
@@ -305,38 +334,54 @@ export function PassportReviewWorkspace({
                   type="button"
                   disabled={submittingAction !== null}
                   onClick={() => handlePublishAction("publish_new_version")}
-                  className="pressable chamfer-sm inline-flex min-h-[44px] items-center justify-center bg-[var(--accent)] px-4 py-2 text-[14px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:opacity-60 cursor-pointer"
+                  className="pressable group inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:opacity-60 cursor-pointer"
                 >
-                  {submittingAction === "publish_new_version"
-                    ? "Publishing..."
-                    : "Publish new version"}
+                  <span>
+                    {submittingAction === "publish_new_version"
+                      ? "Publishing..."
+                      : "Publish new version"}
+                  </span>
+                  <span aria-hidden="true" className="btn-arrow">
+                    →
+                  </span>
                 </button>
                 <button
                   type="button"
                   disabled={submittingAction !== null}
                   onClick={() => handlePublishAction("unpublish")}
-                  className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-[14px] font-semibold text-[var(--ink)] hover:border-[var(--ink)] disabled:opacity-60 cursor-pointer"
+                  className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[#dad9d3] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0f1114] hover:border-[#0f1114] disabled:opacity-60 cursor-pointer"
                 >
-                  {submittingAction === "unpublish" ? "Unpublishing..." : "Unpublish"}
+                  {submittingAction === "unpublish"
+                    ? "Unpublishing..."
+                    : "Unpublish"}
                 </button>
               </>
             )}
           </div>
 
           {versions.length > 0 && (
-            <div className="mt-5 border-t border-[var(--rule)] pt-4">
-              <h3 className="text-[13px] font-semibold text-[var(--ink)]">
-                Immutable version history
-              </h3>
-              <ul className="mt-2 divide-y divide-[var(--rule)] text-[12.5px]">
+            <div className="mt-5 pt-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[13px] font-semibold text-[#0f1114]">
+                  Immutable version history
+                </h3>
+                <span className="num text-[12px] text-[#505660]">
+                  {versions.length} snapshot{versions.length === 1 ? "" : "s"}
+                </span>
+              </div>
+              <ul className="mt-2.5 space-y-1.5 text-[12.5px]">
                 {versions.slice(0, 5).map((ver, index) => (
                   <li
                     key={ver.id}
-                    className="flex items-center justify-between py-2 text-[var(--muted)]"
+                    className="flex items-center justify-between rounded-[10px] bg-white px-3.5 py-2 text-[#505660]"
                   >
-                    <span className="num font-mono font-semibold text-[var(--ink)]">
+                    <span className="num font-semibold text-[#0f1114]">
                       v{ver.versionNumber}
-                      {index === 0 && isPublished ? " (current live)" : ""}
+                      {index === 0 && isPublished ? (
+                        <span className="ml-2 rounded bg-[#edf8f2] px-1.5 py-0.5 text-[11px] font-semibold text-[#156d49]">
+                          current live
+                        </span>
+                      ) : null}
                     </span>
                     <span className="num">
                       Declared {formatShortUtcDate(ver.declaredAt)}
@@ -349,50 +394,62 @@ export function PassportReviewWorkspace({
         </div>
 
         {/* Downloadable QR card */}
-        <div className="rounded-[18px] bg-[#101214] p-5 text-[#f4f3ef] lg:col-span-5">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <h2 className="font-display text-[17px] font-semibold text-white">
-                QR label download
-              </h2>
-              <p className="mt-0.5 text-[13px] text-[#c4c8d0]">
-                Encodes permanent public route
+        <div className="flex flex-col justify-between rounded-[18px] bg-[#101214] p-5 text-[#f4f3ef] sm:p-6 lg:col-span-5">
+          <div>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h2 className="font-display text-[17px] font-semibold text-white">
+                  QR label download
+                </h2>
+                <p className="mt-0.5 text-[13px] text-[#c4c8d0]">
+                  Encodes permanent public route
+                </p>
+              </div>
+              <span
+                className={`rounded-md px-2.5 py-1 text-[11.5px] font-semibold ${
+                  isPublished
+                    ? "bg-[#0a2921] text-[#6ee7b7]"
+                    : "bg-[#2a2112] text-[#fbbf24]"
+                }`}
+              >
+                {isPublished ? "LIVE" : "DRAFT"}
+              </span>
+            </div>
+
+            <div className="mt-4 flex flex-col items-center rounded-[14px] bg-[#171a1e] p-4 sm:p-5">
+              {qrAssets ? (
+                <div className="relative overflow-hidden rounded-[12px] bg-white p-3">
+                  <div
+                    aria-hidden="true"
+                    className="qr-laser-line pointer-events-none absolute inset-x-3 top-0 h-[2px] rounded-full bg-[#145b6e]/70"
+                  />
+                  <Image
+                    src={qrAssets.pngDataUrl}
+                    alt={`QR code pointing to ${publicUrl}`}
+                    width={168}
+                    height={168}
+                    unoptimized
+                    className="h-[168px] w-[168px]"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-[168px] w-[168px] items-center justify-center rounded-[12px] bg-[#101214] text-[13px] text-[#b6bac2]">
+                  Generating QR...
+                </div>
+              )}
+
+              <p className="mt-3.5 max-w-full break-all text-center text-[12.5px] text-[#3eb8cf]">
+                <code>{publicUrl}</code>
               </p>
             </div>
-            <span className="rounded-md bg-[#0a2921] px-2.5 py-0.5 text-[12px] font-semibold text-[#6ee7b7]">
-              {isPublished ? "LIVE" : "DRAFT"}
-            </span>
-          </div>
 
-          <div className="mt-4 flex flex-col items-center rounded-[14px] bg-[#171a1e] p-4">
-            {qrAssets ? (
-              <div className="rounded-[10px] bg-white p-2.5">
-                <Image
-                  src={qrAssets.pngDataUrl}
-                  alt={`QR code pointing to ${publicUrl}`}
-                  width={168}
-                  height={168}
-                  unoptimized
-                  className="h-[168px] w-[168px]"
-                />
-              </div>
-            ) : (
-              <div className="flex h-[168px] w-[168px] items-center justify-center rounded-[10px] bg-[#101214] text-[13px] text-[#b6bac2]">
-                Generating QR...
-              </div>
+            {!isPublished && (
+              <p className="mt-3 text-[12.5px] leading-relaxed text-[#fbbf24]">
+                Approve &amp; Publish before printing so scanners resolve the
+                live page instead of 404.
+              </p>
             )}
-
-            <p className="mt-3 max-w-full break-all text-center text-[13px] text-[#3eb8cf]">
-              <code>{publicUrl}</code>
-            </p>
           </div>
-
-          {!isPublished && (
-            <p className="mt-2.5 text-[13px] text-[#fbbf24]">
-              Approve &amp; Publish before printing so scanners resolve the live page
-              instead of 404.
-            </p>
-          )}
 
           <div className="mt-4 grid grid-cols-2 gap-2.5">
             <button
@@ -407,7 +464,7 @@ export function PassportReviewWorkspace({
               type="button"
               disabled={!qrAssets}
               onClick={downloadPng}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[10px] bg-[#20242a] px-3 text-[13.5px] font-semibold text-white hover:bg-[#2c3139] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[10px] bg-[#242830] px-3 text-[13.5px] font-semibold text-white hover:bg-[#303540] disabled:opacity-50 cursor-pointer"
             >
               Download PNG
             </button>

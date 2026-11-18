@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowRightIcon } from "@/components/Icons";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 
 type AuthMode = "password" | "magic-link";
@@ -103,7 +104,9 @@ export function LoginForm({
         }
       }
     } catch {
-      setErrorMsg("Authentication request failed. Check your connection and try again.");
+      setErrorMsg(
+        "Authentication request failed. Check your connection and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -112,35 +115,35 @@ export function LoginForm({
   return (
     <div
       data-ui="login-card"
-      className="hero-enter-delay-1 surface-elevated rounded-[16px] p-5 sm:p-6"
+      className="hero-fade-rise rounded-[20px] bg-white p-6 text-[#0f1114] sm:p-8"
     >
       {!supabaseConfigured && (
         <div
           role="status"
-          className="mb-4 rounded-[8px] border border-[var(--notice-border)] bg-[var(--notice-bg)] px-3.5 py-2.5 text-[13px] text-[var(--notice-ink)]"
+          className="mb-5 rounded-[12px] bg-[#fdf6ec] px-4 py-3 text-[14px] text-[#7c380b]"
         >
           <p className="font-semibold">Supabase setup required for live sign-in</p>
           <p className="mt-1 leading-relaxed">
-            Set <code className="font-mono">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-            <code className="font-mono">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in{" "}
-            <code className="font-mono">.env.local</code>, then apply the migrations in{" "}
-            <code className="font-mono">supabase/migrations/</code>.
+            Set <code>NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
+            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in{" "}
+            <code>.env.local</code>, then apply the migrations in{" "}
+            <code>supabase/migrations/</code>.
           </p>
         </div>
       )}
 
-      {/* Auth mode switch: Apple-minimalist segmented control with sliding pill */}
+      {/* Segmented Auth Mode Switcher with GPU Sliding Pill */}
       <div
         role="tablist"
         aria-label="Sign-in method"
-        className="relative grid grid-cols-2 gap-1 rounded-[10px] border border-[var(--border)] bg-[var(--well)] p-1"
+        className="relative grid grid-cols-2 gap-1 rounded-[12px] bg-[#f4f4f2] p-1"
       >
         <span
           aria-hidden="true"
           style={{
             transform: mode === "password" ? "translateX(0%)" : "translateX(100%)",
           }}
-          className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/2)] rounded-[8px] bg-[#145b6e]"
+          className="sliding-pill pointer-events-none absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/2)] rounded-[9px] bg-[#145b6e]"
         />
         <button
           type="button"
@@ -151,10 +154,10 @@ export function LoginForm({
             setErrorMsg(null);
             setStatusMsg(null);
           }}
-          className={`pressable relative z-10 min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold cursor-pointer ${
+          className={`pressable relative z-10 min-h-[44px] cursor-pointer rounded-[9px] px-3 text-[14px] font-semibold transition-colors ${
             mode === "password"
-              ? "text-white"
-              : "text-[var(--muted)] hover:text-[var(--ink)]"
+              ? "bg-[#145b6e] text-white"
+              : "text-[#22252a] hover:text-[#0f1114]"
           }`}
         >
           Email &amp; password
@@ -168,21 +171,21 @@ export function LoginForm({
             setErrorMsg(null);
             setStatusMsg(null);
           }}
-          className={`pressable relative z-10 min-h-[42px] rounded-[8px] px-3 text-[13.5px] font-bold cursor-pointer ${
+          className={`pressable relative z-10 min-h-[44px] cursor-pointer rounded-[9px] px-3 text-[14px] font-semibold transition-colors ${
             mode === "magic-link"
-              ? "text-white"
-              : "text-[var(--muted)] hover:text-[var(--ink)]"
+              ? "bg-[#145b6e] text-white"
+              : "text-[#22252a] hover:text-[#0f1114]"
           }`}
         >
           Magic link
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
           <label
             htmlFor="login-email"
-            className="block text-[13px] font-semibold text-[var(--ink)]"
+            className="block text-[14px] font-semibold text-[#0f1114]"
           >
             Work email
           </label>
@@ -195,7 +198,7 @@ export function LoginForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="engineer@brand-example.eu"
-            className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)]"
+            className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dcdad4] bg-[#f9f9f7] px-4 py-3 text-[15px] text-[#0f1114] placeholder:text-[#4b4f57] focus:bg-white"
           />
         </div>
 
@@ -204,7 +207,7 @@ export function LoginForm({
             <div className="flex items-center justify-between">
               <label
                 htmlFor="login-password"
-                className="block text-[13px] font-semibold text-[var(--ink)]"
+                className="block text-[14px] font-semibold text-[#0f1114]"
               >
                 Password
               </label>
@@ -215,7 +218,7 @@ export function LoginForm({
                     prev === "signin" ? "signup" : "signin",
                   )
                 }
-                className="text-[12.5px] font-semibold text-[var(--accent-ink)] underline-offset-4 hover:underline cursor-pointer"
+                className="cursor-pointer text-[14px] font-semibold text-[#145b6e] underline-offset-4 hover:underline"
               >
                 {passwordAction === "signin"
                   ? "Need an account? Sign up"
@@ -234,7 +237,7 @@ export function LoginForm({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Minimum 8 characters"
-              className="input-apple mt-1.5 w-full rounded-[8px] border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2.5 text-[15px] text-[var(--ink)] placeholder:text-[var(--muted)]"
+              className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dcdad4] bg-[#f9f9f7] px-4 py-3 text-[15px] text-[#0f1114] placeholder:text-[#4b4f57] focus:bg-white"
             />
           </div>
         )}
@@ -242,7 +245,7 @@ export function LoginForm({
         {errorMsg && (
           <div
             role="alert"
-            className="tab-panel-enter rounded-[8px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+            className="tab-panel-enter rounded-[10px] bg-red-50 px-4 py-3 text-[14px] font-medium text-red-900"
           >
             {errorMsg}
           </div>
@@ -251,7 +254,7 @@ export function LoginForm({
         {statusMsg && (
           <div
             role="status"
-            className="tab-panel-enter rounded-[8px] border border-[var(--positive-border)] bg-[var(--positive-bg)] px-3.5 py-2.5 text-[13px] text-[var(--positive)]"
+            className="tab-panel-enter rounded-[10px] bg-[#edf8f2] px-4 py-3 text-[14px] font-medium text-[#156d49]"
           >
             {statusMsg}
           </div>
@@ -260,15 +263,18 @@ export function LoginForm({
         <button
           type="submit"
           disabled={loading}
-          className="pressable chamfer-sm inline-flex min-h-[46px] w-full items-center justify-center bg-[var(--accent)] px-4 py-2.5 text-[15px] font-bold text-white hover:bg-[var(--accent-ink)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="pressable inline-flex min-h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading
-            ? "Working..."
-            : mode === "magic-link"
-              ? "Send magic link"
-              : passwordAction === "signin"
-                ? "Sign in to workspace"
-                : "Create brand account"}
+          <span>
+            {loading
+              ? "Working..."
+              : mode === "magic-link"
+                ? "Send magic link"
+                : passwordAction === "signin"
+                  ? "Sign in to workspace"
+                  : "Create brand account"}
+          </span>
+          {!loading && <ArrowRightIcon className="btn-arrow h-4 w-4" />}
         </button>
       </form>
     </div>

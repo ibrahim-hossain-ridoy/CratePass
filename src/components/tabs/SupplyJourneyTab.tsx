@@ -216,10 +216,10 @@ export function SupplyJourneyTab({ stages }: SupplyJourneyTabProps) {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-3.5">
                   <span
-                    className={`num chamfer-sm flex h-7 w-7 shrink-0 items-center justify-center font-mono text-[13px] font-bold ${
+                    className={`num flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[13px] font-bold ${
                       isFinal
-                        ? "bg-[var(--positive)] text-white"
-                        : "bg-[var(--accent)] text-white"
+                        ? "bg-[#156d49] text-white"
+                        : "bg-[#145b6e] text-white"
                     }`}
                   >
                     {stage.step}

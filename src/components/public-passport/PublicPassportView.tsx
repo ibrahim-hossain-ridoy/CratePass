@@ -300,16 +300,16 @@ export function PublicPassportView({
       </nav>
 
       <main className="mx-auto w-full max-w-[1040px] flex-1 space-y-5 px-4 pt-6 pb-28 sm:px-6 md:pb-14">
-        <div className="surface-card-subtle flex flex-wrap items-center justify-between gap-2 rounded-[10px] px-4 py-2.5 text-[13px] text-[var(--muted)]">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-[12px] bg-white px-4 py-3 text-[13px] text-[#505660]">
           <span>
-            <strong className="font-semibold text-[var(--ink)]">
+            <strong className="font-semibold text-[#0f1114]">
               {WORKING_FIELD_LIST_NOTICE}
             </strong>{" "}
             Restricted fields for authorities and repair operators are omitted
             from this public view.
           </span>
-          <span className="font-mono text-[11.5px] font-bold text-[var(--accent)]">
-            PUBLIC TIER ONLY
+          <span className="rounded bg-[#e8f3f6] px-2.5 py-0.5 text-[11.5px] font-semibold text-[#0b3c49]">
+            Public tier only
           </span>
         </div>
 
@@ -330,32 +330,32 @@ export function PublicPassportView({
               return (
                 <section
                   key={groupId}
-                  className="interactive-card surface-elevated rounded-[12px] p-5"
+                  className="interactive-card rounded-[14px] bg-white p-5 sm:p-6"
                 >
-                  <div className="flex items-start justify-between gap-3 border-b border-[var(--rule)] pb-3.5">
+                  <div className="flex items-start justify-between gap-3 border-b border-[#e4e3dd] pb-3.5">
                     <div>
-                      <h2 className="text-[18px] font-bold tracking-tight text-[var(--ink)]">
+                      <h2 className="font-display text-[18px] font-bold tracking-tight text-[#0f1114]">
                         {meta.title}
                       </h2>
-                      <p className="mt-0.5 text-[13px] text-[var(--muted)]">
+                      <p className="mt-0.5 text-[13px] text-[#505660]">
                         {meta.subtitle}
                       </p>
                     </div>
-                    <span className="chamfer-sm shrink-0 border border-[var(--positive-border)] bg-[var(--positive-bg)] px-2.5 py-1 text-[11.5px] font-bold text-[var(--positive)]">
+                    <span className="shrink-0 rounded-md bg-[#edf8f2] px-2.5 py-1 text-[11.5px] font-semibold text-[#156d49]">
                       Public
                     </span>
                   </div>
 
-                  <dl className="mt-1 divide-y divide-[var(--rule)]">
+                  <dl className="mt-1 divide-y divide-[#e8e7e2]">
                     {items.map((field) => (
                       <div
                         key={field.key}
                         className="flex flex-col gap-0.5 py-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
                       >
-                        <dt className="text-[13.5px] font-medium text-[var(--muted)]">
+                        <dt className="text-[13.5px] font-medium text-[#505660]">
                           {field.label}
                         </dt>
-                        <dd className="num text-[15px] font-bold text-[var(--ink)] sm:text-right">
+                        <dd className="num text-[15px] font-semibold text-[#0f1114] sm:text-right">
                           {publicFields[field.key]}
                           {field.unit ? ` ${field.unit}` : ""}
                         </dd>
@@ -370,24 +370,24 @@ export function PublicPassportView({
 
         {/* Tab 2: Conditional text-only Care & Repair info tab */}
         {activeTab === "repair" && repairItems.length > 0 && (
-          <section className="tab-panel-enter surface-elevated rounded-[12px] p-5 sm:p-6">
-            <div className="border-b border-[var(--rule)] pb-4">
-              <h2 className="text-[19px] font-bold text-[var(--ink)]">
+          <section className="tab-panel-enter rounded-[14px] bg-white p-5 sm:p-6">
+            <div className="border-b border-[#e4e3dd] pb-4">
+              <h2 className="font-display text-[19px] font-bold text-[#0f1114]">
                 Care, handling &amp; external spare-parts information
               </h2>
-              <p className="mt-1 text-[14px] text-[var(--muted)]">
+              <p className="mt-1 text-[14px] text-[#505660]">
                 Published manufacturer care notes. Do not open sealed lithium
                 enclosures; internal service belongs strictly to authorised
                 technicians.
               </p>
             </div>
-            <dl className="divide-y divide-[var(--rule)]">
+            <dl className="divide-y divide-[#e8e7e2]">
               {repairItems.map((field) => (
                 <div key={field.key} className="py-4">
-                  <dt className="text-[14px] font-bold text-[var(--ink)]">
+                  <dt className="text-[14px] font-bold text-[#0f1114]">
                     {field.label}
                   </dt>
-                  <dd className="mt-1.5 whitespace-pre-line text-[15px] leading-relaxed text-[var(--muted)]">
+                  <dd className="mt-1.5 whitespace-pre-line text-[15px] leading-relaxed text-[#505660]">
                     {publicFields[field.key]}
                   </dd>
                 </div>
@@ -398,27 +398,27 @@ export function PublicPassportView({
 
         {/* Tab 3: Conditional Supply tab (real brand fields only) */}
         {activeTab === "supply" && supplyItems.length > 0 && (
-          <section className="tab-panel-enter surface-elevated rounded-[12px] p-5 sm:p-6">
-            <div className="border-b border-[var(--rule)] pb-4">
-              <h2 className="text-[19px] font-bold text-[var(--ink)]">
+          <section className="tab-panel-enter rounded-[14px] bg-white p-5 sm:p-6">
+            <div className="border-b border-[#e4e3dd] pb-4">
+              <h2 className="font-display text-[19px] font-bold text-[#0f1114]">
                 Disclosed supply &amp; origin notes
               </h2>
-              <p className="mt-1 text-[14px] text-[var(--muted)]">
+              <p className="mt-1 text-[14px] text-[#505660]">
                 Self-declared locations submitted by the manufacturer for this
                 battery model.
               </p>
             </div>
-            <dl className="mt-2 divide-y divide-[var(--rule)]">
+            <dl className="mt-2 divide-y divide-[#e8e7e2]">
               {supplyItems.map((field, idx) => (
                 <div key={field.key} className="flex items-start gap-3.5 py-4">
-                  <span className="num chamfer-sm mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center bg-[var(--accent)] font-mono text-[12.5px] font-bold text-white">
+                  <span className="num mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#145b6e] text-[12.5px] font-bold text-white">
                     {idx + 1}
                   </span>
                   <div className="min-w-0">
-                    <dt className="text-[14px] font-bold text-[var(--ink)]">
+                    <dt className="text-[14px] font-bold text-[#0f1114]">
                       {field.label}
                     </dt>
-                    <dd className="mt-1 text-[15px] leading-relaxed text-[var(--muted)]">
+                    <dd className="mt-1 text-[15px] leading-relaxed text-[#505660]">
                       {publicFields[field.key]}
                     </dd>
                   </div>
@@ -431,54 +431,54 @@ export function PublicPassportView({
         {/* Tab 4: Provenance & recycling */}
         {activeTab === "provenance" && (
           <div className="tab-panel-enter grid grid-cols-1 gap-5 lg:grid-cols-12">
-            <article className="surface-elevated rounded-[12px] p-5 sm:p-6 lg:col-span-6">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--rule)] pb-3.5">
+            <article className="rounded-[14px] bg-white p-5 sm:p-6 lg:col-span-6">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e4e3dd] pb-3.5">
                 <div>
-                  <h2 className="text-[18px] font-bold text-[var(--ink)]">
+                  <h2 className="font-display text-[18px] font-bold text-[#0f1114]">
                     Provenance &amp; publication record
                   </h2>
-                  <p className="mt-0.5 text-[13px] text-[var(--muted)]">
+                  <p className="mt-0.5 text-[13px] text-[#505660]">
                     Version{" "}
-                    <span className="num font-mono font-semibold text-[var(--ink)]">
+                    <span className="num font-semibold text-[#0f1114]">
                       v{versionNumber}
                     </span>{" "}
-                    · <code className="font-mono">/p/{slug}</code>
+                    · <code>/p/{slug}</code>
                   </p>
                 </div>
               </div>
 
-              <div className="mt-4 rounded-[10px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-4 text-[14px] font-semibold text-[var(--notice-ink)]">
+              <div className="mt-4 rounded-[10px] border border-[#ebd0a8] bg-[#fdf6ec] p-4 text-[14px] font-semibold text-[#7c380b]">
                 {PUBLIC_MANUFACTURER_NOTICE}
               </div>
 
-              <dl className="mt-4 divide-y divide-[var(--rule)] text-[14px]">
+              <dl className="mt-4 divide-y divide-[#e8e7e2] text-[14px]">
                 <div className="flex items-baseline justify-between gap-3 py-3">
-                  <dt className="text-[var(--muted)]">
+                  <dt className="text-[#505660]">
                     Manufacturer declaration
                   </dt>
-                  <dd className="font-bold text-[var(--ink)]">
+                  <dd className="font-bold text-[#0f1114]">
                     Submitted by workspace publisher
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-3 py-3">
-                  <dt className="text-[var(--muted)]">
+                  <dt className="text-[#505660]">
                     Declared timestamp (UTC)
                   </dt>
-                  <dd className="num font-mono text-[13px] font-semibold text-[var(--ink)]">
-                    {declaredAt.slice(0, 19).replace("T", " ")}Z
+                  <dd className="num text-[13px] font-semibold text-[#0f1114]">
+                    <code>{declaredAt.slice(0, 19).replace("T", " ")}Z</code>
                   </dd>
                 </div>
               </dl>
             </article>
 
-            <article className="surface-elevated rounded-[12px] p-5 sm:p-6 lg:col-span-6">
-              <div className="flex items-center gap-3 border-b border-[var(--rule)] pb-3.5">
-                <WheeledBinIcon className="h-7 w-7 shrink-0 text-[var(--ink)]" />
+            <article className="rounded-[14px] bg-white p-5 sm:p-6 lg:col-span-6">
+              <div className="flex items-center gap-3 border-b border-[#e4e3dd] pb-3.5">
+                <WheeledBinIcon className="h-7 w-7 shrink-0 text-[#0f1114]" />
                 <div>
-                  <h2 className="text-[18px] font-bold text-[var(--ink)]">
+                  <h2 className="font-display text-[18px] font-bold text-[#0f1114]">
                     End-of-life &amp; recycling instructions
                   </h2>
-                  <p className="text-[13px] text-[var(--muted)]">
+                  <p className="text-[13px] text-[#505660]">
                     Separate collection required — do not dispose with unsorted
                     waste
                   </p>

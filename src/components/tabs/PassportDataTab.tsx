@@ -9,10 +9,10 @@ function AccessBadge({ tier }: { tier: AccessTier }) {
   const isPublic = tier === "Public";
   return (
     <span
-      className={`chamfer-sm inline-flex flex-none items-center gap-1.5 whitespace-nowrap px-2.5 py-1 text-[12px] font-bold leading-5 ${
+      className={`inline-flex flex-none items-center gap-1.5 rounded-md whitespace-nowrap px-2.5 py-1 text-[12px] font-semibold leading-5 ${
         isPublic
-          ? "border border-[var(--positive-border)] bg-[var(--positive-bg)] text-[var(--positive)]"
-          : "border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-ink)]"
+          ? "bg-[#edf8f2] text-[#156d49]"
+          : "bg-[#e8f3f6] text-[#0b3c49]"
       }`}
     >
       {isPublic ? (
