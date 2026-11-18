@@ -190,13 +190,13 @@ export function PipelineScrollScene() {
             </div>
           </div>
 
-          {/* Right Pinned Interactive Fragment & Studio Imagery */}
+          {/* Right Pinned Interactive Fragment & Dedicated Studio Visuals */}
           <div className="lg:col-span-7">
             <div
               data-ui="pipeline-stage"
               className="relative overflow-hidden rounded-[22px] bg-[#171a1e] p-4 sm:p-6"
             >
-              {/* Stage 0: Technical Specification Datasheet Intake */}
+              {/* Stage 0: Technical Specification Datasheet Intake (Unique Image #2) */}
               {activeIndex === 0 && (
                 <div className="tab-panel-enter space-y-5">
                   <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[14px] bg-[#101214]">
@@ -211,6 +211,12 @@ export function PipelineScrollScene() {
                       aria-hidden="true"
                       className="pdf-scan-beam pointer-events-none absolute inset-x-0 top-6 h-0.5 bg-[#3eb8cf]"
                     />
+                    <div className="pointer-events-none absolute inset-x-4 bottom-3 flex flex-wrap items-center justify-between gap-2 rounded-[10px] bg-[#101214]/90 px-3.5 py-2 text-[13px] text-white">
+                      <span>PDF snippet: &ldquo;Nom. Voltage: 36.0V · 14.5Ah&rdquo;</span>
+                      <span className="font-semibold text-[#34d399]">
+                        Mapped → Annex XIII #14
+                      </span>
+                    </div>
                   </div>
                   <dl className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] bg-[#101214] px-5 py-4">
                     <div>
@@ -250,9 +256,9 @@ export function PipelineScrollScene() {
                     <div className="inline-flex rounded-[10px] bg-[#20242a] p-1">
                       {(
                         [
-                          { id: "public", label: "Public" },
-                          { id: "legit", label: "Legitimate" },
-                          { id: "auth", label: "Authorities" },
+                          { id: "public", label: "Public (30)" },
+                          { id: "legit", label: "Legitimate (27)" },
+                          { id: "auth", label: "Authorities (14)" },
                         ] as const
                       ).map((tier) => (
                         <button
@@ -326,14 +332,14 @@ export function PipelineScrollScene() {
                 </div>
               )}
 
-              {/* Stage 2: Mobile QR Scan + Print-Ready Label */}
+              {/* Stage 2: Laser-Etched Casing QR Plate + Print-Ready Export (Unique Image #3) */}
               {activeIndex === 2 && (
                 <div className="tab-panel-enter space-y-5">
                   <div className="overflow-hidden rounded-[14px] bg-[#101214]">
                     <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[14px]">
                       <Image
-                        src="/images/qr-mobile-scan-studio.jpg"
-                        alt="Smartphone scanning a laser-etched QR code plate on an aluminum bicycle frame to open the Digital Product Passport"
+                        src="/images/casing-qr-macro.jpg"
+                        alt="Anodized aluminum battery enclosure with recessed laser-etched QR code plate"
                         fill
                         sizes="(max-width: 1024px) 100vw, 720px"
                         className="object-cover"

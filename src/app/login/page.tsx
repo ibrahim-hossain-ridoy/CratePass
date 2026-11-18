@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRightIcon, BrandMark } from "@/components/Icons";
+import { ArrowRightIcon, BrandMark, PdfFileIcon, QrGridIcon } from "@/components/Icons";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { LandingSmoothScroll } from "@/components/landing/LandingSmoothScroll";
 import { WORKING_FIELD_LIST_NOTICE } from "@/config/battery-fields";
@@ -95,87 +95,111 @@ export default function LoginPage({
             </div>
           </div>
 
-          {/* Right Column: Edge-Aligned Studio Hardware & Workspace Stage */}
+          {/* Right Column: Live Workspace Console Preview + Dedicated Hardware Specimen */}
           <div className="hero-stage-rise space-y-4 lg:col-span-6">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-display text-[22px] font-semibold tracking-tight text-[#0f1114]">
-                Inside your engineering workspace
+                What you manage inside /app
               </h2>
               <span className="text-[14px] font-semibold text-[#145b6e]">
-                /app console
+                71-point Annex XIII console
               </span>
             </div>
 
-            {/* 2x2 Cohesive Site-Representative Studio Grid — flush with column margins */}
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="hero-shutter-frame hero-enter-1 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
-                <Image
-                  src="/images/spec-datasheet-studio.jpg"
-                  alt="Engineering specification datasheets and caliper on a limestone studio desk"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 48vw, 320px"
-                  className="hero-shutter-img object-cover"
-                />
-                <div
-                  aria-hidden="true"
-                  className="qr-laser-line pointer-events-none absolute inset-x-4 top-0 h-[2px] rounded-full bg-[#145b6e]/70"
-                />
+            {/* Interactive-Style Workspace Console Preview */}
+            <div
+              data-ui="workspace-preview"
+              className="hero-enter-1 overflow-hidden rounded-[20px] bg-[#101214] p-5 text-[#f4f3ef] sm:p-6"
+            >
+              {/* Top Hardware Reference Banner (uses /images/battery-pack-studio.jpg — unique to /login) */}
+              <div className="grid grid-cols-1 items-center gap-4 rounded-[14px] bg-[#171a1e] p-3.5 sm:grid-cols-12">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-[10px] bg-[#e8e7e3] sm:col-span-5">
+                  <Image
+                    src="/images/battery-pack-studio.jpg"
+                    alt="DB-36V battery pack photographed on neutral studio surface"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 90vw, 240px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="space-y-1.5 sm:col-span-7">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="rounded bg-[#0a2921] px-2 py-0.5 text-[11.5px] font-semibold text-[#6ee7b7]">
+                      Published v1
+                    </span>
+                    <span className="num text-[12.5px] font-semibold text-[#3eb8cf]">
+                      /p/db-36v-pack
+                    </span>
+                  </div>
+                  <p className="font-display text-[16px] font-semibold text-white">
+                    DB-36V Commuter Battery Pack
+                  </p>
+                  <p className="text-[13px] text-[#c4c8d0]">
+                    {WORKING_FIELD_LIST_NOTICE}
+                  </p>
+                </div>
               </div>
-              <div className="hero-enter-2 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
-                <Image
-                  src="/images/ebike-studio-europe.jpg"
-                  alt="Minimalist European commuter electric bicycle in a stone courtyard"
-                  fill
-                  sizes="(max-width: 1024px) 48vw, 320px"
-                  className="hero-shutter-img object-cover"
-                />
-              </div>
-              <div className="hero-enter-2 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
-                <Image
-                  src="/images/qr-mobile-scan-studio.jpg"
-                  alt="Smartphone scanning a laser-etched QR code plate to open the mobile Digital Product Passport"
-                  fill
-                  sizes="(max-width: 1024px) 48vw, 320px"
-                  className="hero-shutter-img object-cover"
-                />
-              </div>
-              <div className="hero-enter-3 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
-                <Image
-                  src="/images/casing-qr-macro.jpg"
-                  alt="Anodized aluminum casing with laser-etched QR code plate"
-                  fill
-                  sizes="(max-width: 1024px) 48vw, 320px"
-                  className="hero-shutter-img object-cover"
-                />
-              </div>
-            </div>
 
-            {/* Post-Login Capabilities Summary */}
-            <div className="hero-enter-3 rounded-[18px] bg-[#101214] p-5 text-[#f4f3ef]">
-              <p className="text-[14px] text-[#c4c8d0]">
-                {WORKING_FIELD_LIST_NOTICE}
-              </p>
-              <dl className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-[12px] bg-[#171a1e] p-3.5">
-                  <dt className="text-[14px] text-[#c4c8d0]">1. Spec intake</dt>
-                  <dd className="mt-0.5 text-[15px] font-semibold text-white">
-                    PDF or blank draft
-                  </dd>
+              {/* 3 Self-Explanatory Workspace Modules */}
+              <div className="mt-4 space-y-2.5">
+                <div className="hero-enter-2 flex items-center justify-between gap-3 rounded-[12px] bg-[#171a1e] px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#1d2229] text-[#3eb8cf]">
+                      <PdfFileIcon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="text-[14.5px] font-semibold text-white">
+                        1. OEM Spec PDF or Blank Draft Intake
+                      </p>
+                      <p className="text-[12.5px] text-[#c4c8d0]">
+                        Extracts 51 static fields with source snippets &amp; flags gaps
+                      </p>
+                    </div>
+                  </div>
+                  <span className="num shrink-0 rounded-md bg-[#20242a] px-2.5 py-1 text-[12px] font-semibold text-[#34d399]">
+                    LMT · EV · Ind
+                  </span>
                 </div>
-                <div className="rounded-[12px] bg-[#171a1e] p-3.5">
-                  <dt className="text-[14px] text-[#c4c8d0]">2. Schema check</dt>
-                  <dd className="num mt-0.5 text-[15px] font-semibold text-[#34d399]">
-                    71 Annex XIII points
-                  </dd>
+
+                <div className="hero-enter-2 rounded-[12px] bg-[#171a1e] px-4 py-3">
+                  <div className="flex items-center justify-between text-[13.5px]">
+                    <span className="font-semibold text-white">
+                      2. 71-Point Completeness &amp; 3-Tier Access Check
+                    </span>
+                    <span className="num font-semibold text-[#34d399]">
+                      49 / 51 static (96%)
+                    </span>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#101214]">
+                    <div className="bar-fill-enter h-full w-[94%] rounded-full bg-[#34d399]" />
+                  </div>
+                  <div className="mt-2 flex flex-wrap justify-between gap-2 text-[12px] text-[#c4c8d0]">
+                    <span>Public: 30 pts</span>
+                    <span>Legitimate interest: 27 pts</span>
+                    <span>Authorities only: 14 pts</span>
+                  </div>
                 </div>
-                <div className="rounded-[12px] bg-[#171a1e] p-3.5">
-                  <dt className="text-[14px] text-[#c4c8d0]">3. QR hosting</dt>
-                  <dd className="mt-0.5 text-[15px] font-semibold text-[#3eb8cf]">
-                    SVG + PNG + v1/v2
-                  </dd>
+
+                <div className="hero-enter-3 flex items-center justify-between gap-3 rounded-[12px] bg-[#171a1e] px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white p-1 text-[#0f1114]">
+                      <QrGridIcon className="h-7 w-7" />
+                    </div>
+                    <div>
+                      <p className="text-[14.5px] font-semibold text-white">
+                        3. Print-Ready QR Labels &amp; Immutable Snapshots
+                      </p>
+                      <p className="text-[12.5px] text-[#c4c8d0]">
+                        Download SVG/PNG casing stickers &amp; export GDPR JSON
+                      </p>
+                    </div>
+                  </div>
+                  <span className="shrink-0 rounded-md bg-[#145b6e] px-2.5 py-1 text-[12px] font-semibold text-white">
+                    SVG + PNG
+                  </span>
                 </div>
-              </dl>
+              </div>
             </div>
           </div>
         </div>

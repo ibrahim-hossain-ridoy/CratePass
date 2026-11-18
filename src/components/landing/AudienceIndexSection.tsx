@@ -14,6 +14,9 @@ interface AudienceEntry {
   summary: string;
   highlights: string[];
   tag: string;
+  deliverableTitle: string;
+  deliverableMetric: string;
+  deliverableRows: { label: string; value: string; tone: "ok" | "warn" | "info" }[];
 }
 
 const AUDIENCES: AudienceEntry[] = [
@@ -29,6 +32,13 @@ const AUDIENCES: AudienceEntry[] = [
       "Downloadable vector SVG and PNG QR codes",
     ],
     tag: "LMT & Light EV fleets",
+    deliverableTitle: "Brand Supplier Completeness Scorecard",
+    deliverableMetric: "49 / 51 LMT static pts",
+    deliverableRows: [
+      { label: "Public QR route (/p/urban-36v)", value: "30 public fields ready", tone: "ok" },
+      { label: "External fuse & latch SKU", value: "Missing in supplier PDF", tone: "warn" },
+      { label: "Print-ready casing QR sticker", value: "SVG + 300 DPI PNG", tone: "info" },
+    ],
   },
   {
     id: "assemblers",
@@ -42,6 +52,13 @@ const AUDIENCES: AudienceEntry[] = [
       "Portable organization JSON export anytime",
     ],
     tag: "Contract assembly batches",
+    deliverableTitle: "Batch & Cell-Lot Snapshot Ledger",
+    deliverableMetric: "Immutable v1 / v2",
+    deliverableRows: [
+      { label: "Snapshot v2 · Cell lot LT-2026-09", value: "Current live", tone: "ok" },
+      { label: "Snapshot v1 · Cell lot LT-2026-04", value: "Archived immutable", tone: "info" },
+      { label: "Dynamic BMS telemetry schema", value: "21 keys reserved", tone: "ok" },
+    ],
   },
   {
     id: "importers",
@@ -55,6 +72,13 @@ const AUDIENCES: AudienceEntry[] = [
       "Append-only audit trail for every published snapshot",
     ],
     tag: "Multi-SKU portfolios",
+    deliverableTitle: "Multi-SKU Organization Portfolio",
+    deliverableMetric: "GDPR JSON portable",
+    deliverableRows: [
+      { label: "Restricted authority disclosures", value: "Omitted from public /p/", tone: "ok" },
+      { label: "WEEE & separate collection notice", value: "Displayed on mobile scan", tone: "ok" },
+      { label: "Full organization archive", value: "1-click JSON export", tone: "info" },
+    ],
   },
 ];
 
@@ -105,9 +129,9 @@ export function AudienceIndexSection() {
 
       gsap.fromTo(
         photo,
-        { yPercent: -5 },
+        { yPercent: -4 },
         {
-          yPercent: 5,
+          yPercent: 4,
           ease: "none",
           scrollTrigger: {
             trigger: section,
@@ -130,7 +154,7 @@ export function AudienceIndexSection() {
       className="bg-white py-24 text-[#0f1114] lg:py-32"
     >
       <div className="page-shell grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
-        {/* Sticky Left Column: Title + Real Hardware Studio Visual */}
+        {/* Sticky Left Column: Title + Unique Hardware Photo (#4) + Interactive Stakeholder Deliverable Card */}
         <div className="lg:sticky lg:top-24 lg:col-span-5">
           <div className="overflow-hidden pb-1">
             <h2 className="text-display-section audience-heading-reveal text-[#0f1114]">
@@ -142,39 +166,58 @@ export function AudienceIndexSection() {
             pack builders, and EU market representatives.
           </p>
 
-          <div className="mt-8 overflow-hidden rounded-[20px] bg-[#e8e7e3]">
-            <div ref={photoRef} className="relative aspect-[4/3] w-full">
-              <Image
-                src={
-                  selectedId === "brands"
-                    ? "/images/ebike-studio-europe.jpg"
-                    : selectedId === "assemblers"
-                      ? "/images/spec-datasheet-studio.jpg"
-                      : "/images/qr-mobile-scan-studio.jpg"
-                }
-                alt={
-                  selectedId === "brands"
-                    ? "Minimalist European commuter e-bike photographed against a travertine architectural wall"
-                    : selectedId === "assemblers"
-                      ? "Engineering specification datasheets and caliper on a limestone studio desk"
-                      : "Smartphone scanning a laser-etched QR code plate to open the public Digital Product Passport"
-                }
-                fill
-                sizes="(max-width: 1024px) 100vw, 520px"
-                className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                style={{
-                  transform:
-                    selectedId === "brands"
-                      ? "scale(1.0)"
-                      : selectedId === "assemblers"
-                        ? "scale(1.04)"
-                        : "scale(1.04)",
-                }}
-              />
+          <div
+            data-ui="audience-deliverable"
+            className="mt-8 overflow-hidden rounded-[20px] bg-[#101214] p-4 text-[#f4f3ef] sm:p-5"
+          >
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[12px] bg-[#171a1e]">
+              <div ref={photoRef} className="relative h-full w-full">
+                <Image
+                  src="/images/bms-cells-obsidian.jpg"
+                  alt="21700 cylindrical lithium cell array and matte black BMS circuit board with copper busbars"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 520px"
+                  className="object-cover"
+                />
+              </div>
+              <div className="pointer-events-none absolute inset-x-3 bottom-2.5 flex items-center justify-between rounded-lg bg-[#101214]/90 px-3 py-1.5 text-[12.5px]">
+                <span className="font-semibold text-white">{active.group}</span>
+                <span className="font-semibold text-[#3eb8cf]">{active.tag}</span>
+              </div>
             </div>
-            <div className="flex items-center justify-between px-5 py-4 text-[14px] font-medium text-[#0f1114]">
-              <span>{active.group}</span>
-              <span className="text-[#145b6e]">{active.tag}</span>
+
+            {/* Dynamic Deliverable Breakdown for the Selected Audience */}
+            <div className="mt-4 space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-display text-[16px] font-semibold text-white">
+                  {active.deliverableTitle}
+                </span>
+                <span className="num rounded-md bg-[#173038] px-2.5 py-0.5 text-[12.5px] font-semibold text-[#7dd3e8]">
+                  {active.deliverableMetric}
+                </span>
+              </div>
+
+              <div className="space-y-1.5 text-[13.5px]">
+                {active.deliverableRows.map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-center justify-between gap-2 rounded-lg bg-[#171a1e] px-3.5 py-2.5"
+                  >
+                    <span className="text-[#e2e5ea]">{row.label}</span>
+                    <span
+                      className={`shrink-0 font-semibold ${
+                        row.tone === "ok"
+                          ? "text-[#34d399]"
+                          : row.tone === "warn"
+                            ? "text-[#fbbf24]"
+                            : "text-[#3eb8cf]"
+                      }`}
+                    >
+                      {row.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -206,7 +206,7 @@ export function InkFillSection() {
                 className="max-w-[540px] rounded-[20px] bg-[#101214] p-6 text-[#f4f3ef] sm:p-8"
               >
                 <h2 className="text-display-section text-white">
-                  Built for the physical casing
+                  Scan the frame QR to open the live passport
                 </h2>
                 <p className="mt-3 text-[17px] leading-relaxed text-[#e2e5ea]">
                   Every published passport resolves to a permanent{" "}
