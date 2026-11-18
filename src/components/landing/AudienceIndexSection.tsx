@@ -145,8 +145,20 @@ export function AudienceIndexSection() {
           <div className="mt-8 overflow-hidden rounded-[20px] bg-[#e8e7e3]">
             <div ref={photoRef} className="relative aspect-[4/3] w-full">
               <Image
-                src="/images/battery-pack-studio.jpg"
-                alt="Anodized 36V e-bike battery pack photographed on neutral studio surface"
+                src={
+                  selectedId === "brands"
+                    ? "/images/ebike-studio-europe.jpg"
+                    : selectedId === "assemblers"
+                      ? "/images/spec-datasheet-studio.jpg"
+                      : "/images/qr-mobile-scan-studio.jpg"
+                }
+                alt={
+                  selectedId === "brands"
+                    ? "Minimalist European commuter e-bike photographed against a travertine architectural wall"
+                    : selectedId === "assemblers"
+                      ? "Engineering specification datasheets and caliper on a limestone studio desk"
+                      : "Smartphone scanning a laser-etched QR code plate to open the public Digital Product Passport"
+                }
                 fill
                 sizes="(max-width: 1024px) 100vw, 520px"
                 className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -155,8 +167,8 @@ export function AudienceIndexSection() {
                     selectedId === "brands"
                       ? "scale(1.0)"
                       : selectedId === "assemblers"
-                        ? "scale(1.05) translateX(-1.5%)"
-                        : "scale(1.07) translateY(-1.5%)",
+                        ? "scale(1.04)"
+                        : "scale(1.04)",
                 }}
               />
             </div>

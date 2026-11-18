@@ -151,24 +151,36 @@ export function PassportPreview() {
                 <div className="flex flex-col justify-between rounded-[12px] bg-white p-4">
                   <div className="flex items-center justify-between gap-2 pb-2.5">
                     <span className="font-display text-[17px] font-semibold text-[#0f1114]">
-                      2.5D Repair Cutaway
+                      Carbon &amp; recycled content
                     </span>
-                    <span className="rounded-md bg-[#f4f4f2] px-2.5 py-0.5 text-[14px] font-semibold text-[#0f1114]">
-                      4 hotspots
+                    <span className="rounded-md bg-[#e8f3f6] px-2.5 py-0.5 text-[13px] font-semibold text-[#0b3c49]">
+                      Annex XIII · Impact
                     </span>
                   </div>
 
-                  <div className="relative my-2 aspect-[16/9] w-full overflow-hidden rounded-lg bg-[#e8e7e3]">
-                    <Image
-                      src="/images/battery-cutaway-25d.jpg"
-                      alt="Exploded 2.5D battery cutaway showing external fuse, latch, 21700 cells, and BMS"
-                      fill
-                      sizes="(max-width: 768px) 90vw, 340px"
-                      className="object-cover"
-                    />
+                  <div className="my-2 space-y-3">
+                    <div>
+                      <div className="flex items-baseline justify-between text-[13.5px]">
+                        <span className="text-[#4b4f57]">Raw material &amp; cell share</span>
+                        <span className="num font-semibold text-[#0f1114]">81% of CO2e</span>
+                      </div>
+                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-[#e8e7e3]">
+                        <div className="h-full w-[81%] rounded-full bg-[#145b6e]" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-baseline justify-between text-[13.5px]">
+                        <span className="text-[#4b4f57]">Recycled cobalt &amp; nickel</span>
+                        <span className="num font-semibold text-[#156d49]">18% pre/post-consumer</span>
+                      </div>
+                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-[#e8e7e3]">
+                        <div className="h-full w-[42%] rounded-full bg-[#156d49]" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[14px] font-semibold">
+                  <div className="flex items-center justify-between pt-2 text-[13.5px] font-semibold">
                     <span className="text-[#156d49]">
                       Fuse &amp; latch: User steps
                     </span>

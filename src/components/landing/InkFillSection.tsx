@@ -191,8 +191,8 @@ export function InkFillSection() {
           >
             <div ref={openingImageRef} className="absolute inset-0 h-full w-full">
               <Image
-                src="/images/battery-pack-studio.jpg"
-                alt="Anodized DB-36V lithium battery pack housing engineered for QR casing identification"
+                src="/images/qr-mobile-scan-studio.jpg"
+                alt="Technician smartphone scanning a laser-etched QR code plate on an aluminum frame to open the hosted Digital Product Passport"
                 fill
                 sizes="100vw"
                 className="object-cover object-center"

@@ -196,13 +196,13 @@ export function PipelineScrollScene() {
               data-ui="pipeline-stage"
               className="relative overflow-hidden rounded-[22px] bg-[#171a1e] p-4 sm:p-6"
             >
-              {/* Stage 0: BMS & 21700 Cell Hardware Extraction */}
+              {/* Stage 0: Technical Specification Datasheet Intake */}
               {activeIndex === 0 && (
                 <div className="tab-panel-enter space-y-5">
                   <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[14px] bg-[#101214]">
                     <Image
-                      src="/images/bms-cells-obsidian.jpg"
-                      alt="Lithium-ion 21700 cell module with spot-welded nickel tabs and matte black BMS circuit board"
+                      src="/images/spec-datasheet-studio.jpg"
+                      alt="Engineering specification datasheets and precision caliper on a limestone studio desk"
                       fill
                       sizes="(max-width: 1024px) 100vw, 720px"
                       className="object-cover"
@@ -214,15 +214,15 @@ export function PipelineScrollScene() {
                   </div>
                   <dl className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] bg-[#101214] px-5 py-4">
                     <div>
-                      <dt className="text-[14px] text-[#c4c8d0]">Cell array</dt>
-                      <dd className="num mt-0.5 text-[17px] font-semibold text-white">
-                        10S4P · 21700
+                      <dt className="text-[14px] text-[#c4c8d0]">Source input</dt>
+                      <dd className="mt-0.5 text-[17px] font-semibold text-white">
+                        OEM Spec PDF (≤ 10 MB)
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-[14px] text-[#c4c8d0]">BMS protocol</dt>
-                      <dd className="mt-0.5 text-[17px] font-semibold text-white">
-                        Dynamic SoH + cycles
+                      <dt className="text-[14px] text-[#c4c8d0]">Schema target</dt>
+                      <dd className="num mt-0.5 text-[17px] font-semibold text-white">
+                        51 static + 21 BMS fields
                       </dd>
                     </div>
                     <div>
@@ -326,14 +326,14 @@ export function PipelineScrollScene() {
                 </div>
               )}
 
-              {/* Stage 2: Exploded Cutaway + Print-Ready QR Label */}
+              {/* Stage 2: Mobile QR Scan + Print-Ready Label */}
               {activeIndex === 2 && (
                 <div className="tab-panel-enter space-y-5">
-                  <div className="overflow-hidden rounded-[14px] bg-[#e8e7e3] p-2">
-                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[10px]">
+                  <div className="overflow-hidden rounded-[14px] bg-[#101214]">
+                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[14px]">
                       <Image
-                        src="/images/battery-cutaway-25d.jpg"
-                        alt="Exploded 2.5D battery enclosure view mapping external fuse, cell pack, and BMS board"
+                        src="/images/qr-mobile-scan-studio.jpg"
+                        alt="Smartphone scanning a laser-etched QR code plate on an aluminum bicycle frame to open the Digital Product Passport"
                         fill
                         sizes="(max-width: 1024px) 100vw, 720px"
                         className="object-cover"

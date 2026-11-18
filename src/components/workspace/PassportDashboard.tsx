@@ -231,17 +231,17 @@ export function PassportDashboard({
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-[#e8e7e3]">
                 <Image
-                  src="/images/casing-qr-macro.jpg"
-                  alt="Laser-etched QR plate on anodized aluminum battery pack casing"
+                  src="/images/spec-datasheet-studio.jpg"
+                  alt="Engineering specification datasheets and caliper on a limestone studio desk"
                   fill
                   sizes="(max-width: 1024px) 50vw, 380px"
                   className="object-cover"
                 />
               </div>
-              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-[#e8e7e3]">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-[#101214]">
                 <Image
-                  src="/images/battery-cutaway-25d.jpg"
-                  alt="2.5D cutaway showing fuse, latch, cells, and BMS board"
+                  src="/images/qr-mobile-scan-studio.jpg"
+                  alt="Smartphone scanning a laser-etched QR code plate to open the mobile Digital Product Passport"
                   fill
                   sizes="(max-width: 1024px) 50vw, 380px"
                   className="object-cover"

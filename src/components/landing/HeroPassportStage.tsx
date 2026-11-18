@@ -126,16 +126,28 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
         ref={cardRef}
         className="preserve-3d relative overflow-hidden rounded-[22px] bg-[#dcdad4]"
       >
-        {/* Full-bleed Studio Product Macro with Image Shutter Opening */}
+        {/* Full-bleed Studio Visual with Image Shutter Opening — switches by pipeline stage */}
         <div className="hero-shutter-frame relative aspect-[16/10] w-full overflow-hidden bg-[#e8e7e3]">
           <div className="hero-shutter-img relative h-full w-full">
             <Image
-              src="/images/casing-qr-macro.jpg"
-              alt="Brushed aluminum DB-36V battery enclosure with recessed laser-etched QR data badge"
+              src={
+                activeStage === "pdf"
+                  ? "/images/spec-datasheet-studio.jpg"
+                  : activeStage === "qr"
+                    ? "/images/qr-mobile-scan-studio.jpg"
+                    : "/images/ebike-studio-europe.jpg"
+              }
+              alt={
+                activeStage === "pdf"
+                  ? "Printed engineering specification datasheets and caliper on a limestone studio desk"
+                  : activeStage === "qr"
+                    ? "Smartphone scanning a laser-etched QR code plate to open the mobile Digital Product Passport"
+                    : "Minimalist European commuter electric bicycle in an architectural stone courtyard"
+              }
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 660px"
-              className="object-cover object-center"
+              className="object-cover object-center transition-transform duration-500"
             />
           </div>
 

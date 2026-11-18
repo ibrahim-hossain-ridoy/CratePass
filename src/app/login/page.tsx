@@ -106,12 +106,12 @@ export default function LoginPage({
               </span>
             </div>
 
-            {/* 2x2 Cohesive Studio Hardware & Pipeline Grid — flush with column margins */}
+            {/* 2x2 Cohesive Site-Representative Studio Grid — flush with column margins */}
             <div className="grid grid-cols-2 gap-3.5">
               <div className="hero-shutter-frame hero-enter-1 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
                 <Image
-                  src="/images/casing-qr-macro.jpg"
-                  alt="Anodized aluminum battery casing with laser-etched QR code plate"
+                  src="/images/spec-datasheet-studio.jpg"
+                  alt="Engineering specification datasheets and caliper on a limestone studio desk"
                   fill
                   priority
                   sizes="(max-width: 1024px) 48vw, 320px"
@@ -124,8 +124,8 @@ export default function LoginPage({
               </div>
               <div className="hero-enter-2 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
                 <Image
-                  src="/images/bms-cells-obsidian.jpg"
-                  alt="21700 lithium cell array and matte black BMS circuit board"
+                  src="/images/ebike-studio-europe.jpg"
+                  alt="Minimalist European commuter electric bicycle in a stone courtyard"
                   fill
                   sizes="(max-width: 1024px) 48vw, 320px"
                   className="hero-shutter-img object-cover"
@@ -133,8 +133,8 @@ export default function LoginPage({
               </div>
               <div className="hero-enter-2 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
                 <Image
-                  src="/images/battery-cutaway-25d.jpg"
-                  alt="Exploded 2.5D cutaway of the DB-36V battery pack"
+                  src="/images/qr-mobile-scan-studio.jpg"
+                  alt="Smartphone scanning a laser-etched QR code plate to open the mobile Digital Product Passport"
                   fill
                   sizes="(max-width: 1024px) 48vw, 320px"
                   className="hero-shutter-img object-cover"
@@ -142,8 +142,8 @@ export default function LoginPage({
               </div>
               <div className="hero-enter-3 relative aspect-[16/10] overflow-hidden rounded-[16px] bg-[#101214]">
                 <Image
-                  src="/images/battery-pack-studio.jpg"
-                  alt="DB-36V e-bike battery pack photographed on neutral studio cyclorama"
+                  src="/images/casing-qr-macro.jpg"
+                  alt="Anodized aluminum casing with laser-etched QR code plate"
                   fill
                   sizes="(max-width: 1024px) 48vw, 320px"
                   className="hero-shutter-img object-cover"

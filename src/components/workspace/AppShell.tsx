@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRightIcon, BrandMark } from "@/components/Icons";
@@ -125,26 +124,25 @@ export function AppShell({
             })}
           </nav>
 
-          {/* Hardware Specimen Quick Card */}
-          <div className="overflow-hidden rounded-[14px] bg-[#101214] p-3.5 text-[#f4f3ef]">
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[9px] bg-[#e8e7e3]">
-              <Image
-                src="/images/battery-pack-studio.jpg"
-                alt="DB-36V reference battery pack"
-                fill
-                sizes="220px"
-                className="object-cover"
-              />
+          {/* Compact Annex XIII Schema Reference Card (No redundant battery photo in sidebar) */}
+          <div className="rounded-[14px] bg-[#101214] p-3.5 text-[#f4f3ef]">
+            <div className="flex items-center justify-between gap-2">
+              <span className="rounded bg-[#173038] px-2 py-0.5 text-[11px] font-semibold text-[#7dd3e8]">
+                Annex XIII
+              </span>
+              <span className="num text-[12px] font-semibold text-[#34d399]">
+                71 points
+              </span>
             </div>
-            <p className="font-display mt-3 text-[14px] font-semibold text-white">
-              Reference DB-36V Pack
+            <p className="font-display mt-2.5 text-[14px] font-semibold text-white">
+              Reference DB-36V Specimen
             </p>
             <p className="mt-0.5 text-[12.5px] text-[#c4c8d0]">
-              4-tab public QR specimen
+              51 static · 21 dynamic BMS · 3 tiers
             </p>
             <Link
               href="/demo"
-              className="pressable mt-2.5 inline-flex w-full items-center justify-between rounded-[8px] bg-[#1d2229] px-3 py-2 text-[13px] font-semibold text-[#3eb8cf] transition-colors hover:bg-[#282e37]"
+              className="pressable mt-3 inline-flex w-full items-center justify-between rounded-[8px] bg-[#1d2229] px-3 py-2 text-[13px] font-semibold text-[#3eb8cf] transition-colors hover:bg-[#282e37]"
             >
               <span>Inspect live /demo</span>
               <ArrowRightIcon className="btn-arrow h-3.5 w-3.5" />
