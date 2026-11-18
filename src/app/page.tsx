@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { ArrowRightIcon } from "@/components/Icons";
 import { AudienceIndexSection } from "@/components/landing/AudienceIndexSection";
 import { HeroPassportStage } from "@/components/landing/HeroPassportStage";
+import { InkFillSection } from "@/components/landing/InkFillSection";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { LandingSmoothScroll } from "@/components/landing/LandingSmoothScroll";
 import { PassportPreview } from "@/components/landing/PassportPreview";
@@ -17,7 +18,10 @@ export default function LandingPage() {
 
       <main>
         {/* Act 1: Studio Hardware & Poster-Scale Hero (#e8e7e3 neutral putty) */}
-        <section className="pb-16 pt-8 sm:pt-12 lg:pb-24 lg:pt-16">
+        <section
+          data-chapter-theme="putty"
+          className="pb-16 pt-8 sm:pt-12 lg:pb-24 lg:pt-16"
+        >
           <div className="page-shell grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             {/* Left Copy & Actions */}
             <div className="lg:col-span-6">
@@ -39,7 +43,7 @@ export default function LandingPage() {
                   className="pressable inline-flex items-center gap-2 rounded-[10px] bg-[#145b6e] px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
                 >
                   <span>See live demo</span>
-                  <ArrowRightIcon className="h-4 w-4" />
+                  <ArrowRightIcon className="btn-arrow h-4 w-4" />
                 </Link>
                 <a
                   href="#contact"
@@ -64,14 +68,21 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Act 2: Held Sticky Obsidian Scroll Scene (#101214) */}
+        {/* Act 2 (Scene 1): Held Sticky Obsidian Scroll Scene (#101214) */}
         <PipelineScrollScene />
 
-        {/* Act 3: Asymmetric Chalk Audience Index (#ffffff) */}
+        {/* Act 3 (Quiet Editorial Section): Asymmetric Chalk Audience Index (#ffffff) */}
         <AudienceIndexSection />
 
-        {/* Act 4: Live Embedded Specimen Stage (#e8e7e3 studio putty) */}
-        <section id="preview" className="bg-[#e8e7e3] py-20 text-[#0f1114] lg:py-28">
+        {/* Act 3.5: Ink-Fill Statement + Rolling Figures + Scene 2 Opening Window (#101214) */}
+        <InkFillSection />
+
+        {/* Act 4: Live Interactive Specimen Stage (#e8e7e3 studio putty) */}
+        <section
+          id="preview"
+          data-chapter-theme="putty"
+          className="bg-[#e8e7e3] py-20 text-[#0f1114] lg:py-28"
+        >
           <div className="page-shell">
             <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
@@ -88,7 +99,7 @@ export default function LandingPage() {
                 className="pressable inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[15px] font-semibold text-[#145b6e] transition-colors hover:text-[#0e4656]"
               >
                 <span>Launch full demo view</span>
-                <ArrowRightIcon className="h-4 w-4" />
+                <ArrowRightIcon className="btn-arrow h-4 w-4" />
               </Link>
             </div>
 
@@ -97,7 +108,11 @@ export default function LandingPage() {
         </section>
 
         {/* Act 5: Deep Baltic Petrol Closing Invitation (#0c262e) */}
-        <section id="contact" className="bg-[#0c262e] py-24 text-[#f4f7f8] lg:py-32">
+        <section
+          id="contact"
+          data-chapter-theme="petrol"
+          className="bg-[#0c262e] py-24 text-[#f4f7f8] lg:py-32"
+        >
           <div className="page-shell grid grid-cols-1 items-end gap-12 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <h2 className="text-display-hero max-w-[16ch] text-white">
@@ -120,7 +135,7 @@ export default function LandingPage() {
                   className="pressable inline-flex items-center gap-2 whitespace-nowrap rounded-[10px] bg-white px-6 py-3.5 text-[15px] font-semibold text-[#0c262e] transition-colors hover:bg-[#e6f2f5]"
                 >
                   <span>Open spec intake form</span>
-                  <ArrowRightIcon className="h-4 w-4" />
+                  <ArrowRightIcon className="btn-arrow h-4 w-4" />
                 </a>
                 <Link
                   href="/app/new"
@@ -144,7 +159,10 @@ export default function LandingPage() {
       </main>
 
       {/* Act 6: Single Calm Architectural Footer (#0d0f12) */}
-      <footer className="bg-[#0d0f12] py-10 text-[14px] text-[#c4c8d0]">
+      <footer
+        data-chapter-theme="obsidian"
+        className="bg-[#0d0f12] py-10 text-[14px] text-[#c4c8d0]"
+      >
         <div className="page-shell flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
           <div className="space-y-1.5">
             <p className="font-medium text-[#e4e6eb]">

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRightIcon, PdfFileIcon, QrGridIcon } from "@/components/Icons";
 
 interface HeroPassportStageProps {
@@ -45,23 +46,44 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
   useEffect(() => {
     const container = stageRef.current;
     const hardware = cardRef.current;
-    if (!container || !hardware) return;
+    if (!container || !hardware || typeof window === "undefined") return;
 
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    if (prefersReduced) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Receding hero scroll-out effect (motion.md §6 Receding hero)
+    const scrollTween = gsap.to(container, {
+      yPercent: 5,
+      scale: 0.968,
+      ease: "none",
+      scrollTrigger: {
+        trigger: container,
+        start: "top 18%",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+
     const canHover = window.matchMedia(
       "(hover: hover) and (pointer: fine)",
     ).matches;
 
-    if (prefersReduced || !canHover) return;
+    if (!canHover) {
+      return () => {
+        scrollTween.kill();
+      };
+    }
 
     const rotX = gsap.quickTo(hardware, "rotationX", {
-      duration: 0.55,
+      duration: 0.5,
       ease: "power3.out",
     });
     const rotY = gsap.quickTo(hardware, "rotationY", {
-      duration: 0.55,
+      duration: 0.5,
       ease: "power3.out",
     });
 
@@ -69,8 +91,8 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
       const rect = container.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      rotY(x * 7);
-      rotX(-y * 5);
+      rotY(x * 7.5);
+      rotX(-y * 5.5);
     };
 
     const handleLeave = () => {
@@ -82,6 +104,7 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
     container.addEventListener("mouseleave", handleLeave);
 
     return () => {
+      scrollTween.kill();
       container.removeEventListener("mousemove", handleMove);
       container.removeEventListener("mouseleave", handleLeave);
     };
@@ -103,16 +126,18 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
         ref={cardRef}
         className="preserve-3d relative overflow-hidden rounded-[22px] bg-[#dcdad4]"
       >
-        {/* Full-bleed Studio Product Macro */}
-        <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#e8e7e3]">
-          <Image
-            src="/images/casing-qr-macro.jpg"
-            alt="Brushed aluminum DB-36V battery enclosure with recessed laser-etched QR data badge"
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 660px"
-            className="object-cover object-center"
-          />
+        {/* Full-bleed Studio Product Macro with Image Shutter Opening */}
+        <div className="hero-shutter-frame relative aspect-[16/10] w-full overflow-hidden bg-[#e8e7e3]">
+          <div className="hero-shutter-img relative h-full w-full">
+            <Image
+              src="/images/casing-qr-macro.jpg"
+              alt="Brushed aluminum DB-36V battery enclosure with recessed laser-etched QR data badge"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 660px"
+              className="object-cover object-center"
+            />
+          </div>
 
           {activeStage !== "check" && (
             <div

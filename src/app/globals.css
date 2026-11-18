@@ -49,11 +49,22 @@
   --petrol-ink: #f4f7f8;
   --petrol-accent: #7ce3f4;
 
-  /* Emil Kowalski & Apple Spring Physics Curves */
+  /* Emil Kowalski, Apple Fluid & Awwwards Scene Easing Curves */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-exit: cubic-bezier(0.55, 0.055, 0.675, 0.19);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-ui: 240ms;
+  --t-reveal: 820ms;
+  --t-open: 1100ms;
+  --stagger-line: 90ms;
+  --stagger-item: 70ms;
 
   /* Five Sacred Responsive Typographic Steps */
   --step-display: clamp(1.9rem, 1.2rem + 2.75vw, 4.1rem);
@@ -226,8 +237,72 @@ a {
   .pressable:active {
     transform: translateY(0) scale(0.97);
   }
+  .pressable:hover .btn-arrow {
+    transform: translateX(3.5px);
+  }
   .interactive-card:hover {
     transform: translateY(-2px);
+  }
+}
+
+.btn-arrow {
+  transition: transform 220ms var(--ease-out);
+}
+
+/* Chapter-Aware Adaptive Header (300ms colour-by-chapter transition) */
+.chapter-nav {
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+/* Rolling Odometer Figures (motion.md §6 recipe) */
+.roll-digits {
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.roll-col {
+  display: inline-block;
+  height: 1em;
+  overflow: clip;
+}
+
+.roll-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--d, 0) * -1em));
+}
+
+.roll-strip > span {
+  height: 1em;
+  display: block;
+}
+
+/* Cross-Document View Transitions */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: vtLeave 180ms var(--ease-exit) both;
+}
+
+::view-transition-new(root) {
+  animation: vtArrive 340ms var(--ease-out) 40ms both;
+}
+
+@keyframes vtLeave {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vtArrive {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
 }
 
@@ -278,23 +353,41 @@ html.lenis body {
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-line-inner {
-    animation: heroLineRise 820ms var(--ease-out) both;
+    animation: heroLineRise 840ms var(--ease-expo) both;
   }
 
   .hero-line-inner-delay {
-    animation: heroLineRise 820ms var(--ease-out) 110ms both;
+    animation: heroLineRise 840ms var(--ease-expo) 95ms both;
   }
 
   .hero-fade-rise {
-    animation: heroFadeUp 680ms var(--ease-out) 220ms both;
+    animation: heroFadeUp 680ms var(--ease-out) 210ms both;
   }
 
   .hero-stage-rise {
-    animation: heroStageIn 760ms var(--ease-out) 160ms both;
+    animation: heroStageIn 820ms var(--ease-expo) 140ms both;
+  }
+
+  .hero-shutter-frame {
+    clip-path: inset(0 0 100% 0);
+    animation: shutterOpen 1020ms var(--ease-in-out) 120ms forwards;
+  }
+
+  .hero-shutter-img {
+    transform: scale(1.09);
+    animation: shutterSettle 1180ms var(--ease-expo) 100ms forwards;
+  }
+
+  .roll-figure:not([data-rolled="true"]) .roll-strip {
+    transform: translateY(0);
+  }
+
+  .roll-figure[data-rolled="true"] .roll-strip {
+    transition: transform 1050ms var(--ease-expo) calc(var(--i, 0) * 75ms);
   }
 
   .tab-panel-enter {
-    animation: panelEnter 240ms var(--ease-out) both;
+    animation: panelEnter 230ms var(--ease-out) both;
   }
 
   .hotspot-card-enter {
@@ -376,6 +469,18 @@ html.lenis body {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shutterOpen {
+  to {
+    clip-path: inset(0 0 0% 0);
+  }
+}
+
+@keyframes shutterSettle {
+  to {
+    transform: scale(1);
   }
 }
 
@@ -469,6 +574,9 @@ html.lenis body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
   html {
     scroll-behavior: auto;
   }
@@ -487,6 +595,10 @@ html.lenis body {
   .hero-line-inner-delay,
   .hero-fade-rise,
   .hero-stage-rise,
+  .hero-shutter-frame,
+  .hero-shutter-img,
+  .roll-strip,
+  .btn-arrow,
   .tab-panel-enter,
   .hotspot-card-enter,
   .accordion-body-enter,
@@ -501,6 +613,7 @@ html.lenis body {
     animation: none !important;
     transition: opacity 150ms ease !important;
     transform: none !important;
+    clip-path: none !important;
     opacity: 1 !important;
   }
 }

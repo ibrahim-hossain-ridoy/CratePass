@@ -77,11 +77,23 @@ export function AudienceIndexSection() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
+      gsap.from(".audience-heading-reveal", {
+        yPercent: 105,
+        duration: 0.85,
+        ease: "expo.out",
+        clearProps: "transform",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 82%",
+          once: true,
+        },
+      });
+
       gsap.from(".audience-row", {
         y: 26,
         opacity: 0,
         duration: 0.72,
-        stagger: 0.12,
+        stagger: 0.11,
         ease: "power3.out",
         clearProps: "transform,opacity",
         scrollTrigger: {
@@ -93,9 +105,9 @@ export function AudienceIndexSection() {
 
       gsap.fromTo(
         photo,
-        { yPercent: -4 },
+        { yPercent: -5 },
         {
-          yPercent: 4,
+          yPercent: 5,
           ease: "none",
           scrollTrigger: {
             trigger: section,
@@ -114,14 +126,17 @@ export function AudienceIndexSection() {
     <section
       id="audiences"
       ref={sectionRef}
+      data-chapter-theme="chalk"
       className="bg-white py-24 text-[#0f1114] lg:py-32"
     >
       <div className="page-shell grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
         {/* Sticky Left Column: Title + Real Hardware Studio Visual */}
         <div className="lg:sticky lg:top-24 lg:col-span-5">
-          <h2 className="text-display-section text-[#0f1114]">
-            Built for battery teams across the EU market
-          </h2>
+          <div className="overflow-hidden pb-1">
+            <h2 className="text-display-section audience-heading-reveal text-[#0f1114]">
+              Built for battery teams across the EU market
+            </h2>
+          </div>
           <p className="mt-4 max-w-[44ch] text-[17px] leading-relaxed text-[#22252a]">
             One structured data schema tailored for engineering teams, contract
             pack builders, and EU market representatives.
@@ -152,7 +167,7 @@ export function AudienceIndexSection() {
           </div>
         </div>
 
-        {/* Right Column: Editorial Index Rows (no card grid repetition) */}
+        {/* Right Column: Editorial Index Rows */}
         <div className="space-y-3 lg:col-span-7">
           {AUDIENCES.map((item) => {
             const isActive = item.id === selectedId;
@@ -209,7 +224,7 @@ export function AudienceIndexSection() {
               className="pressable inline-flex items-center gap-2 rounded-[10px] bg-[#145b6e] px-5 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
             >
               <span>Try PDF completeness check</span>
-              <ArrowRightIcon className="h-4 w-4" />
+              <ArrowRightIcon className="btn-arrow h-4 w-4" />
             </Link>
           </div>
         </div>

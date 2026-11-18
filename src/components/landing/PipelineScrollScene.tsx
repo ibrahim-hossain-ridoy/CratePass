@@ -40,6 +40,7 @@ const STEPS: StepItem[] = [
 
 export function PipelineScrollScene() {
   const rootRef = useRef<HTMLElement>(null);
+  const progressFillRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [previewTier, setPreviewTier] = useState<"public" | "legit" | "auth">(
     "public",
@@ -56,7 +57,7 @@ export function PipelineScrollScene() {
       "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
       () => {
         root.classList.add("is-live");
-        root.style.setProperty("--hold", "2");
+        root.style.setProperty("--hold", "2.2");
 
         const trigger = ScrollTrigger.create({
           trigger: root,
@@ -67,6 +68,9 @@ export function PipelineScrollScene() {
           onUpdate: (self) => {
             const p = self.progress;
             root.style.setProperty("--p", p.toFixed(4));
+            if (progressFillRef.current) {
+              progressFillRef.current.style.transform = `scaleY(${Math.max(0.08, p).toFixed(3)})`;
+            }
             const next = p < 0.34 ? 0 : p < 0.68 ? 1 : 2;
             setActiveIndex((prev) => (prev === next ? prev : next));
           },
@@ -104,60 +108,85 @@ export function PipelineScrollScene() {
     <section
       id="workflow"
       ref={rootRef}
-      className="scene bg-[#101214] text-[#f4f3ef]"
+      data-chapter-theme="obsidian"
+      className="scene relative z-10 bg-[#101214] text-[#f4f3ef]"
     >
       <div className="scene-stage flex min-h-[720px] items-center pb-16 pt-24 lg:min-h-svh lg:pb-12 lg:pt-28">
         <div className="page-shell grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
-          {/* Left Narrative Scrubber */}
+          {/* Left Narrative Scrubber with Live Progress Spine */}
           <div className="lg:col-span-5">
-            <h2 className="text-display-section text-white">
-              One pipeline from PDF to QR
-            </h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-display-section text-white">
+                One pipeline from PDF to QR
+              </h2>
+              <span className="shrink-0 rounded-full bg-[#171a1e] px-3 py-1 text-[14px] font-medium text-[#3eb8cf]">
+                Step {activeIndex + 1} of {STEPS.length}
+              </span>
+            </div>
+
             <p className="mt-3 max-w-[44ch] text-[17px] leading-relaxed text-[#e2e5ea]">
               Each step resolves raw battery specifications into structured public
               and restricted disclosures before printing a casing label.
             </p>
 
-            <div className="mt-6 space-y-2.5" role="tablist" aria-label="Workflow stages">
-              {STEPS.map((step, idx) => {
-                const active = activeIndex === idx;
-                return (
-                  <button
-                    key={step.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={active}
-                    onClick={() => handleStepClick(idx)}
-                    className={`w-full cursor-pointer rounded-[14px] px-4.5 py-4 text-left transition-colors duration-200 ${
-                      active
-                        ? "bg-[#1d2228] text-white"
-                        : "bg-[#15181c] text-[#c4c8d0] hover:bg-[#1a1e23] hover:text-white"
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-display text-[19px] font-semibold leading-snug text-inherit">
-                        {step.title}
-                      </span>
-                      <span
-                        className={`shrink-0 rounded-full px-3 py-0.5 text-[13.5px] font-medium ${
-                          active
-                            ? "bg-[#3eb8cf] text-[#08181d]"
-                            : "bg-[#232830] text-[#e2e5ea]"
-                        }`}
-                      >
-                        {step.metric}
-                      </span>
-                    </div>
-                    <p
-                      className={`mt-1.5 text-[16px] leading-relaxed ${
-                        active ? "text-[#f4f3ef]" : "text-[#b6bac2]"
+            <div className="relative mt-6 flex gap-4">
+              {/* Vertical Scrub Spine */}
+              <div
+                aria-hidden="true"
+                className="hidden w-1 shrink-0 overflow-hidden rounded-full bg-[#1d2228] lg:block"
+              >
+                <div
+                  ref={progressFillRef}
+                  style={{ transform: "scaleY(0.33)" }}
+                  className="h-full w-full origin-top rounded-full bg-[#3eb8cf] transition-transform duration-150"
+                />
+              </div>
+
+              <div
+                className="flex-1 space-y-2.5"
+                role="tablist"
+                aria-label="Workflow stages"
+              >
+                {STEPS.map((step, idx) => {
+                  const active = activeIndex === idx;
+                  return (
+                    <button
+                      key={step.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => handleStepClick(idx)}
+                      className={`w-full cursor-pointer rounded-[14px] px-4.5 py-4 text-left transition-colors duration-200 ${
+                        active
+                          ? "bg-[#1d2228] text-white"
+                          : "bg-[#15181c] text-[#c4c8d0] hover:bg-[#1a1e23] hover:text-white"
                       }`}
                     >
-                      {step.summary}
-                    </p>
-                  </button>
-                );
-              })}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-display text-[19px] font-semibold leading-snug text-inherit">
+                          {step.title}
+                        </span>
+                        <span
+                          className={`shrink-0 rounded-full px-3 py-0.5 text-[14px] font-medium ${
+                            active
+                              ? "bg-[#3eb8cf] text-[#08181d]"
+                              : "bg-[#232830] text-[#e2e5ea]"
+                          }`}
+                        >
+                          {step.metric}
+                        </span>
+                      </div>
+                      <p
+                        className={`mt-1.5 text-[16px] leading-relaxed ${
+                          active ? "text-[#f4f3ef]" : "text-[#b6bac2]"
+                        }`}
+                      >
+                        {step.summary}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
