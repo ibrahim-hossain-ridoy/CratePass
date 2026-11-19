@@ -4,7 +4,11 @@ import { redirect } from "next/navigation";
 import { AppShell } from "@/components/workspace/AppShell";
 import { BillingWorkspace } from "@/components/workspace/BillingWorkspace";
 import { getPaddleEnv, isBillingEnabled } from "@/config/site";
-import { describeOrgBillingState, getBillingProvider } from "@/lib/billing";
+import {
+  describeOrgBillingState,
+  getBillingProvider,
+  isTestBillingSimulationAllowed,
+} from "@/lib/billing";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import WorkspaceLoading from "../loading";
 
@@ -21,8 +25,8 @@ async function BillingLoader({
   if (ctx.state === "unconfigured") {
     return (
       <AppShell orgName="Setup required">
-        <div className="rounded-[10px] border border-[var(--notice-border)] bg-[var(--notice-bg)] p-5 text-[14px] text-[var(--notice-ink)]">
-          <h1 className="text-[18px] font-semibold">
+        <div className="rounded-[12px] bg-[#fdf6ec] p-5 text-[14px] text-[#7c380b]">
+          <h1 className="font-display text-[18px] font-semibold">
             Configure Supabase environment variables to open /app/billing
           </h1>
           <p className="mt-2">
@@ -70,12 +74,11 @@ async function BillingLoader({
       <BillingWorkspace
         orgName={ctx.org.orgName}
         role={ctx.org.role}
-        billingEnabled={billingEnabled}
         billingStatus={ctx.org.billingStatus}
         compEnabled={ctx.org.compEnabled}
         paddleEnv={getPaddleEnv()}
         checkoutConfigured={provider.isCheckoutConfigured()}
-        webhookConfigured={provider.isWebhookConfigured()}
+        testSimulationEnabled={isTestBillingSimulationAllowed()}
         displayState={displayState}
         checkoutNotice={checkoutNotice}
       />

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import type { BillingDisplayState } from "@/lib/billing";
 import type { BillingStatus } from "@/types/database";
@@ -9,12 +10,11 @@ import type { BillingStatus } from "@/types/database";
 interface BillingWorkspaceProps {
   orgName: string;
   role: "owner" | "member";
-  billingEnabled: boolean;
   billingStatus: BillingStatus;
   compEnabled: boolean;
   paddleEnv: "sandbox" | "production";
   checkoutConfigured: boolean;
-  webhookConfigured: boolean;
+  testSimulationEnabled: boolean;
   displayState: BillingDisplayState;
   checkoutNotice?: "success" | "canceled";
 }
@@ -22,20 +22,30 @@ interface BillingWorkspaceProps {
 export function BillingWorkspace({
   orgName,
   role,
-  billingEnabled,
-  billingStatus,
+  billingStatus: initialBillingStatus,
   compEnabled,
   paddleEnv,
   checkoutConfigured,
-  webhookConfigured,
+  testSimulationEnabled,
   displayState,
   checkoutNotice,
 }: BillingWorkspaceProps) {
+  const router = useRouter();
+  const [billingStatus, setBillingStatus] =
+    useState<BillingStatus>(initialBillingStatus);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
+  const [simulatingAction, setSimulatingAction] = useState<
+    "upgrade" | "reset" | null
+  >(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const isBrandHostingActive = billingStatus === "active";
+  const hasPublishingAccess = isBrandHostingActive || compEnabled || displayState.canPublish;
 
   async function handleStartCheckout() {
     setErrorMessage(null);
+    setStatusMessage(null);
     setLoadingCheckout(true);
     try {
       const res = await fetch("/api/billing/checkout", {
@@ -55,21 +65,53 @@ export function BillingWorkspace({
       }
       window.location.assign(json.checkoutUrl);
     } catch {
-      setErrorMessage("Network error starting Paddle checkout.");
+      setErrorMessage("Network error starting checkout.");
     } finally {
       setLoadingCheckout(false);
     }
   }
 
-  const canUpgradeNow =
-    billingEnabled &&
+  async function handleSimulatePlan(action: "upgrade" | "reset") {
+    setErrorMessage(null);
+    setStatusMessage(null);
+    setSimulatingAction(action);
+    try {
+      const res = await fetch("/api/billing/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        billingStatus?: BillingStatus;
+      };
+      if (!res.ok || !json.billingStatus) {
+        setErrorMessage(json.error || "Could not update test plan status.");
+        return;
+      }
+      setBillingStatus(json.billingStatus);
+      setStatusMessage(
+        action === "upgrade"
+          ? "Local test upgrade complete: organization is now on Brand Hosting (€49/month) and logged in your audit trail."
+          : "Local test reset complete: organization has been returned to the Free Plan and logged in your audit trail.",
+      );
+      router.refresh();
+    } catch {
+      setErrorMessage("Network error updating test plan status.");
+    } finally {
+      setSimulatingAction(null);
+    }
+  }
+
+  const canUpgradeViaPaddle =
+    !isBrandHostingActive &&
     !compEnabled &&
-    billingStatus !== "active" &&
     role === "owner" &&
     checkoutConfigured;
 
   return (
     <div data-ui className="space-y-6">
+      {/* Workspace Header */}
       <div className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -81,33 +123,36 @@ export function BillingWorkspace({
             </span>
           </div>
           <h1 className="font-display mt-2 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
-            Plan &amp; Billing
+            Plans &amp; Billing
           </h1>
-          <p className="mt-1 text-[13.5px] text-[#505660]">
-            Technical hosting infrastructure billing controls and Paddle sandbox adapter.
+          <p className="mt-1 text-[14px] text-[#505660]">
+            {displayState.headline}. {displayState.detail}
           </p>
         </div>
 
         <span
           className={`inline-flex self-start rounded-md px-3 py-1.5 text-[12.5px] font-semibold sm:self-auto ${
-            displayState.canPublish
+            hasPublishingAccess
               ? "bg-[#edf8f2] text-[#156d49]"
               : "bg-[#fdf6ec] text-[#7c380b]"
           }`}
         >
-          {displayState.badgeLabel}
+          {isBrandHostingActive
+            ? "Brand Hosting Active"
+            : displayState.badgeLabel}
         </span>
       </div>
 
+      {/* Checkout / Simulation Feedback Banners */}
       {checkoutNotice === "success" && (
         <div
           role="status"
           className="tab-panel-enter rounded-[12px] border border-[#9fd4b9] bg-[#edf8f2] p-4 text-[13.5px] text-[#156d49]"
         >
-          <p className="font-semibold">Checkout submitted to Paddle</p>
+          <p className="font-semibold">Checkout submitted</p>
           <p className="mt-1">
-            Subscription status updates automatically once Paddle delivers the signed{" "}
-            <code>/api/webhooks/paddle</code> event.
+            Your Brand Hosting subscription activates automatically as soon as
+            payment confirmation is received.
           </p>
         </div>
       )}
@@ -117,76 +162,101 @@ export function BillingWorkspace({
           role="status"
           className="tab-panel-enter rounded-[12px] border border-[#ebd0a8] bg-[#fdf6ec] p-4 text-[13.5px] text-[#7c380b]"
         >
-          Checkout was canceled before completion. Existing drafts and PDFs are untouched.
+          Checkout was canceled before completion. Your existing drafts and
+          uploaded PDFs are untouched.
         </div>
       )}
 
+      {statusMessage && (
+        <div
+          role="status"
+          className="tab-panel-enter rounded-[12px] border border-[#9fd4b9] bg-[#edf8f2] p-4 text-[13.5px] font-medium text-[#156d49]"
+        >
+          {statusMessage}
+        </div>
+      )}
+
+      {errorMessage && (
+        <div
+          role="alert"
+          className="tab-panel-enter rounded-[12px] border border-red-300 bg-red-50 p-4 text-[13.5px] font-medium text-red-900"
+        >
+          {errorMessage}
+        </div>
+      )}
+
+      {/* Two Clean User-Facing Plan Cards */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
-        {/* Current Organization Entitlement Status */}
-        <section className="rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6 lg:col-span-7">
-          <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
-            {displayState.headline}
-          </h2>
-          <p className="mt-2 text-[14px] leading-relaxed text-[#505660]">
-            {displayState.detail}
-          </p>
-
-          <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-[12px] bg-white p-3.5">
-              <dt className="text-[12px] font-medium text-[#505660]">
-                Billing gate (BILLING_ENABLED)
-              </dt>
-              <dd className="mt-1 text-[13.5px] font-semibold text-[#0f1114]">
-                <code>
-                  {billingEnabled ? "true (enforced on publish)" : "false (pilot free)"}
-                </code>
-              </dd>
-            </div>
-            <div className="rounded-[12px] bg-white p-3.5">
-              <dt className="text-[12px] font-medium text-[#505660]">
-                Organization billing_status
-              </dt>
-              <dd className="mt-1 text-[13.5px] font-semibold text-[#0f1114]">
-                <code>{billingStatus}</code>
-              </dd>
-            </div>
-            <div className="rounded-[12px] bg-white p-3.5">
-              <dt className="text-[12px] font-medium text-[#505660]">
-                Pilot comp_enabled override
-              </dt>
-              <dd className="mt-1 text-[13.5px] font-semibold text-[#0f1114]">
-                <code>{compEnabled ? "true (bypass active)" : "false"}</code>
-              </dd>
-            </div>
-            <div className="rounded-[12px] bg-white p-3.5">
-              <dt className="text-[12px] font-medium text-[#505660]">
-                Paddle adapter mode
-              </dt>
-              <dd className="mt-1 text-[13.5px] font-semibold text-[#0f1114]">
-                <code>
-                  {paddleEnv} ({checkoutConfigured && webhookConfigured ? "keys set" : "setup needed"})
-                </code>
-              </dd>
-            </div>
-          </dl>
-
-          <div className="mt-4 rounded-[12px] bg-white p-4 text-[12.5px] leading-relaxed text-[#505660]">
-            Pilot brands can be granted manual publishing access by setting{" "}
-            <code className="text-[#0f1114]">comp_enabled = true</code> on
-            their row in <code className="text-[#0f1114]">organizations</code>{" "}
-            via Supabase admin/SQL. End-users cannot modify billing flags directly.
-          </div>
-        </section>
-
-        {/* Placeholder EUR Plan Card */}
-        <section className="flex flex-col justify-between rounded-[18px] bg-[#101214] p-5 text-[#f4f3ef] sm:p-6 lg:col-span-5">
+        {/* Tier 1: Free Plan */}
+        <section className="flex flex-col justify-between rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6 lg:col-span-6">
           <div>
             <div className="flex items-start justify-between gap-2">
               <div>
-                <span className="inline-flex rounded-md bg-[#173038] px-2.5 py-0.5 text-[11.5px] font-semibold text-[#7dd3e8]">
-                  Placeholder EUR pricing
+                <span className="inline-flex rounded-md bg-white px-2.5 py-0.5 text-[12px] font-semibold text-[#505660]">
+                  Draft &amp; Intake
                 </span>
-                <h2 className="font-display mt-2 text-[19px] font-semibold text-white">
+                <h2 className="font-display mt-2 text-[20px] font-semibold text-[#0f1114]">
+                  Free Plan
+                </h2>
+              </div>
+              <div className="text-right">
+                <span className="num font-display text-[28px] font-bold tracking-tight text-[#0f1114]">
+                  €0
+                </span>
+                <span className="block text-[12px] text-[#505660]">/ month</span>
+              </div>
+            </div>
+
+            <p className="mt-3 text-[14px] leading-relaxed text-[#505660]">
+              Sign up, upload PDFs or create blank drafts, run 71-point
+              completeness checks, and edit drafts for your battery models.
+            </p>
+
+            <ul className="mt-5 space-y-2.5 rounded-[14px] bg-white p-4 text-[13.5px] text-[#0f1114]">
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#145b6e]" />
+                <span>Sign up &amp; create your organization workspace</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#145b6e]" />
+                <span>Upload OEM spec PDFs or start blank drafts</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#145b6e]" />
+                <span>Run 71-point Annex XIII completeness checks</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#145b6e]" />
+                <span>Edit drafts &amp; export full organization JSON</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="mt-6">
+            {!isBrandHostingActive ? (
+              <div className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] bg-white px-4 py-2.5 text-[13.5px] font-semibold text-[#0f1114]">
+                Current plan
+              </div>
+            ) : (
+              <Link
+                href="/app"
+                className="pressable inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] bg-white px-4 py-2.5 text-[13.5px] font-semibold text-[#0f1114] hover:bg-[#eae9e4]"
+              >
+                Open Passports ledger
+              </Link>
+            )}
+          </div>
+        </section>
+
+        {/* Tier 2: Brand Hosting (€49/month) */}
+        <section className="flex flex-col justify-between rounded-[18px] bg-[#101214] p-5 text-[#f4f3ef] sm:p-6 lg:col-span-6">
+          <div>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <span className="inline-flex rounded-md bg-[#173038] px-2.5 py-0.5 text-[12px] font-semibold text-[#7dd3e8]">
+                  Live Hosting &amp; QR Labels
+                </span>
+                <h2 className="font-display mt-2 text-[20px] font-semibold text-white">
                   {siteConfig.billingPlan.name}
                 </h2>
               </div>
@@ -198,70 +268,61 @@ export function BillingWorkspace({
               </div>
             </div>
 
-            <p className="mt-3 text-[13.5px] leading-relaxed text-[#c4c8d0]">
+            <p className="mt-3 text-[14px] leading-relaxed text-[#c4c8d0]">
               {siteConfig.billingPlan.summary}
             </p>
 
-            <ul className="mt-4 space-y-2.5 rounded-[12px] bg-[#171a1e] p-4 text-[13px] text-[#e2e5ea]">
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#3eb8cf]" />
-                <span>Live QR passport hosting at /p/[slug]</span>
+            <ul className="mt-5 space-y-2.5 rounded-[14px] bg-[#171a1e] p-4 text-[13.5px] text-[#e2e5ea]">
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3eb8cf]" />
+                <span>Publish live /p/[slug] mobile QR passports</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#3eb8cf]" />
-                <span>SVG &amp; PNG print-ready QR downloads</span>
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3eb8cf]" />
+                <span>Download print-ready SVG &amp; PNG QR labels</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#3eb8cf]" />
-                <span>Immutable versioned snapshots &amp; audit trail</span>
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3eb8cf]" />
+                <span>Issue immutable versioned updates (v1, v2) &amp; audit trail</span>
               </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#3eb8cf]" />
-                <span>Separate public &amp; restricted technical tiers</span>
+              <li className="flex items-center gap-2.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3eb8cf]" />
+                <span>Separate public &amp; restricted technical access tiers</span>
               </li>
             </ul>
-
-            {errorMessage && (
-              <div
-                role="alert"
-                className="mt-4 rounded-[10px] border border-red-400/50 bg-red-950/60 px-3.5 py-2.5 text-[13px] text-red-200"
-              >
-                {errorMessage}
-              </div>
-            )}
           </div>
 
           <div className="mt-6 space-y-2.5">
-            {canUpgradeNow ? (
+            {isBrandHostingActive ? (
+              <div className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] bg-[#0a2921] px-4 py-2.5 text-[14px] font-semibold text-[#6ee7b7]">
+                Active subscription
+              </div>
+            ) : canUpgradeViaPaddle ? (
               <button
                 type="button"
                 disabled={loadingCheckout}
                 onClick={handleStartCheckout}
-                className="pressable group inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#1a748b] disabled:opacity-60 cursor-pointer"
+                className="pressable group inline-flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#1a748b] disabled:opacity-60"
               >
                 <span>
                   {loadingCheckout
-                    ? "Opening Paddle checkout..."
-                    : `Activate ${paddleEnv === "sandbox" ? "Sandbox " : ""}plan (€${siteConfig.billingPlan.priceEurMonthly}/mo)`}
+                    ? "Opening checkout..."
+                    : `Upgrade to Brand Hosting${paddleEnv === "sandbox" ? " (Sandbox)" : ""} (€${siteConfig.billingPlan.priceEurMonthly}/mo)`}
                 </span>
                 <span aria-hidden="true" className="btn-arrow">
                   →
                 </span>
               </button>
             ) : (
-              <button
-                type="button"
-                disabled
-                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] bg-[#1c2026] px-4 py-2.5 text-[13.5px] font-semibold text-[#c4c8d0]"
-              >
-                {!billingEnabled
-                  ? "Billing disabled (free pilot open)"
-                  : compEnabled || billingStatus === "active"
-                    ? "Publishing unlocked for this org"
-                    : !checkoutConfigured
-                      ? "Set PADDLE_API_KEY & price ID to enable checkout"
-                      : "Organization owner required"}
-              </button>
+              <div className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[10px] bg-[#1c2026] px-4 py-2.5 text-[13.5px] font-semibold text-[#c4c8d0]">
+                {compEnabled
+                  ? "Publishing unlocked via pilot grant"
+                  : role !== "owner"
+                    ? "Ask your organization owner to manage plans"
+                    : testSimulationEnabled
+                      ? "Use Local Test Checkout below to test upgrading"
+                      : "Online checkout will open once Paddle is connected"}
+              </div>
             )}
 
             <Link
@@ -273,6 +334,60 @@ export function BillingWorkspace({
           </div>
         </section>
       </div>
+
+      {/* Gated Local/Test-Only Simulated Checkout Panel (Never shown in production) */}
+      {testSimulationEnabled && (
+        <section className="rounded-[18px] bg-[#fdf6ec] p-5 text-[#7c380b] sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="max-w-[60ch]">
+              <span className="inline-flex rounded-md bg-white px-2.5 py-0.5 text-[12px] font-semibold text-[#7c380b]">
+                Local Test Mode
+              </span>
+              <h2 className="font-display mt-2 text-[17px] font-semibold text-[#0f1114]">
+                Simulate Brand Hosting checkout on localhost
+              </h2>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-[#505660]">
+                Test upgrading to Brand Hosting (€49/month) or resetting back to
+                the Free Plan without live Paddle credentials. Updates your
+                organization record in Supabase and writes an entry to your audit
+                log.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                disabled={
+                  simulatingAction !== null ||
+                  role !== "owner" ||
+                  isBrandHostingActive
+                }
+                onClick={() => handleSimulatePlan("upgrade")}
+                className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#145b6e] px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-[#0e4656] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {simulatingAction === "upgrade"
+                  ? "Upgrading..."
+                  : `Test Upgrade to Brand Hosting (€${siteConfig.billingPlan.priceEurMonthly}/mo)`}
+              </button>
+
+              <button
+                type="button"
+                disabled={
+                  simulatingAction !== null ||
+                  role !== "owner" ||
+                  !isBrandHostingActive
+                }
+                onClick={() => handleSimulatePlan("reset")}
+                className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-white px-4 py-2 text-[13.5px] font-semibold text-[#0f1114] hover:bg-[#f4f4f2] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {simulatingAction === "reset"
+                  ? "Resetting..."
+                  : "Reset to Free Plan"}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

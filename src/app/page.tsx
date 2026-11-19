@@ -42,18 +42,18 @@ export default function LandingPage() {
 
                 <div className="hero-fade-rise mt-6 flex flex-wrap items-center gap-3.5">
                   <Link
-                    href="/demo"
+                    href="/app/new"
                     className="pressable inline-flex items-center gap-2 rounded-[10px] bg-[#145b6e] px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
                   >
-                    <span>See live demo</span>
+                    <span>Start free pilot</span>
                     <ArrowRightIcon className="btn-arrow h-4 w-4" />
                   </Link>
-                  <a
-                    href="#contact"
+                  <Link
+                    href="/demo"
                     className="pressable inline-flex items-center justify-center rounded-[10px] bg-[#dad8d1] px-6 py-3.5 text-[15px] font-semibold text-[#0f1114] transition-colors hover:bg-[#cfccc4]"
                   >
-                    Send your spec PDF
-                  </a>
+                    See live demo
+                  </Link>
                 </div>
               </div>
             </div>

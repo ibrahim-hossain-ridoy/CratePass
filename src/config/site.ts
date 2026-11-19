@@ -18,7 +18,7 @@ export const siteConfig = {
     priceEurMonthly: 49,
     isPlaceholderPricing: true,
     summary:
-      "Placeholder EUR pricing — publish hosted passports, downloadable QR labels, and versioned updates for your organization.",
+      "Publish live /p/[slug] QR passports, download SVG/PNG QR labels, and issue versioned updates.",
   },
 } as const;
 

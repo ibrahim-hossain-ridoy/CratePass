@@ -48,12 +48,12 @@ export default function TermsPage() {
           3. Pilot Access, Usage Caps &amp; Billing
         </h2>
         <p className="text-[var(--muted)]">
-          While pilot mode is active (<code className="font-mono">BILLING_ENABLED=false</code>{" "}
-          or when an organization carries an approved comp override), publishing is
-          enabled free of charge subject to anti-abuse quotas (default 5 PDF extractions
-          per organization per UTC day). When paid billing is enabled, subscription fees
-          are listed as placeholder EUR pricing (€{siteConfig.billingPlan.priceEurMonthly}
-          /month) processed via Paddle, acting as Merchant of Record once configured.
+          While pilot mode is active or when an organization carries an approved
+          pilot grant, publishing is enabled free of charge subject to anti-abuse
+          quotas (default 5 PDF extractions per organization per UTC day). When
+          paid billing is enabled, subscription fees are listed at €
+          {siteConfig.billingPlan.priceEurMonthly}/month and processed via Paddle,
+          acting as Merchant of Record once configured.
         </p>
       </section>
 

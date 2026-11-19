@@ -23,10 +23,23 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+const safeMetadataBase =
+  configuredSiteUrl && /^https?:\/\//i.test(configuredSiteUrl)
+    ? new URL(configuredSiteUrl)
+    : undefined;
+
 export const metadata: Metadata = {
+  metadataBase: safeMetadataBase,
   title: "Battery Passport Host — EU Battery Passport from Spec PDFs",
   description:
     "Turn battery spec PDFs into structured EU Digital Product Passports, 71-point Annex XIII completeness checks, and hosted mobile QR passport links.",
+  openGraph: {
+    title: "Battery Passport Host — EU Battery Passport from Spec PDFs",
+    description:
+      "Turn battery spec PDFs into structured EU Digital Product Passports, 71-point Annex XIII completeness checks, and hosted mobile QR passport links.",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = {

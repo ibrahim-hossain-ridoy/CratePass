@@ -197,7 +197,7 @@ export function LoginForm({
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="engineer@brand-example.eu"
+            placeholder="name@company.com"
             className="input-apple mt-1.5 w-full rounded-[10px] border border-[#dcdad4] bg-[#f9f9f7] px-4 py-3 text-[15px] text-[#0f1114] placeholder:text-[#4b4f57] focus:bg-white"
           />
         </div>
