@@ -1,9 +1,8 @@
 export const siteConfig = {
   siteName: "Battery Passport Host",
   brandName: "Battery Passport Host",
-  // Replace placeholder values below before deploying to production:
-  formUrl: "https://example.com/spec-form", // taste-skill-ignore
-  contactEmail: "hello@example.com", // taste-skill-ignore
+  formUrl: "/app/new",
+  contactEmail: "ibrahim369hossain@gmail.com",
   defaultAnthropicModel: "claude-haiku-5-5",
   higherAccuracyAnthropicModel: "claude-sonnet-5-5",
   dailyExtractionLimitPerOrg: 5,
