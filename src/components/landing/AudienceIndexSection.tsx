@@ -166,12 +166,9 @@ export function AudienceIndexSection() {
             pack builders, and EU market representatives.
           </p>
 
-          <div
-            data-ui="audience-deliverable"
-            className="mt-8 overflow-hidden rounded-[20px] bg-[#101214] p-4 text-[#f4f3ef] sm:p-5"
-          >
+          <div className="mt-8 overflow-hidden rounded-[20px] bg-[#101214] p-4 text-[#f4f3ef] sm:p-5">
             <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[12px] bg-[#171a1e]">
-              <div ref={photoRef} className="relative h-full w-full">
+              <div ref={photoRef} className="absolute inset-0">
                 <Image
                   src="/images/bms-cells-obsidian.jpg"
                   alt="21700 cylindrical lithium cell array and matte black BMS circuit board with copper busbars"
@@ -180,7 +177,7 @@ export function AudienceIndexSection() {
                   className="object-cover"
                 />
               </div>
-              <div className="pointer-events-none absolute inset-x-3 bottom-2.5 flex items-center justify-between rounded-lg bg-[#101214]/90 px-3 py-1.5 text-[12.5px]">
+              <div className="pointer-events-none absolute inset-x-3 bottom-2.5 flex items-center justify-between rounded-lg bg-[#101214]/90 px-3 py-1.5 text-[14px]">
                 <span className="font-semibold text-white">{active.group}</span>
                 <span className="font-semibold text-[#3eb8cf]">{active.tag}</span>
               </div>
@@ -189,15 +186,15 @@ export function AudienceIndexSection() {
             {/* Dynamic Deliverable Breakdown for the Selected Audience */}
             <div className="mt-4 space-y-2.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-display text-[16px] font-semibold text-white">
+                <span className="font-display text-[17px] font-semibold text-white">
                   {active.deliverableTitle}
                 </span>
-                <span className="num rounded-md bg-[#173038] px-2.5 py-0.5 text-[12.5px] font-semibold text-[#7dd3e8]">
+                <span className="num rounded-md bg-[#173038] px-2.5 py-0.5 text-[14px] font-semibold text-[#7dd3e8]">
                   {active.deliverableMetric}
                 </span>
               </div>
 
-              <div className="space-y-1.5 text-[13.5px]">
+              <div className="space-y-1.5 text-[14px]">
                 {active.deliverableRows.map((row) => (
                   <div
                     key={row.label}

@@ -17,49 +17,49 @@ export default function LandingPage() {
       <LandingNav />
 
       <main>
-        {/* Act 1: Studio Hardware & Poster-Scale Hero (#e8e7e3 neutral putty) */}
+        {/* Act 1: Full-Width Architectural Poster Masthead + Widescreen Cinema Stage (#e8e7e3) */}
         <section
           data-chapter-theme="putty"
-          className="pb-16 pt-8 sm:pt-12 lg:pb-24 lg:pt-16"
+          className="pb-16 pt-6 sm:pt-8 lg:pb-20 lg:pt-8"
         >
-          <div className="page-shell grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            {/* Left Copy & Actions */}
-            <div className="lg:col-span-6">
-              <div className="overflow-hidden">
-                <h1 className="text-display-hero hero-line-inner max-w-[19ch] text-[#0f1114]">
-                  EU Battery Passport from your spec PDF
-                </h1>
+          <div className="page-shell">
+            {/* Top Editorial Masthead: 2-Line Poster Headline Left + Lead & Actions Right */}
+            <div className="grid grid-cols-1 items-end gap-6 lg:grid-cols-12 lg:gap-12">
+              <div className="lg:col-span-7">
+                <div className="overflow-hidden">
+                  <h1 className="text-display-hero hero-line-inner max-w-[19ch] text-[#0f1114]">
+                    EU Battery Passport from your spec PDF
+                  </h1>
+                </div>
               </div>
 
-              <p className="hero-fade-rise mt-6 max-w-[46ch] text-[17px] leading-relaxed text-[#22252a]">
-                Turn battery technical datasheets into structured Digital Product
-                Passports built to open fast from a casing QR scan, showing every
-                populated attribute and flagged disclosure gap.
-              </p>
+              <div className="lg:col-span-5">
+                <p className="hero-fade-rise max-w-[46ch] text-[17px] leading-relaxed text-[#22252a]">
+                  Turn battery technical datasheets into structured Digital Product
+                  Passports built to open fast from a casing QR scan, showing every
+                  populated attribute and flagged disclosure gap.
+                </p>
 
-              <div className="hero-fade-rise mt-8 flex flex-wrap items-center gap-3.5">
-                <Link
-                  href="/demo"
-                  className="pressable inline-flex items-center gap-2 rounded-[10px] bg-[#145b6e] px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
-                >
-                  <span>See live demo</span>
-                  <ArrowRightIcon className="btn-arrow h-4 w-4" />
-                </Link>
-                <a
-                  href="#contact"
-                  className="pressable inline-flex items-center justify-center rounded-[10px] bg-[#dad8d1] px-6 py-3.5 text-[15px] font-semibold text-[#0f1114] transition-colors hover:bg-[#cfccc4]"
-                >
-                  Send your spec PDF
-                </a>
+                <div className="hero-fade-rise mt-6 flex flex-wrap items-center gap-3.5">
+                  <Link
+                    href="/demo"
+                    className="pressable inline-flex items-center gap-2 rounded-[10px] bg-[#145b6e] px-6 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
+                  >
+                    <span>See live demo</span>
+                    <ArrowRightIcon className="btn-arrow h-4 w-4" />
+                  </Link>
+                  <a
+                    href="#contact"
+                    className="pressable inline-flex items-center justify-center rounded-[10px] bg-[#dad8d1] px-6 py-3.5 text-[15px] font-semibold text-[#0f1114] transition-colors hover:bg-[#cfccc4]"
+                  >
+                    Send your spec PDF
+                  </a>
+                </div>
               </div>
-
-              <p className="hero-fade-rise num mt-9 text-[15px] font-medium text-[#22252a]">
-                71 Annex XIII points · 3 access tiers · Hosted QR route (/p/[slug])
-              </p>
             </div>
 
-            {/* Right Interactive 3D Hardware & Pipeline Switcher */}
-            <div className="lg:col-span-6">
+            {/* Full-Width Widescreen Hero Stage (Zero Card Folder) */}
+            <div className="mt-8 lg:mt-9">
               <HeroPassportStage
                 title="Completeness check"
                 badgeLabel="Sample output – illustrative"
