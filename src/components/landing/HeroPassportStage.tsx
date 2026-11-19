@@ -64,21 +64,43 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
 
   return (
     <div ref={stageRef} className="hero-stage-rise w-full">
-      {/* Full-Width Cinema-Scale Architectural Visual (No card folder, no nested SaaS boxes) */}
+      {/* Full-Width Cinema-Scale Ecosystem Stage (Left: Spec PDF -> Center: Cutaway Battery & QR -> Right: Mobile Passport) */}
       <div className="overflow-hidden rounded-[22px] bg-[#101214]">
-        <div className="hero-shutter-frame relative aspect-[16/10] w-full overflow-hidden bg-[#d8d6cf] sm:aspect-[16/8] lg:h-[420px] lg:aspect-auto">
+        <div className="hero-shutter-frame relative aspect-[16/9] w-full overflow-hidden bg-[#181b20] lg:h-[468px] lg:aspect-auto">
           <div
             ref={imageWrapRef}
             className="hero-shutter-img absolute inset-0"
           >
             <Image
-              src="/images/ebike-studio-europe.jpg"
-              alt="Minimalist European commuter electric bicycle in an architectural travertine stone courtyard"
+              src="/images/hero-passport-ecosystem.jpg"
+              alt="Engineering specification blueprints on the left, cutaway lithium battery pack with laser-etched QR plate in the center, and live mobile Digital Product Passport on a smartphone stand on the right"
               fill
               priority
               sizes="(max-width: 1280px) 100vw, 1240px"
               className="object-cover object-center"
             />
+          </div>
+
+          {/* 3 Minimalist Spatial Zone Markers Aligned with the 3 Objects in the Photograph */}
+          <div className="pointer-events-none absolute inset-x-4 top-4 hidden grid-cols-3 gap-4 md:grid sm:inset-x-6">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#101214]/88 px-3.5 py-1.5 text-[13px] font-semibold text-white">
+                <span className="h-2 w-2 rounded-full bg-[#3eb8cf]" />
+                01 · OEM Spec PDF Datasheet
+              </span>
+            </div>
+            <div className="text-center">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#101214]/88 px-3.5 py-1.5 text-[13px] font-semibold text-white">
+                <span className="h-2 w-2 rounded-full bg-[#34d399]" />
+                02 · 71-Point Annex XIII &amp; Casing QR
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#101214]/88 px-3.5 py-1.5 text-[13px] font-semibold text-white">
+                <span className="status-pulse h-2 w-2 rounded-full bg-[#34d399]" />
+                03 · Live Mobile Passport (/p/[slug])
+              </span>
+            </div>
           </div>
         </div>
 
