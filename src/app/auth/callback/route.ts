@@ -1,7 +1,27 @@
 import { NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { sanitizeNextPath } from "@/lib/workspace/helpers";
+import {
+  deriveOrgNameFromEmail,
+  sanitizeNextPath,
+} from "@/lib/workspace/helpers";
+
+async function ensureUserPersonalOrg(
+  supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>,
+) {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    const orgNameHint = deriveOrgNameFromEmail(user.email ?? "");
+    await supabase.rpc("ensure_personal_org", {
+      p_org_name: orgNameHint,
+    });
+  } catch {
+    // Non-fatal: getWorkspaceContext() also invokes ensure_personal_org idempotently on /app
+  }
+}
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -18,6 +38,7 @@ export async function GET(request: Request) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      await ensureUserPersonalOrg(supabase);
       return NextResponse.redirect(`${origin}${nextPath}`);
     }
   }
@@ -28,6 +49,7 @@ export async function GET(request: Request) {
       token_hash: tokenHash,
     });
     if (!error) {
+      await ensureUserPersonalOrg(supabase);
       return NextResponse.redirect(`${origin}${nextPath}`);
     }
   }
