@@ -20,7 +20,6 @@ interface BillingWorkspaceProps {
 }
 
 export function BillingWorkspace({
-  orgName,
   role,
   billingStatus: initialBillingStatus,
   compEnabled,
@@ -114,15 +113,10 @@ export function BillingWorkspace({
       {/* Workspace Header */}
       <div className="flex flex-col gap-3 pb-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-md bg-[#e8f3f6] px-2.5 py-0.5 text-[12px] font-semibold text-[#0b3c49]">
-              {orgName}
-            </span>
-            <span className="text-[12.5px] text-[#505660]">
-              Role: <strong className="font-semibold text-[#0f1114]">{role}</strong>
-            </span>
-          </div>
-          <h1 className="font-display mt-2 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
+          <span className="text-[12.5px] text-[#505660]">
+            Role: <strong className="font-semibold text-[#0f1114]">{role}</strong>
+          </span>
+          <h1 className="font-display mt-1 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
             Plans &amp; Billing
           </h1>
           <p className="mt-1 text-[14px] text-[#505660]">

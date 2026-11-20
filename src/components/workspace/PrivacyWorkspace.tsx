@@ -19,7 +19,6 @@ interface PrivacyWorkspaceProps {
 }
 
 export function PrivacyWorkspace({
-  orgName,
   orgSlug,
   candidates: initialCandidates,
 }: PrivacyWorkspaceProps) {
@@ -55,10 +54,7 @@ export function PrivacyWorkspace({
   return (
     <div data-ui className="space-y-6">
       <div className="pb-2">
-        <span className="inline-flex items-center rounded-md bg-[#e8f3f6] px-2.5 py-0.5 text-[12px] font-semibold text-[#0b3c49]">
-          {orgName}
-        </span>
-        <h1 className="font-display mt-2 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
+        <h1 className="font-display text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
           Privacy, GDPR Export &amp; Legal Drafts
         </h1>
         <p className="mt-1 text-[13.5px] text-[#505660]">

@@ -16,8 +16,7 @@ interface AppShellProps {
 
 const NAV_ITEMS = [
   { href: "/app", label: "Passports", tag: "Ledger" },
-  { href: "/app/new", label: "New passport", tag: "PDF / Blank" },
-  { href: "/app/billing", label: "Plan & billing", tag: "Pilot" },
+  { href: "/app/billing", label: "Plan & billing", tag: "Plans" },
   { href: "/app/privacy", label: "Privacy & GDPR", tag: "JSON" },
 ] as const;
 
@@ -138,7 +137,7 @@ export function AppShell({
               Reference DB-36V Specimen
             </p>
             <p className="mt-0.5 text-[12.5px] text-[#c4c8d0]">
-              51 static · 21 dynamic BMS · 3 tiers
+              50 static · 21 dynamic BMS · 3 tiers
             </p>
             <Link
               href="/demo"
@@ -204,12 +203,9 @@ export function AppShell({
             </div>
           </div>
 
-          <Link
-            href="/app/new"
-            className="pressable inline-flex min-h-[38px] shrink-0 items-center rounded-[9px] bg-[#145b6e] px-3.5 text-[13.5px] font-semibold text-white"
-          >
-            New passport
-          </Link>
+          <span className="text-[12.5px] font-medium text-[#4b4f57]">
+            {currentSectionLabel}
+          </span>
         </div>
 
         {mobileMenuOpen && (
@@ -250,25 +246,18 @@ export function AppShell({
 
       {/* Main Framed Workspace Column (48px Top Bar + Crisp White Inset Sheet) */}
       <div className="flex min-w-0 flex-1 flex-col md:p-2.5 md:pl-0">
-        {/* Desktop 48px Top Command Bar on the Tinted Frame */}
+        {/* Desktop 46px Top Breadcrumb Bar on the Tinted Frame */}
         <div className="hidden h-[46px] items-center justify-between px-4 text-[13.5px] md:flex">
           <div className="flex items-center gap-2 text-[#4b4f57]">
-            <span className="font-medium text-[#0f1114]">{orgName}</span>
-            <span>/</span>
-            <span>{currentSectionLabel}</span>
+            <span className="font-medium text-[#0f1114]">{currentSectionLabel}</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-[13px] text-[#4b4f57]">
-              EU Regulation 2023/1542 · Annex XIII (71 points)
-            </span>
-            <Link
-              href="/app/new"
-              className="pressable inline-flex items-center gap-1.5 rounded-[8px] bg-[#145b6e] px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
-            >
-              <span>+ New passport</span>
-            </Link>
-          </div>
+          <Link
+            href="/demo"
+            className="text-[13px] font-medium text-[#4b4f57] transition-colors hover:text-[#145b6e]"
+          >
+            Live demo ↗
+          </Link>
         </div>
 
         {/* Crisp White Framed Workspace Sheet */}

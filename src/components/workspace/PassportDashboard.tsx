@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ArrowRightIcon } from "@/components/Icons";
-import { RollingNumber } from "@/components/landing/RollingNumber";
 import { WORKING_FIELD_LIST_NOTICE } from "@/config/battery-fields";
 import { formatShortUtcDate } from "@/lib/workspace/helpers";
 import type { PassportStatus } from "@/types/database";
@@ -31,7 +30,6 @@ interface PassportDashboardProps {
 }
 
 export function PassportDashboard({
-  orgName,
   dailyExtractionsUsed,
   dailyExtractionLimit,
   passports: initialPassports,
@@ -95,14 +93,11 @@ export function PassportDashboard({
   }, [passports, statusFilter, searchQuery]);
 
   return (
-    <div data-ui className="space-y-8">
+    <div data-ui className="space-y-6">
       {/* Sheet Header Row */}
       <div className="flex flex-col gap-5 pb-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-md bg-[#e6f2f5] px-2.5 py-1 text-[13px] font-semibold text-[#0b3c49]">
-            {orgName}
-          </span>
-          <h1 className="text-title-page mt-2 text-[#0f1114]">
+          <h1 className="text-title-page text-[#0f1114]">
             Battery Passports
           </h1>
           <p className="mt-1 text-[14.5px] text-[#4b4f57]">
@@ -130,62 +125,11 @@ export function PassportDashboard({
             href="/app/new"
             className="pressable inline-flex min-h-[46px] items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-5 py-2.5 text-[14.5px] font-semibold text-white transition-colors hover:bg-[#0e4656]"
           >
-            <span>New passport</span>
+            <span>+ New passport</span>
             <ArrowRightIcon className="btn-arrow h-4 w-4" />
           </Link>
         </div>
       </div>
-
-      {/* Typography-Led KPI Row (app-screens.md §5) */}
-      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-[14px] bg-[#f4f4f2] p-5">
-          <dt className="text-[13.5px] font-semibold text-[#4b4f57]">
-            Total battery records
-          </dt>
-          <dd className="font-display num mt-1.5 text-[30px] font-semibold leading-none text-[#0f1114]">
-            <RollingNumber value={passports.length} />
-          </dd>
-          <p className="mt-2 text-[13px] text-[#4b4f57]">
-            Scoped to {orgName}
-          </p>
-        </div>
-
-        <div className="rounded-[14px] bg-[#edf8f2] p-5">
-          <dt className="text-[13.5px] font-semibold text-[#156d49]">
-            Published QR routes
-          </dt>
-          <dd className="font-display num mt-1.5 text-[30px] font-semibold leading-none text-[#156d49]">
-            <RollingNumber value={publishedCount} />
-          </dd>
-          <p className="mt-2 text-[13px] text-[#156d49]">
-            Live at /p/[slug]
-          </p>
-        </div>
-
-        <div className="rounded-[14px] bg-[#f4f4f2] p-5">
-          <dt className="text-[13.5px] font-semibold text-[#4b4f57]">
-            Drafts in completeness check
-          </dt>
-          <dd className="font-display num mt-1.5 text-[30px] font-semibold leading-none text-[#0f1114]">
-            <RollingNumber value={draftCount} />
-          </dd>
-          <p className="mt-2 text-[13px] text-[#4b4f57]">
-            Awaiting field review
-          </p>
-        </div>
-
-        <div className="rounded-[14px] bg-[#e6f2f5] p-5">
-          <dt className="text-[13.5px] font-semibold text-[#0b3c49]">
-            Annex XIII schema scope
-          </dt>
-          <dd className="font-display num mt-1.5 text-[30px] font-semibold leading-none text-[#0b3c49]">
-            <RollingNumber value={71} suffix=" pts" />
-          </dd>
-          <p className="mt-2 text-[13px] text-[#0b3c49]">
-            51 static · 21 dynamic BMS
-          </p>
-        </div>
-      </dl>
 
       {queryError && (
         <div
