@@ -8,6 +8,11 @@ import {
   getSupplierFieldMeta,
   type SupplierLocale,
 } from "@/lib/supplier/i18n-zh";
+import {
+  readApiJson,
+  uploadPdfViaSignedUrl,
+  validateClientPdfFile,
+} from "@/lib/storage/client-upload";
 import type { FieldAccessTier, FieldInputType } from "@/config/battery-fields";
 
 export interface SupplierRequestedFieldItem {
@@ -59,6 +64,28 @@ export function SupplierPortalForm({
     return t.tierLegitimate;
   }
 
+  const MAX_SUPPLIER_PDF_BYTES = 10 * 1024 * 1024;
+
+  function validateSupplierPdfSelection(picked: File | null): boolean {
+    if (!picked) {
+      return true;
+    }
+    if (picked.size > MAX_SUPPLIER_PDF_BYTES) {
+      setErrorMsg(t.errorFileSize);
+      return false;
+    }
+    const clientErr = validateClientPdfFile(picked, MAX_SUPPLIER_PDF_BYTES);
+    if (clientErr) {
+      setErrorMsg(
+        !picked.name.toLowerCase().endsWith(".pdf")
+          ? t.errorFileType
+          : clientErr,
+      );
+      return false;
+    }
+    return true;
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMsg(null);
@@ -69,40 +96,50 @@ export function SupplierPortalForm({
       return;
     }
 
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        setErrorMsg(t.errorFileSize);
-        return;
-      }
-      if (!file.name.toLowerCase().endsWith(".pdf")) {
-        setErrorMsg(t.errorFileType);
-        return;
-      }
+    if (file && !validateSupplierPdfSelection(file)) {
+      return;
     }
 
     setSubmitting(true);
     try {
-      const formData = new FormData();
-      formData.append("fields", JSON.stringify(values));
-      if (supplierName.trim()) {
-        formData.append("supplierName", supplierName.trim());
-      }
+      let storagePath: string | undefined;
+      let fileName: string | undefined;
+
       if (file) {
-        formData.append("document", file);
+        const uploaded = await uploadPdfViaSignedUrl({
+          file,
+          signedUrlEndpoint: `/api/supplier/${encodeURIComponent(token)}/signed-url`,
+          maxBytes: MAX_SUPPLIER_PDF_BYTES,
+        });
+        storagePath = uploaded.storagePath;
+        fileName = uploaded.fileName;
       }
 
       const res = await fetch(`/api/supplier/${encodeURIComponent(token)}`, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fields: values,
+          supplierName: supplierName.trim() || undefined,
+          storagePath,
+          fileName,
+        }),
       });
-      const json = (await res.json()) as { error?: string; ok?: boolean };
-      if (!res.ok || !json.ok) {
-        setErrorMsg(json.error || "Submission failed. Please retry.");
+      const { data: json, errorMessage } = await readApiJson<{
+        error?: string;
+        ok?: boolean;
+      }>(res);
+      if (!res.ok || !json?.ok) {
+        setErrorMsg(errorMessage || "Submission failed. Please retry.");
         return;
       }
       setSubmitted(true);
-    } catch {
-      setErrorMsg("Network error submitting specifications. Please retry.");
+    } catch (err) {
+      setErrorMsg(
+        err instanceof Error && err.message
+          ? err.message
+          : "Submission failed before completing. Please retry.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -367,8 +404,14 @@ export function SupplierPortalForm({
                   accept=".pdf,application/pdf"
                   aria-label={t.uploadPickLabel}
                   onChange={(e) => {
+                    const picked = e.target.files?.[0] ?? null;
                     setErrorMsg(null);
-                    setFile(e.target.files?.[0] ?? null);
+                    if (picked && !validateSupplierPdfSelection(picked)) {
+                      setFile(null);
+                      e.target.value = "";
+                      return;
+                    }
+                    setFile(picked);
                   }}
                   className="input-apple mt-4 block w-full cursor-pointer rounded-[10px] border border-[#dcdad4] bg-[#f9f9f7] px-3.5 py-2.5 text-[14px] text-[#0f1114] file:mr-3 file:cursor-pointer file:rounded-[8px] file:border-0 file:bg-[#145b6e] file:px-3.5 file:py-1.5 file:text-[13px] file:font-semibold file:text-white"
                 />

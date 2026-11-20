@@ -11,6 +11,11 @@ import {
   isFieldRequiredForCategory,
   type BatteryCategory,
 } from "@/config/battery-fields";
+import {
+  readApiJson,
+  uploadPdfViaSignedUrl,
+  validateClientPdfFile,
+} from "@/lib/storage/client-upload";
 import type { ExtractionResultMap, RecordMode } from "@/types/database";
 
 interface NewPassportFlowProps {
@@ -52,8 +57,14 @@ export function NewPassportFlow({
   const [batteryCategory, setBatteryCategory] = useState<BatteryCategory>("LMT");
   const [usedCount, setUsedCount] = useState(dailyUsed);
   const [uploading, setUploading] = useState(false);
+  const [uploadStage, setUploadStage] = useState<
+    "idle" | "signing" | "uploading" | "extracting"
+  >("idle");
   const [creatingBlank, setCreatingBlank] = useState(false);
   const [creatingSimpleQr, setCreatingSimpleQr] = useState(false);
+  const [simpleUploadStage, setSimpleUploadStage] = useState<
+    "idle" | "signing" | "uploading" | "saving"
+  >("idle");
   const [simpleManufacturer, setSimpleManufacturer] = useState("");
   const [simpleAddress, setSimpleAddress] = useState("");
   const [simpleTypeLabel, setSimpleTypeLabel] = useState(
@@ -69,6 +80,8 @@ export function NewPassportFlow({
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<ExtractApiSuccess | null>(null);
+
+  const maxUploadBytes = maxUploadMb * 1024 * 1024;
 
   const categoryStats = useMemo(() => {
     const reqAll = OFFICIAL_71_FIELDS.filter((f) =>
@@ -96,47 +109,54 @@ export function NewPassportFlow({
       return;
     }
 
-    const maxBytes = maxUploadMb * 1024 * 1024;
-    if (file.size > maxBytes) {
-      setErrorMsg(`File exceeds the ${maxUploadMb} MB upload limit.`);
-      return;
-    }
-
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      setErrorMsg("Only PDF files (.pdf) are supported.");
+    const fileValidationError = validateClientPdfFile(file, maxUploadBytes);
+    if (fileValidationError) {
+      setErrorMsg(fileValidationError);
       return;
     }
 
     setUploading(true);
+    setUploadStage("signing");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("batteryCategory", batteryCategory);
-      if (productName.trim()) {
-        formData.append("productName", productName.trim());
-      }
+      const { storagePath, fileName } = await uploadPdfViaSignedUrl({
+        file,
+        signedUrlEndpoint: "/api/uploads/signed-url",
+        purpose: "spec",
+        maxBytes: maxUploadBytes,
+        onStage: (stage) => setUploadStage(stage),
+      });
 
+      setUploadStage("extracting");
       const res = await fetch("/api/passports/extract", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          storagePath,
+          fileName,
+          batteryCategory,
+          productName: productName.trim() || undefined,
+        }),
       });
-      const json = (await res.json()) as Partial<ExtractApiSuccess> & {
-        error?: string;
-      };
+      const { data: json, errorMessage } = await readApiJson<
+        Partial<ExtractApiSuccess> & { error?: string }
+      >(res);
 
-      if (!res.ok || !json.passportId) {
-        setErrorMsg(json.error || "PDF upload or extraction failed.");
+      if (!res.ok || !json?.passportId) {
+        setErrorMsg(errorMessage || "PDF upload or extraction failed.");
         return;
       }
 
       setUsedCount(json.dailyExtractionsUsed ?? usedCount + 1);
       setResult(json as ExtractApiSuccess);
-    } catch {
+    } catch (err) {
       setErrorMsg(
-        "Upload failed before finishing. Check your connection and try again.",
+        err instanceof Error && err.message
+          ? err.message
+          : "Upload failed before finishing. Check your connection and try again.",
       );
     } finally {
       setUploading(false);
+      setUploadStage("idle");
     }
   }
 
@@ -153,19 +173,21 @@ export function NewPassportFlow({
           modelCode: modelCode.trim() || undefined,
         }),
       });
-      const json = (await res.json()) as Partial<ExtractApiSuccess> & {
-        error?: string;
-      };
+      const { data: json, errorMessage } = await readApiJson<
+        Partial<ExtractApiSuccess> & { error?: string }
+      >(res);
 
-      if (!res.ok || !json.passportId) {
-        setErrorMsg(json.error || "Could not create blank passport draft.");
+      if (!res.ok || !json?.passportId) {
+        setErrorMsg(errorMessage || "Could not create blank passport draft.");
         return;
       }
 
       setResult(json as ExtractApiSuccess);
-    } catch {
+    } catch (err) {
       setErrorMsg(
-        "Could not start blank passport draft. Check your connection and try again.",
+        err instanceof Error && err.message
+          ? err.message
+          : "Could not start blank passport draft. Check your connection and try again.",
       );
     } finally {
       setCreatingBlank(false);
@@ -182,48 +204,71 @@ export function NewPassportFlow({
     }
 
     if (simpleDocFile) {
-      const maxBytes = maxUploadMb * 1024 * 1024;
-      if (simpleDocFile.size > maxBytes) {
-        setErrorMsg(`EU DoC PDF exceeds the ${maxUploadMb} MB limit.`);
-        return;
-      }
-      if (!simpleDocFile.name.toLowerCase().endsWith(".pdf")) {
-        setErrorMsg("Only PDF files (.pdf) are supported for EU DoC upload.");
+      const fileValidationError = validateClientPdfFile(
+        simpleDocFile,
+        maxUploadBytes,
+      );
+      if (fileValidationError) {
+        setErrorMsg(fileValidationError);
         return;
       }
     }
 
     setCreatingSimpleQr(true);
+    setSimpleUploadStage(simpleDocFile ? "signing" : "saving");
     try {
-      const formData = new FormData();
-      formData.append("productName", productName.trim());
-      formData.append("modelCode", modelCode.trim());
-      formData.append("manufacturerName", simpleManufacturer.trim());
-      formData.append("manufacturerAddress", simpleAddress.trim());
-      formData.append("batteryTypeLabel", simpleTypeLabel.trim());
-      formData.append("euDocLink", simpleDocUrl.trim());
-      formData.append("collectionMarking", simpleMarking.trim());
-      formData.append("disposalInstructions", simpleDisposal.trim());
+      let storagePath: string | undefined;
+      let fileName: string | undefined;
+
       if (simpleDocFile) {
-        formData.append("docPdf", simpleDocFile);
+        const uploaded = await uploadPdfViaSignedUrl({
+          file: simpleDocFile,
+          signedUrlEndpoint: "/api/uploads/signed-url",
+          purpose: "doc",
+          maxBytes: maxUploadBytes,
+          onStage: (stage) => setSimpleUploadStage(stage),
+        });
+        storagePath = uploaded.storagePath;
+        fileName = uploaded.fileName;
       }
 
+      setSimpleUploadStage("saving");
       const res = await fetch("/api/passports/simple-qr", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productName: productName.trim(),
+          modelCode: modelCode.trim(),
+          manufacturerName: simpleManufacturer.trim(),
+          manufacturerAddress: simpleAddress.trim(),
+          batteryTypeLabel: simpleTypeLabel.trim(),
+          euDocLink: simpleDocUrl.trim(),
+          collectionMarking: simpleMarking.trim(),
+          disposalInstructions: simpleDisposal.trim(),
+          storagePath,
+          fileName,
+        }),
       });
-      const json = (await res.json()) as { passportId?: string; error?: string };
-      if (!res.ok || !json.passportId) {
-        setErrorMsg(json.error || "Could not create Simple QR record.");
+      const { data: json, errorMessage } = await readApiJson<{
+        passportId?: string;
+        error?: string;
+      }>(res);
+      if (!res.ok || !json?.passportId) {
+        setErrorMsg(errorMessage || "Could not create Simple QR record.");
         return;
       }
 
       router.push(`/app/passports/${json.passportId}`);
       router.refresh();
-    } catch {
-      setErrorMsg("Network error creating Simple QR record. Please retry.");
+    } catch (err) {
+      setErrorMsg(
+        err instanceof Error && err.message
+          ? err.message
+          : "Could not create Simple QR record. Please retry.",
+      );
     } finally {
       setCreatingSimpleQr(false);
+      setSimpleUploadStage("idle");
     }
   }
 
@@ -458,7 +503,20 @@ export function NewPassportFlow({
                 id="simple-doc-pdf"
                 type="file"
                 accept=".pdf,application/pdf"
-                onChange={(e) => setSimpleDocFile(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  const picked = e.target.files?.[0] ?? null;
+                  setErrorMsg(null);
+                  if (picked) {
+                    const err = validateClientPdfFile(picked, maxUploadBytes);
+                    if (err) {
+                      setErrorMsg(err);
+                      setSimpleDocFile(null);
+                      e.target.value = "";
+                      return;
+                    }
+                  }
+                  setSimpleDocFile(picked);
+                }}
                 className="input-apple mt-1 block w-full cursor-pointer rounded-[10px] border border-[#dcdad4] bg-white px-3 py-2 text-[13.5px] file:mr-3 file:cursor-pointer file:rounded-[7px] file:border-0 file:bg-[#145b6e] file:px-3 file:py-1.5 file:text-[12.5px] file:font-semibold file:text-white"
               />
             </div>
@@ -529,7 +587,10 @@ export function NewPassportFlow({
           >
             <span>
               {creatingSimpleQr
-                ? "Creating Simple QR record..."
+                ? simpleUploadStage === "signing" ||
+                  simpleUploadStage === "uploading"
+                  ? "Uploading EU DoC PDF..."
+                  : "Creating Simple QR record..."
                 : "Create Simple QR record & review"}
             </span>
             {!creatingSimpleQr && <ArrowRightIcon className="h-4 w-4" />}
@@ -712,8 +773,18 @@ export function NewPassportFlow({
                 accept=".pdf,application/pdf"
                 required
                 onChange={(e) => {
+                  const picked = e.target.files?.[0] ?? null;
                   setErrorMsg(null);
-                  setFile(e.target.files?.[0] ?? null);
+                  if (picked) {
+                    const err = validateClientPdfFile(picked, maxUploadBytes);
+                    if (err) {
+                      setErrorMsg(err);
+                      setFile(null);
+                      e.target.value = "";
+                      return;
+                    }
+                  }
+                  setFile(picked);
                 }}
                 data-ui className="input-apple mt-4 block w-full cursor-pointer rounded-[10px] border border-[#dcdad4] bg-[#f9f9f7] px-3.5 py-2.5 text-[14px] text-[#0f1114] file:mr-3 file:cursor-pointer file:rounded-[8px] file:border-0 file:bg-[#145b6e] file:px-3.5 file:py-1.5 file:text-[13.5px] file:font-semibold file:text-white"
               />
@@ -743,7 +814,11 @@ export function NewPassportFlow({
             >
               <span>
                 {uploading
-                  ? "Extracting datasheet fields..."
+                  ? uploadStage === "signing"
+                    ? "Preparing direct upload..."
+                    : uploadStage === "uploading"
+                      ? "Uploading PDF to private storage..."
+                      : "Extracting datasheet fields..."
                   : usedCount >= dailyLimit
                     ? `Daily limit reached (${dailyLimit}/day)`
                     : "Upload PDF & run completeness check"}

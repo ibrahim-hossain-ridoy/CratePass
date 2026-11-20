@@ -4,6 +4,13 @@ import { BATTERY_FIELD_MAP } from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
 import { validatePdfUpload } from "@/lib/pdf";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import {
+  SPEC_PDFS_BUCKET,
+  SignedUploadValidationError,
+  downloadAndValidateStoredPdf,
+  isAuthorizedScopedPdfPath,
+  sanitizePdfFileName,
+} from "@/lib/storage/signed-uploads";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { normalizeSupplierLocale } from "@/lib/supplier/i18n-zh";
 import {
@@ -164,6 +171,8 @@ export async function POST(
   let rawFields: Record<string, unknown> = {};
   let attachedFile: File | null = null;
   let supplierContactNote = "";
+  let requestedStoragePath = "";
+  let requestedFileName = "";
 
   const contentType = request.headers.get("content-type") || "";
   if (contentType.includes("multipart/form-data")) {
@@ -209,12 +218,20 @@ export async function POST(
       const json = (await request.json()) as {
         fields?: Record<string, unknown>;
         supplierName?: string;
+        storagePath?: unknown;
+        fileName?: unknown;
       };
       if (json.fields && typeof json.fields === "object") {
         rawFields = json.fields;
       }
       if (typeof json.supplierName === "string") {
         supplierContactNote = json.supplierName.trim().slice(0, 160);
+      }
+      if (typeof json.storagePath === "string") {
+        requestedStoragePath = json.storagePath.trim();
+      }
+      if (typeof json.fileName === "string") {
+        requestedFileName = json.fileName.trim();
       }
     } catch {
       return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
@@ -226,7 +243,11 @@ export async function POST(
     : [];
   const sanitizedPayload = sanitizeSupplierSubmission(requestedKeys, rawFields);
 
-  if (Object.keys(sanitizedPayload).length === 0 && !attachedFile) {
+  if (
+    Object.keys(sanitizedPayload).length === 0 &&
+    !attachedFile &&
+    !requestedStoragePath
+  ) {
     return NextResponse.json(
       { error: "Provide at least one requested specification or upload a PDF document." },
       { status: 400 },
@@ -234,7 +255,39 @@ export async function POST(
   }
 
   let uploadedDocPath: string | null = null;
-  if (attachedFile) {
+  if (requestedStoragePath) {
+    if (
+      !isAuthorizedScopedPdfPath({
+        storagePath: requestedStoragePath,
+        purpose: "supplier",
+        orgId: String(reqRow.workspace_id),
+        requestId: String(reqRow.id),
+      })
+    ) {
+      return NextResponse.json(
+        { error: "Invalid or unauthorized supplier document path." },
+        { status: 400 },
+      );
+    }
+
+    try {
+      await downloadAndValidateStoredPdf({
+        storageBucket: admin.storage.from(SPEC_PDFS_BUCKET),
+        storagePath: requestedStoragePath,
+        fileName: sanitizePdfFileName(requestedFileName, "supplier-doc.pdf"),
+        maxBytes: siteConfig.maxUploadBytes,
+      });
+    } catch (err) {
+      if (err instanceof SignedUploadValidationError) {
+        return NextResponse.json({ error: err.message }, { status: err.status });
+      }
+      return NextResponse.json(
+        { error: "Invalid PDF attachment." },
+        { status: 400 },
+      );
+    }
+    uploadedDocPath = requestedStoragePath;
+  } else if (attachedFile) {
     const bytes = new Uint8Array(await attachedFile.arrayBuffer());
     try {
       validatePdfUpload({
@@ -253,7 +306,7 @@ export async function POST(
     const storagePath = `${reqRow.workspace_id}/supplier/${reqRow.id}/${randomUUID()}.pdf`;
 
     const { error: storageErr } = await admin.storage
-      .from("spec-pdfs")
+      .from(SPEC_PDFS_BUCKET)
       .upload(storagePath, bytes, {
         contentType: "application/pdf",
         upsert: false,
@@ -288,6 +341,9 @@ export async function POST(
     .select("id");
 
   if (updateErr || !updatedRows || updatedRows.length === 0) {
+    if (uploadedDocPath) {
+      await admin.storage.from(SPEC_PDFS_BUCKET).remove([uploadedDocPath]);
+    }
     return NextResponse.json(
       { error: "Could not save submission; this link may have already been submitted." },
       { status: 409 },

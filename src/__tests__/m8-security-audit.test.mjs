@@ -52,13 +52,17 @@ test("M8 security headers configured in next.config.ts and README documentation 
     "BILLING_ENABLED",
     "src/config/battery-fields.ts",
     "supabase/migrations",
-    "Not legal advice",
   ]) {
     assert.ok(
       readmeSrc.includes(requiredSection),
       `README.md must document ${requiredSection}`,
     );
   }
+  assert.match(
+    readmeSrc,
+    /not legal advice/i,
+    "README.md must document Not legal advice disclaimer",
+  );
 });
 
 test("M8 API memory-DoS guard, checkout rate limiting, and zero dangerous sinks", () => {

@@ -10,6 +10,14 @@ import { extractBatteryFieldsFromText } from "@/lib/extractor";
 import { normalizeFieldValues } from "@/lib/passport-projection";
 import { computeSha256Hex, extractPdfText, validatePdfUpload } from "@/lib/pdf";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import {
+  SPEC_PDFS_BUCKET,
+  SignedUploadValidationError,
+  downloadAndValidateStoredPdf,
+  extractUuidFromScopedPdfPath,
+  isAuthorizedScopedPdfPath,
+  sanitizePdfFileName,
+} from "@/lib/storage/signed-uploads";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
@@ -80,73 +88,144 @@ export async function POST(request: Request) {
     );
   }
 
-  let formData: FormData;
-  try {
-    formData = await request.formData();
-  } catch {
-    return NextResponse.json(
-      { error: "Invalid multipart form submission." },
-      { status: 400 },
-    );
-  }
-
-  const fileEntry = formData.get("file");
-  const productNameOverride = String(formData.get("productName") ?? "").trim().slice(0, 160);
-  const rawCategory = String(formData.get("batteryCategory") ?? "LMT").trim();
-  const batteryCategory: BatteryCategory = isValidBatteryCategory(rawCategory)
-    ? rawCategory
-    : "LMT";
-
-  if (!(fileEntry instanceof File)) {
-    return NextResponse.json(
-      { error: "Attach a PDF specification file under field 'file'." },
-      { status: 400 },
-    );
-  }
-
-  if (fileEntry.size > siteConfig.maxUploadBytes) {
-    return NextResponse.json(
-      { error: "PDF file exceeds the 10 MB upload limit." },
-      { status: 413 },
-    );
-  }
-
-  const bytes = new Uint8Array(await fileEntry.arrayBuffer());
-  try {
-    validatePdfUpload({
-      bytes,
-      mimeType: fileEntry.type || "",
-      fileName: fileEntry.name || "datasheet.pdf",
-      maxBytes: siteConfig.maxUploadBytes,
-    });
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Invalid PDF upload." },
-      { status: 400 },
-    );
-  }
-
-  const uploadId = randomUUID();
-  const safeFilename = (fileEntry.name || "datasheet.pdf")
-    .replace(/[^a-zA-Z0-9._-]+/g, "-")
-    .slice(0, 120);
-  const storagePath = `${ctx.org.orgId}/${uploadId}.pdf`;
-  const sha256 = computeSha256Hex(bytes);
-
   const storageClient = createAdminSupabaseClient() ?? supabase;
-  const { error: uploadStorageErr } = await storageClient.storage
-    .from("spec-pdfs")
-    .upload(storagePath, bytes, {
-      contentType: "application/pdf",
-      upsert: false,
-    });
+  const contentType = request.headers.get("content-type") || "";
 
-  if (uploadStorageErr) {
-    return NextResponse.json(
-      { error: "Failed to store PDF in private workspace storage." },
-      { status: 500 },
-    );
+  let bytes: Uint8Array;
+  let uploadId: string;
+  let safeFilename: string;
+  let storagePath: string;
+  let productNameOverride = "";
+  let batteryCategory: BatteryCategory = "LMT";
+
+  if (contentType.includes("application/json")) {
+    let body: {
+      storagePath?: unknown;
+      fileName?: unknown;
+      productName?: unknown;
+      batteryCategory?: unknown;
+    };
+    try {
+      body = (await request.json()) as typeof body;
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    }
+
+    productNameOverride = String(body.productName ?? "").trim().slice(0, 160);
+    const rawCategory = String(body.batteryCategory ?? "LMT").trim();
+    batteryCategory = isValidBatteryCategory(rawCategory) ? rawCategory : "LMT";
+
+    const requestedPath =
+      typeof body.storagePath === "string" ? body.storagePath.trim() : "";
+    if (
+      !isAuthorizedScopedPdfPath({
+        storagePath: requestedPath,
+        purpose: "spec",
+        orgId: ctx.org.orgId,
+      })
+    ) {
+      return NextResponse.json(
+        { error: "Invalid or unauthorized PDF storage path." },
+        { status: 400 },
+      );
+    }
+
+    const parsedUploadId = extractUuidFromScopedPdfPath(requestedPath);
+    if (!parsedUploadId) {
+      return NextResponse.json(
+        { error: "Invalid PDF storage identifier." },
+        { status: 400 },
+      );
+    }
+
+    safeFilename = sanitizePdfFileName(body.fileName, "datasheet.pdf");
+    try {
+      const validated = await downloadAndValidateStoredPdf({
+        storageBucket: storageClient.storage.from(SPEC_PDFS_BUCKET),
+        storagePath: requestedPath,
+        fileName: safeFilename,
+        maxBytes: siteConfig.maxUploadBytes,
+      });
+      bytes = validated.bytes;
+    } catch (err) {
+      if (err instanceof SignedUploadValidationError) {
+        return NextResponse.json({ error: err.message }, { status: err.status });
+      }
+      return NextResponse.json(
+        { error: "Failed to validate uploaded PDF from storage." },
+        { status: 400 },
+      );
+    }
+
+    uploadId = parsedUploadId;
+    storagePath = requestedPath;
+  } else {
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid multipart form submission." },
+        { status: 400 },
+      );
+    }
+
+    const fileEntry = formData.get("file");
+    productNameOverride = String(formData.get("productName") ?? "")
+      .trim()
+      .slice(0, 160);
+    const rawCategory = String(formData.get("batteryCategory") ?? "LMT").trim();
+    batteryCategory = isValidBatteryCategory(rawCategory) ? rawCategory : "LMT";
+
+    if (!(fileEntry instanceof File)) {
+      return NextResponse.json(
+        { error: "Attach a PDF specification file under field 'file'." },
+        { status: 400 },
+      );
+    }
+
+    if (fileEntry.size > siteConfig.maxUploadBytes) {
+      return NextResponse.json(
+        { error: "PDF file exceeds the 10 MB upload limit." },
+        { status: 413 },
+      );
+    }
+
+    bytes = new Uint8Array(await fileEntry.arrayBuffer());
+    try {
+      validatePdfUpload({
+        bytes,
+        mimeType: fileEntry.type || "",
+        fileName: fileEntry.name || "datasheet.pdf",
+        maxBytes: siteConfig.maxUploadBytes,
+      });
+    } catch (err) {
+      return NextResponse.json(
+        { error: err instanceof Error ? err.message : "Invalid PDF upload." },
+        { status: 400 },
+      );
+    }
+
+    uploadId = randomUUID();
+    safeFilename = sanitizePdfFileName(fileEntry.name, "datasheet.pdf");
+    storagePath = `${ctx.org.orgId}/${uploadId}.pdf`;
+
+    const { error: uploadStorageErr } = await storageClient.storage
+      .from(SPEC_PDFS_BUCKET)
+      .upload(storagePath, bytes, {
+        contentType: "application/pdf",
+        upsert: false,
+      });
+
+    if (uploadStorageErr) {
+      return NextResponse.json(
+        { error: "Failed to store PDF in private workspace storage." },
+        { status: 500 },
+      );
+    }
   }
+
+  const sha256 = computeSha256Hex(bytes);
 
   // Record upload BEFORE calling extractor so quota reflects attempted extractions
   const { error: insertUploadErr } = await supabase.from("uploads").insert({
@@ -161,6 +240,13 @@ export async function POST(request: Request) {
   });
 
   if (insertUploadErr) {
+    if (insertUploadErr.code === "23505") {
+      return NextResponse.json(
+        { error: "This uploaded PDF has already been processed." },
+        { status: 409 },
+      );
+    }
+    await storageClient.storage.from(SPEC_PDFS_BUCKET).remove([storagePath]);
     return NextResponse.json(
       { error: "Failed to record PDF upload metadata." },
       { status: 500 },
