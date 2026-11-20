@@ -144,31 +144,16 @@ export async function DELETE(
     return NextResponse.json({ error: "Passport not found." }, { status: 404 });
   }
 
-  if (passportRow.status === "published") {
-    return NextResponse.json(
-      { error: "Unpublish the live passport before requesting deletion." },
-      { status: 409 },
-    );
-  }
-
-  // Respect immutable passport_versions ledger (cannot self-delete published history)
+  // Count any published snapshots in passport_versions for audit metadata
   const { data: versions } = await supabase
     .from("passport_versions")
     .select("id")
     .eq("passport_id", id)
-    .eq("org_id", ctx.org.orgId)
-    .limit(1);
+    .eq("org_id", ctx.org.orgId);
 
-  if (versions && versions.length > 0) {
-    return NextResponse.json(
-      {
-        error:
-          "This record has immutable published version snapshots in passport_versions. Unpublish from public view or request GDPR workspace erasure via support.",
-      },
-      { status: 409 },
-    );
-  }
+  const versionCount = versions?.length ?? 0;
 
+  // Clean up any associated PDF objects in the private spec-pdfs bucket
   const { data: uploads } = await supabase
     .from("uploads")
     .select("storage_path")
@@ -183,6 +168,20 @@ export async function DELETE(
     await supabase.storage.from("spec-pdfs").remove(storagePaths);
   }
 
+  // Break current_version_id FK and immediately deactivate public /p/[slug]
+  await supabase
+    .from("passports")
+    .update({ status: "draft", current_version_id: null })
+    .eq("id", id)
+    .eq("org_id", ctx.org.orgId);
+
+  // Detach uploads rows cleanly before deleting the parent passport
+  await supabase
+    .from("uploads")
+    .update({ passport_id: null })
+    .eq("passport_id", id)
+    .eq("org_id", ctx.org.orgId);
+
   const { error: deleteErr } = await supabase
     .from("passports")
     .delete()
@@ -190,9 +189,15 @@ export async function DELETE(
     .eq("org_id", ctx.org.orgId);
 
   if (deleteErr) {
+    const isImmutableTrigger =
+      /immutable/i.test(deleteErr.message || "") && versionCount > 0;
     return NextResponse.json(
-      { error: "Could not delete draft passport." },
-      { status: 500 },
+      {
+        error: isImmutableTrigger
+          ? "Live /p/[slug] was deactivated, but database migration 202611190004_allow_cascade_passport_delete.sql must be applied in Supabase before deleting passports with published versions."
+          : "Could not delete passport.",
+      },
+      { status: isImmutableTrigger ? 409 : 500 },
     );
   }
 
@@ -205,11 +210,13 @@ export async function DELETE(
   await supabase.from("audit_log").insert({
     org_id: ctx.org.orgId,
     actor_user_id: ctx.user.id,
-    action: "passport.deleted",
+    action: "passport_deleted",
     target_type: "passport",
     target_id: id,
     metadata: {
       slug: passportRow.slug,
+      was_published: passportRow.status === "published",
+      version_count: versionCount,
       removed_pdf_count: storagePaths.length,
     },
   });

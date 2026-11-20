@@ -8,6 +8,9 @@ import {
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import { normalizeBatteryCategory } from "@/config/battery-fields";
+import { isBillingEnabled } from "@/config/site";
+import { describeOrgBillingState } from "@/lib/billing";
+import { canOrgPublish } from "@/lib/publish";
 import type { ExtractionResultMap } from "@/types/database";
 import WorkspaceLoading from "../../loading";
 
@@ -92,15 +95,23 @@ async function PassportReviewLoader({
       ? (passportRes.data.working_fields as Record<string, string>)
       : {};
 
-  const billingLabel = ctx.org.compEnabled
-    ? "Pilot plan (comped)"
-    : `Plan: ${ctx.org.billingStatus}`;
+  const billingEnabled = isBillingEnabled();
+  const canPublish = canOrgPublish({
+    billingEnabled,
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
+  const billingState = describeOrgBillingState({
+    billingEnabled,
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
 
   return (
     <AppShell
       orgName={ctx.org.orgName}
       userEmail={ctx.user.email}
-      billingLabel={billingLabel}
+      billingLabel={billingState.badgeLabel}
     >
       <PassportReviewWorkspace
         passportId={String(passportRes.data.id)}
@@ -118,6 +129,7 @@ async function PassportReviewLoader({
         initialFields={workingFields}
         extractionFields={rawExtraction?.fields}
         initialVersions={versions}
+        canPublish={canPublish}
         siteUrlConfigured={process.env.NEXT_PUBLIC_SITE_URL}
       />
     </AppShell>

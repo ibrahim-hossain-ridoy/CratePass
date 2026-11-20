@@ -32,6 +32,7 @@ interface PassportReviewWorkspaceProps {
   initialFields: Record<string, string>;
   extractionFields?: ExtractionResultMap;
   initialVersions: VersionHistoryItem[];
+  canPublish?: boolean;
   siteUrlConfigured?: string;
 }
 
@@ -45,6 +46,7 @@ export function PassportReviewWorkspace({
   initialFields,
   extractionFields,
   initialVersions,
+  canPublish = true,
   siteUrlConfigured,
 }: PassportReviewWorkspaceProps) {
   const router = useRouter();
@@ -63,6 +65,9 @@ export function PassportReviewWorkspace({
   const [actionError, setActionError] = useState<string | null>(null);
   const [billingRequiredError, setBillingRequiredError] = useState(false);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [qrAssets, setQrAssets] = useState<QrAssets | null>(null);
   const [publicUrl, setPublicUrl] = useState<string>(() =>
     buildPublicPassportUrl(slug, undefined, siteUrlConfigured),
@@ -104,6 +109,14 @@ export function PassportReviewWorkspace({
     setActionError(null);
     setBillingRequiredError(false);
     setActionNotice(null);
+
+    if (!canPublish) {
+      setBillingRequiredError(true);
+      setActionError(
+        "Brand Hosting (€49/mo) is required to publish live QR passports.",
+      );
+      return;
+    }
 
     if (action !== "unpublish" && !declarationChecked) {
       setActionError(
@@ -160,8 +173,30 @@ export function PassportReviewWorkspace({
     }
   }
 
+  async function handleDeletePassport() {
+    setDeleteError(null);
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/passports/${passportId}`, {
+        method: "DELETE",
+      });
+      const json = (await res.json()) as { error?: string };
+      if (!res.ok) {
+        setDeleteError(json.error || "Could not delete passport.");
+        return;
+      }
+      setDeleteDialogOpen(false);
+      router.push("/app");
+      router.refresh();
+    } catch {
+      setDeleteError("Network error deleting passport. Try again.");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   function downloadSvg() {
-    if (!qrAssets) return;
+    if (!canPublish || !qrAssets) return;
     const blob = new Blob([qrAssets.svg], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -172,7 +207,7 @@ export function PassportReviewWorkspace({
   }
 
   function downloadPng() {
-    if (!qrAssets) return;
+    if (!canPublish || !qrAssets) return;
     const link = document.createElement("a");
     link.href = qrAssets.pngDataUrl;
     link.download = `${slug}-qr.png`;
@@ -241,8 +276,38 @@ export function PassportReviewWorkspace({
               </span>
             </Link>
           )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setDeleteError(null);
+              setDeleteDialogOpen(true);
+            }}
+            className="pressable inline-flex min-h-[40px] cursor-pointer items-center rounded-[10px] border border-red-200 bg-red-50 px-3.5 text-[13.5px] font-semibold text-red-800 hover:bg-red-100"
+          >
+            Delete
+          </button>
         </div>
       </div>
+
+      {/* Free Plan Upgrade Notice Banner */}
+      {!canPublish && (
+        <div
+          role="note"
+          className="flex flex-col justify-between gap-3 rounded-[16px] border border-[#ebd0a8] bg-[#fdf6ec] p-4 text-[#7c380b] sm:flex-row sm:items-center sm:px-5"
+        >
+          <p className="text-[14px] font-semibold leading-snug">
+            Brand Hosting (€49/mo) is required to publish live QR passports —
+            upgrade to publish /p/{slug} and download SVG/PNG QR labels.
+          </p>
+          <Link
+            href="/app/billing"
+            className="pressable inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-[10px] bg-[#145b6e] px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-[#0e4656]"
+          >
+            Upgrade in Plan &amp; Billing →
+          </Link>
+        </div>
+      )}
 
       {/* Publish & QR controls grid */}
       <section className="grid grid-cols-1 gap-5 lg:grid-cols-12">
@@ -266,17 +331,20 @@ export function PassportReviewWorkspace({
           </div>
 
           <label
-            className={`mt-4 flex cursor-pointer items-start gap-3 rounded-[12px] border p-4 text-[13.5px] text-[#0f1114] transition-colors duration-150 ${
-              declarationChecked
-                ? "border-[#145b6e] bg-[#e8f3f6]/75"
-                : "border-[#dad9d3] bg-white hover:border-[#0f1114]/40"
+            className={`mt-4 flex items-start gap-3 rounded-[12px] border p-4 text-[13.5px] text-[#0f1114] transition-colors duration-150 ${
+              !canPublish
+                ? "cursor-not-allowed border-[#e4e3dd] bg-white/60 opacity-65"
+                : declarationChecked
+                  ? "cursor-pointer border-[#145b6e] bg-[#e8f3f6]/75"
+                  : "cursor-pointer border-[#dad9d3] bg-white hover:border-[#0f1114]/40"
             }`}
           >
             <input
               type="checkbox"
+              disabled={!canPublish}
               checked={declarationChecked}
               onChange={(e) => setDeclarationChecked(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-[#145b6e]"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[#145b6e] disabled:cursor-not-allowed"
             />
             <span className="font-medium leading-snug text-[#0f1114]">
               {ACCURACY_DECLARATION_TEXT}
@@ -294,7 +362,7 @@ export function PassportReviewWorkspace({
                   href="/app/billing"
                   className="mt-2 inline-flex font-semibold text-red-950 underline underline-offset-4"
                 >
-                  Open Plan &amp; Billing (/app/billing)
+                  Upgrade in Plan &amp; Billing →
                 </Link>
               )}
             </div>
@@ -313,13 +381,13 @@ export function PassportReviewWorkspace({
             {!isPublished ? (
               <button
                 type="button"
-                disabled={submittingAction !== null}
+                disabled={!canPublish || submittingAction !== null}
                 onClick={() =>
                   handlePublishAction(
                     versions.length > 0 ? "publish_new_version" : "publish",
                   )
                 }
-                className="pressable group inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:opacity-60 cursor-pointer"
+                className="pressable group inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span>
                   {submittingAction ? "Publishing..." : "Approve & Publish"}
@@ -332,9 +400,9 @@ export function PassportReviewWorkspace({
               <>
                 <button
                   type="button"
-                  disabled={submittingAction !== null}
+                  disabled={!canPublish || submittingAction !== null}
                   onClick={() => handlePublishAction("publish_new_version")}
-                  className="pressable group inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:opacity-60 cursor-pointer"
+                  className="pressable group inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span>
                     {submittingAction === "publish_new_version"
@@ -347,9 +415,9 @@ export function PassportReviewWorkspace({
                 </button>
                 <button
                   type="button"
-                  disabled={submittingAction !== null}
+                  disabled={!canPublish || submittingAction !== null}
                   onClick={() => handlePublishAction("unpublish")}
-                  className="pressable inline-flex min-h-[44px] items-center justify-center rounded-[10px] border border-[#dad9d3] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0f1114] hover:border-[#0f1114] disabled:opacity-60 cursor-pointer"
+                  className="pressable inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-[10px] border border-[#dad9d3] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0f1114] hover:border-[#0f1114] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {submittingAction === "unpublish"
                     ? "Unpublishing..."
@@ -429,7 +497,7 @@ export function PassportReviewWorkspace({
                     width={168}
                     height={168}
                     unoptimized
-                    className="h-[168px] w-[168px]"
+                    className={`h-[168px] w-[168px] ${!canPublish ? "opacity-45" : ""}`}
                   />
                 </div>
               ) : (
@@ -443,28 +511,41 @@ export function PassportReviewWorkspace({
               </p>
             </div>
 
-            {!isPublished && (
+            {!canPublish ? (
               <p className="mt-3 text-[12.5px] leading-relaxed text-[#fbbf24]">
-                Approve &amp; Publish before printing so scanners resolve the
-                live page instead of 404.
+                Brand Hosting (€49/mo) is required to download print-ready SVG
+                and PNG QR labels.{" "}
+                <Link
+                  href="/app/billing"
+                  className="font-semibold text-[#7ce3f4] underline underline-offset-4"
+                >
+                  Upgrade in Plan &amp; Billing →
+                </Link>
               </p>
+            ) : (
+              !isPublished && (
+                <p className="mt-3 text-[12.5px] leading-relaxed text-[#fbbf24]">
+                  Approve &amp; Publish before printing so scanners resolve the
+                  live page instead of 404.
+                </p>
+              )
             )}
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2.5">
             <button
               type="button"
-              disabled={!qrAssets}
+              disabled={!canPublish || !qrAssets}
               onClick={downloadSvg}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[10px] bg-[#145b6e] px-3 text-[13.5px] font-semibold text-white hover:bg-[#1a748b] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#145b6e] px-3 text-[13.5px] font-semibold text-white hover:bg-[#1a748b] disabled:cursor-not-allowed disabled:opacity-45"
             >
               Download SVG
             </button>
             <button
               type="button"
-              disabled={!qrAssets}
+              disabled={!canPublish || !qrAssets}
               onClick={downloadPng}
-              className="pressable inline-flex min-h-[42px] items-center justify-center rounded-[10px] bg-[#242830] px-3 text-[13.5px] font-semibold text-white hover:bg-[#303540] disabled:opacity-50 cursor-pointer"
+              className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#242830] px-3 text-[13.5px] font-semibold text-white hover:bg-[#303540] disabled:cursor-not-allowed disabled:opacity-45"
             >
               Download PNG
             </button>
@@ -472,7 +553,7 @@ export function PassportReviewWorkspace({
         </div>
       </section>
 
-      {/* Full editable fields grid */}
+      {/* Full editable fields grid (always enabled on Free and Pro plans) */}
       <PassportFieldEditor
         passportId={passportId}
         initialBatteryCategory={batteryCategory}
@@ -488,6 +569,65 @@ export function PassportReviewWorkspace({
           setWorkingFields(updated.workingFields);
         }}
       />
+
+      {/* Delete Confirmation Dialog */}
+      {deleteDialogOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-passport-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+        >
+          <div className="w-full max-w-[460px] rounded-[20px] bg-white p-6 text-[#0f1114]">
+            <h2
+              id="delete-passport-title"
+              className="font-display text-[19px] font-semibold text-[#0f1114]"
+            >
+              Delete &ldquo;{productName}&rdquo;?
+            </h2>
+
+            {isPublished ? (
+              <p className="mt-3 rounded-[12px] border border-red-300 bg-red-50 p-3.5 text-[13.5px] font-semibold leading-relaxed text-red-900">
+                This passport is live at /p/{slug}. Deleting it will permanently
+                deactivate that QR link.
+              </p>
+            ) : (
+              <p className="mt-2 text-[14px] leading-relaxed text-[#505660]">
+                This will permanently delete this passport record and any
+                associated specification PDF in your private storage bucket.
+              </p>
+            )}
+
+            {deleteError && (
+              <div
+                role="alert"
+                className="mt-3 rounded-[10px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+              >
+                {deleteError}
+              </div>
+            )}
+
+            <div className="mt-6 flex flex-wrap justify-end gap-2.5">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setDeleteDialogOpen(false)}
+                className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#f4f4f2] px-4 py-2 text-[14px] font-semibold text-[#0f1114] hover:bg-[#e8e7e3] disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDeletePassport}
+                className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-red-700 px-4 py-2 text-[14px] font-semibold text-white hover:bg-red-800 disabled:opacity-60"
+              >
+                {deleting ? "Deleting..." : "Delete permanently"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

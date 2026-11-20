@@ -68,6 +68,23 @@ export async function POST(
     return NextResponse.json({ error: "Passport not found." }, { status: 404 });
   }
 
+  // Enforce Free vs. Brand Hosting billing gate across publish, publish_new_version, and unpublish
+  const billingAllowed = canOrgPublish({
+    billingEnabled: isBillingEnabled(),
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
+  if (!billingAllowed) {
+    return NextResponse.json(
+      {
+        error:
+          "Brand Hosting (€49/mo) is required to publish live QR passports or manage published versions.",
+        code: "BILLING_REQUIRED",
+      },
+      { status: 402 },
+    );
+  }
+
   if (parsed.data.action === "unpublish") {
     const { error: unpubErr } = await supabase
       .from("passports")
@@ -89,22 +106,6 @@ export async function POST(
     });
 
     return NextResponse.json({ ok: true, status: "draft" });
-  }
-
-  // Billing gate for M6 (inactive while BILLING_ENABLED=false or comp_enabled=true)
-  const billingAllowed = canOrgPublish({
-    billingEnabled: isBillingEnabled(),
-    billingStatus: ctx.org.billingStatus,
-    compEnabled: ctx.org.compEnabled,
-  });
-  if (!billingAllowed) {
-    return NextResponse.json(
-      {
-        error: "Active subscription or pilot comp is required to publish and generate live QR links.",
-        code: "BILLING_REQUIRED",
-      },
-      { status: 402 },
-    );
   }
 
   const sourceFields =

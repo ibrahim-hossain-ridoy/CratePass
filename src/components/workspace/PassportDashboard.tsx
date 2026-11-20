@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ArrowRightIcon } from "@/components/Icons";
 import { RollingNumber } from "@/components/landing/RollingNumber";
@@ -33,13 +34,43 @@ export function PassportDashboard({
   orgName,
   dailyExtractionsUsed,
   dailyExtractionLimit,
-  passports,
+  passports: initialPassports,
   queryError,
 }: PassportDashboardProps) {
+  const router = useRouter();
+  const [passports, setPassports] =
+    useState<DashboardPassportItem[]>(initialPassports);
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">(
     "all",
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [pendingDelete, setPendingDelete] =
+    useState<DashboardPassportItem | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function handleConfirmDelete() {
+    if (!pendingDelete) return;
+    setDeleteError(null);
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/passports/${pendingDelete.id}`, {
+        method: "DELETE",
+      });
+      const json = (await res.json()) as { error?: string };
+      if (!res.ok) {
+        setDeleteError(json.error || "Could not delete passport.");
+        return;
+      }
+      setPassports((prev) => prev.filter((item) => item.id !== pendingDelete.id));
+      setPendingDelete(null);
+      router.refresh();
+    } catch {
+      setDeleteError("Network error deleting passport. Try again.");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   const publishedCount = passports.filter((p) => p.status === "published").length;
   const draftCount = passports.length - publishedCount;
@@ -382,7 +413,7 @@ export function PassportDashboard({
                       </td>
 
                       <td className="whitespace-nowrap py-4 text-right">
-                        <div className="inline-flex items-center gap-3">
+                        <div className="inline-flex items-center gap-2.5">
                           {item.status === "published" && (
                             <Link
                               href={`/p/${item.slug}`}
@@ -397,6 +428,16 @@ export function PassportDashboard({
                           >
                             Review &amp; edit
                           </Link>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDeleteError(null);
+                              setPendingDelete(item);
+                            }}
+                            className="pressable inline-flex min-h-[38px] cursor-pointer items-center rounded-[9px] bg-red-50 px-3 text-[13px] font-semibold text-red-800 hover:bg-red-100"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -404,6 +445,65 @@ export function PassportDashboard({
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Passport Confirmation Dialog */}
+      {pendingDelete && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="ledger-delete-passport-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+        >
+          <div className="w-full max-w-[460px] rounded-[20px] bg-white p-6 text-[#0f1114]">
+            <h2
+              id="ledger-delete-passport-title"
+              className="font-display text-[19px] font-semibold text-[#0f1114]"
+            >
+              Delete &ldquo;{pendingDelete.productName}&rdquo;?
+            </h2>
+
+            {pendingDelete.status === "published" ? (
+              <p className="mt-3 rounded-[12px] border border-red-300 bg-red-50 p-3.5 text-[13.5px] font-semibold leading-relaxed text-red-900">
+                This passport is live at /p/{pendingDelete.slug}. Deleting it
+                will permanently deactivate that QR link.
+              </p>
+            ) : (
+              <p className="mt-2 text-[14px] leading-relaxed text-[#505660]">
+                This will permanently delete this passport record and any
+                associated specification PDF in your private storage bucket.
+              </p>
+            )}
+
+            {deleteError && (
+              <div
+                role="alert"
+                className="mt-3 rounded-[10px] border border-red-300 bg-red-50 px-3.5 py-2.5 text-[13px] text-red-900"
+              >
+                {deleteError}
+              </div>
+            )}
+
+            <div className="mt-6 flex flex-wrap justify-end gap-2.5">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setPendingDelete(null)}
+                className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#f4f4f2] px-4 py-2 text-[14px] font-semibold text-[#0f1114] hover:bg-[#e8e7e3] disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleConfirmDelete}
+                className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-red-700 px-4 py-2 text-[14px] font-semibold text-white hover:bg-red-800 disabled:opacity-60"
+              >
+                {deleting ? "Deleting..." : "Delete permanently"}
+              </button>
+            </div>
           </div>
         </div>
       )}
