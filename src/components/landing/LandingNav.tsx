@@ -132,7 +132,7 @@ export function LandingNav() {
 
         <nav
           aria-label="Primary navigation"
-          className="hidden items-center gap-8 whitespace-nowrap text-[15px] font-medium lg:flex"
+          className="hidden items-center gap-7 whitespace-nowrap text-[15px] font-medium lg:flex"
         >
           <a
             href="#workflow"
@@ -152,26 +152,26 @@ export function LandingNav() {
           >
             Preview
           </a>
-          <a
-            href="#contact"
+          <Link
+            href="/demo"
             className={`whitespace-nowrap transition-colors duration-150 ${current.navLink}`}
           >
-            Contact
-          </a>
+            Live demo
+          </Link>
         </nav>
 
         <div className="flex shrink-0 items-center gap-2.5">
           <Link
             href="/login"
-            className={`pressable hidden shrink-0 whitespace-nowrap rounded-[10px] px-4 py-2 text-[15px] font-semibold transition-colors sm:inline-flex ${current.signInBtn}`}
+            className={`pressable inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[10px] px-3.5 py-2 text-[14px] font-semibold transition-colors sm:px-4 sm:text-[15px] ${current.signInBtn}`}
           >
             Sign in
           </Link>
           <Link
-            href="/demo"
-            className={`pressable inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[10px] px-4.5 py-2 text-[15px] font-semibold transition-colors ${current.demoBtn}`}
+            href="/signup"
+            className={`pressable inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[10px] px-3.5 py-2 text-[14px] font-semibold transition-colors sm:px-4.5 sm:text-[15px] ${current.demoBtn}`}
           >
-            See live demo
+            Sign up
           </Link>
         </div>
       </div>
