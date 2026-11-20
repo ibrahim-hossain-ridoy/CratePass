@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 export const metadata: Metadata = {
   title: `Sign in · ${siteConfig.siteName}`,
   description:
-    "Sign in to your Battery Passport Host workspace to manage battery drafts, 71-point completeness checks, and hosted QR passports.",
+    "Sign in to your CratePass workspace to manage EU Battery Passport drafts, 71-point Annex XIII completeness checks, and hosted QR passports.",
 };
 
 export default function LoginPage({

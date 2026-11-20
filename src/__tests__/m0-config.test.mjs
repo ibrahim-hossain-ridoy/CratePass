@@ -14,7 +14,7 @@ import {
 } from "../config/battery-fields.ts";
 
 test("siteConfig exposes required housekeeping fields and defaults", () => {
-  assert.equal(siteConfig.siteName, "Battery Passport Host");
+  assert.equal(siteConfig.siteName, "CratePass");
   assert.equal(typeof siteConfig.formUrl, "string");
   assert.equal(typeof siteConfig.contactEmail, "string");
   assert.equal(isBillingEnabled(), false);

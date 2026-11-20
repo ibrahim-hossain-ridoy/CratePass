@@ -175,9 +175,9 @@ export default function LandingPage() {
                 </span>
               </Link>
               <p className="max-w-[48ch] text-[14.5px] leading-relaxed text-[#c4c8d0]">
-                Technical hosting infrastructure for EU Battery Regulation (EU)
-                2023/1542 Annex XIII passports. Zero vendor lock-in; open JSON
-                export.
+                {siteConfig.tagline} Technical hosting infrastructure for
+                Regulation (EU) 2023/1542 Annex XIII passports. Zero vendor
+                lock-in; open JSON export.
               </p>
               <p className="pt-1 text-[14px]">
                 <a

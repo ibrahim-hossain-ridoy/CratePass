@@ -1,6 +1,8 @@
 export const siteConfig = {
-  siteName: "Battery Passport Host",
-  brandName: "Battery Passport Host",
+  siteName: "CratePass",
+  brandName: "CratePass",
+  tagline:
+    "Digital Product Passport Hosting — Built for EU Battery Passports (2027) and upcoming ESPR categories.",
   formUrl: "/app/new",
   contactEmail: "ibrahim369hossain@gmail.com",
   defaultAnthropicModel: "claude-haiku-5-5",

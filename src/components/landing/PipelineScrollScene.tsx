@@ -356,7 +356,7 @@ export function PipelineScrollScene() {
                           Ready for battery casing laser mark or label
                         </p>
                         <p className="mt-1 text-[14px] text-[#3eb8cf]">
-                          passport.host/p/db-36v-pack
+                          /p/db-36v-pack
                         </p>
                       </div>
                     </div>

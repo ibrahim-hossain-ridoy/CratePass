@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 export const metadata: Metadata = {
   title: `Sign up · ${siteConfig.siteName}`,
   description:
-    "Create your free Battery Passport Host workspace to upload OEM battery specification PDFs and run 71-point Annex XIII completeness checks.",
+    "Create your free CratePass workspace to upload OEM battery specification PDFs and run 71-point Annex XIII completeness checks.",
 };
 
 export default function SignUpPage({

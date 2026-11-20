@@ -31,13 +31,14 @@ const safeMetadataBase =
 
 export const metadata: Metadata = {
   metadataBase: safeMetadataBase,
-  title: "Battery Passport Host — EU Battery Passport from Spec PDFs",
+  title: "CratePass — EU Battery Passport from Spec PDFs",
   description:
-    "Turn battery spec PDFs into structured EU Digital Product Passports, 71-point Annex XIII completeness checks, and hosted mobile QR passport links.",
+    "Digital Product Passport Hosting — Built for EU Battery Passports (2027) and upcoming ESPR categories. Turn battery spec PDFs into 71-point Annex XIII completeness checks and hosted mobile QR passport links.",
   openGraph: {
-    title: "Battery Passport Host — EU Battery Passport from Spec PDFs",
+    siteName: "CratePass",
+    title: "CratePass — EU Battery Passport from Spec PDFs",
     description:
-      "Turn battery spec PDFs into structured EU Digital Product Passports, 71-point Annex XIII completeness checks, and hosted mobile QR passport links.",
+      "Digital Product Passport Hosting — Built for EU Battery Passports (2027) and upcoming ESPR categories. Turn battery spec PDFs into 71-point Annex XIII completeness checks and hosted mobile QR passport links.",
     type: "website",
   },
 };

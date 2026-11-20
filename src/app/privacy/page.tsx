@@ -6,7 +6,7 @@ import { siteConfig } from "@/config/site";
 export const metadata: Metadata = {
   title: `Privacy & EU Data Processing (Draft) · ${siteConfig.siteName}`,
   description:
-    "Draft GDPR and EU data-processing notice for Battery Passport Host (TODO: lawyer review).",
+    "Draft GDPR and EU data-processing notice for CratePass (TODO: lawyer review).",
 };
 
 export default function PrivacyPage() {
