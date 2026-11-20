@@ -313,3 +313,184 @@ test(".env.example documents GEMINI_API_KEY and GEMINI_MODEL=gemini-2.5-flash", 
   assert.match(content, /^GEMINI_API_KEY=/m);
   assert.match(content, /^GEMINI_MODEL=gemini-2\.5-flash$/m);
 });
+
+test("Gemini 2.5 Flash handles thinkingBudget: 0, markdown fences, partial fields, null metadata, numeric values, long snippets, and malformed fields without failing", async () => {
+  const captured = [];
+  const fakePdfBytes = new Uint8Array(Buffer.from("%PDF-1.7\n%%EOF", "utf8"));
+  const longSnippet = "Table 2 Battery Pack Specification — ".repeat(12) + "Nominal Voltage: 48V";
+
+  const fakeFetch = async (url, init) => {
+    captured.push({ url: String(url), body: JSON.parse(String(init.body)) });
+    return new Response(
+      JSON.stringify({
+        candidates: [
+          {
+            finishReason: "STOP",
+            content: {
+              parts: [
+                {
+                  text: [
+                    "```json",
+                    JSON.stringify({
+                      productName: null,
+                      modelCode: null,
+                      fields: {
+                        manufacturer_name: {
+                          status: "found",
+                          value: "Shenzhen CellTech Co., Ltd.",
+                          sourceSnippet: "Manufacturer: Shenzhen CellTech Co., Ltd.",
+                        },
+                        nominal_voltage_v: {
+                          status: "found",
+                          value: 48,
+                          sourceSnippet: longSnippet,
+                        },
+                        chemistry_type: "Li-ion NMC 811", // malformed non-object field -> skip/downgrade cleanly
+                        weight_kg: {
+                          status: "invalid_status_enum",
+                          value: "3.4",
+                          sourceSnippet: "Weight: 3.4 kg",
+                        },
+                        unexpected_extra_key: {
+                          status: "found",
+                          value: "ignored",
+                          sourceSnippet: "ignored",
+                        },
+                        cycle_count: {
+                          status: "found",
+                          value: "500",
+                          sourceSnippet: "500 cycles",
+                        },
+                      },
+                    }),
+                    "```",
+                  ].join("\n"),
+                },
+              ],
+            },
+          },
+        ],
+        usageMetadata: {
+          promptTokenCount: 950,
+          candidatesTokenCount: 220,
+        },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  };
+
+  // Also test with empty untrustedText (simulating unpdf fallback -> inlineData binary extraction)
+  const result = await extractBatteryFieldsFromText("", "celltech-48v.pdf", {
+    env: {
+      ANTHROPIC_API_KEY: "",
+      GEMINI_API_KEY: "AIza-unit-test-key",
+      GEMINI_MODEL: "gemini-2.5-flash",
+    },
+    pdfBytes: fakePdfBytes,
+    fetchImpl: fakeFetch,
+  });
+
+  assert.equal(captured.length, 1);
+  assert.deepEqual(captured[0].body.generationConfig, {
+    temperature: 0,
+    maxOutputTokens: 8192,
+    responseMimeType: "application/json",
+    thinkingConfig: { thinkingBudget: 0 },
+  });
+
+  assert.equal(result.productName, "");
+  assert.equal(result.modelCode, "");
+  assert.equal(result.fields.manufacturer_name.status, "found");
+  assert.equal(result.fields.manufacturer_name.value, "Shenzhen CellTech Co., Ltd.");
+  assert.equal(result.fields.nominal_voltage_v.status, "found");
+  assert.equal(result.fields.nominal_voltage_v.value, "48");
+  assert.ok(result.fields.nominal_voltage_v.sourceSnippet.length <= 260);
+  assert.equal(result.fields.chemistry_type.status, "missing");
+  assert.equal(result.fields.weight_kg.status, "missing");
+  assert.equal("cycle_count" in result.fields, false);
+  assert.equal("unexpected_extra_key" in result.fields, false);
+  assert.equal(result.summary.found, 2);
+  assert.equal(
+    result.summary.found + result.summary.uncertain + result.summary.missing,
+    STATIC_BATTERY_FIELDS.length,
+  );
+});
+
+test("Gemini extractor retries cleanly without thinkingConfig if model returns HTTP 400 for thinkingConfig", async () => {
+  const bodies = [];
+  const fakeFetch = async (_url, init) => {
+    const parsed = JSON.parse(String(init.body));
+    bodies.push(parsed);
+    if (bodies.length === 1) {
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: 400,
+            message: 'Invalid JSON payload received. Unknown name "thinkingConfig" at generation_config',
+            status: "INVALID_ARGUMENT",
+          },
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+    return new Response(
+      JSON.stringify({
+        candidates: [
+          {
+            finishReason: "STOP",
+            content: {
+              parts: [
+                {
+                  text: JSON.stringify({
+                    productName: "Fallback Model Pack",
+                    fields: {
+                      capacity_ah: {
+                        status: "found",
+                        value: "14.5",
+                        sourceSnippet: "Capacity: 14.5 Ah",
+                      },
+                    },
+                  }),
+                },
+              ],
+            },
+          },
+        ],
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  };
+
+  const result = await extractBatteryFieldsFromText(
+    "Capacity: 14.5 Ah",
+    "fallback.pdf",
+    {
+      env: {
+        ANTHROPIC_API_KEY: "",
+        GEMINI_API_KEY: "AIza-unit-test-key",
+        GEMINI_MODEL: "gemini-2.0-flash",
+      },
+      fetchImpl: fakeFetch,
+    },
+  );
+
+  assert.equal(bodies.length, 2);
+  assert.deepEqual(bodies[0].generationConfig.thinkingConfig, { thinkingBudget: 0 });
+  assert.equal("thinkingConfig" in bodies[1].generationConfig, false);
+  assert.equal(result.fields.capacity_ah.value, "14.5");
+});
+
+test("extract/route.ts safely falls back when unpdf throws and logs failures with console.error", () => {
+  const routeSrc = fs.readFileSync(
+    path.join(process.cwd(), "src/app/api/passports/extract/route.ts"),
+    "utf8",
+  );
+  assert.ok(
+    routeSrc.includes('console.error("[extract]'),
+    "extract route must log diagnostic errors with console.error('[extract] ...')",
+  );
+  assert.ok(
+    routeSrc.includes("resolveExtractionProvider"),
+    "extract route should check provider so Gemini can run on raw PDF binary if unpdf throws",
+  );
+});

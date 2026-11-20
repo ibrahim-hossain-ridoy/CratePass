@@ -59,14 +59,51 @@ export interface NormalizedExtractionOutput {
   summary: ExtractionSummaryCounts;
 }
 
+export interface ValidateExtractionOptions {
+  /**
+   * When true (default), dynamic BMS keys (Points 51–71) throw an error.
+   * When false, dynamic keys are silently ignored and excluded from output.
+   */
+  rejectDynamicKeys?: boolean;
+}
+
+function coercePrimitiveToString(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (typeof value === "boolean") return String(value);
+  return "";
+}
+
 export function validateAndNormalizeExtraction(
   raw: unknown,
+  options?: ValidateExtractionOptions,
 ): NormalizedExtractionOutput {
-  const parsed = ExtractionPayloadSchema.safeParse(raw);
-  if (!parsed.success) {
-    throw new Error(
-      `Invalid extraction payload: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`,
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    throw new Error("Invalid extraction payload: expected top-level JSON object.");
+  }
+
+  const rawObj = raw as Record<string, unknown>;
+  const rawFieldsCandidate = rawObj.fields;
+  if (
+    !rawFieldsCandidate ||
+    typeof rawFieldsCandidate !== "object" ||
+    Array.isArray(rawFieldsCandidate)
+  ) {
+    throw new Error("Invalid extraction payload: missing 'fields' object.");
+  }
+
+  const rawFields = rawFieldsCandidate as Record<string, unknown>;
+  const rejectDynamicKeys = options?.rejectDynamicKeys !== false;
+
+  if (rejectDynamicKeys) {
+    const offendingDynamicKeys = Object.keys(rawFields).filter((key) =>
+      DYNAMIC_BMS_KEYS.has(key),
     );
+    if (offendingDynamicKeys.length > 0) {
+      throw new Error(
+        `Invalid extraction payload: fields: Unrecognized key(s) in object: ${offendingDynamicKeys.map((k) => `'${k}'`).join(", ")}`,
+      );
+    }
   }
 
   const normalizedFields: ExtractionResultMap = {};
@@ -75,8 +112,26 @@ export function validateAndNormalizeExtraction(
   let uncertain = 0;
 
   for (const def of STATIC_BATTERY_FIELDS) {
-    const candidate = parsed.data.fields[def.key];
-    if (!candidate || candidate.status === "missing") {
+    const rawCandidate = rawFields[def.key];
+    if (
+      !rawCandidate ||
+      typeof rawCandidate !== "object" ||
+      Array.isArray(rawCandidate)
+    ) {
+      normalizedFields[def.key] = {
+        status: "missing",
+        value: "",
+        sourceSnippet: "",
+      };
+      missing += 1;
+      continue;
+    }
+
+    const entry = rawCandidate as Record<string, unknown>;
+    const rawStatus =
+      typeof entry.status === "string" ? entry.status.trim().toLowerCase() : "";
+
+    if (rawStatus !== "found" && rawStatus !== "uncertain") {
       normalizedFields[def.key] = {
         status: "missing",
         value: "",
@@ -87,8 +142,12 @@ export function validateAndNormalizeExtraction(
     }
 
     const maxChars = def.maxChars ?? 2000;
-    const cleanVal = sanitizeFieldValue(candidate.value, maxChars);
-    const cleanSnippet = sanitizeFieldValue(candidate.sourceSnippet, 260);
+    const rawValue = coercePrimitiveToString(entry.value);
+    const rawSnippet = coercePrimitiveToString(
+      entry.sourceSnippet ?? entry.source_snippet,
+    );
+    const cleanVal = sanitizeFieldValue(rawValue, maxChars);
+    const cleanSnippet = sanitizeFieldValue(rawSnippet, 260);
 
     // Anti-hallucination guardrail: every "found" or "uncertain" field MUST carry
     // both a non-empty value AND a verbatim sourceSnippet from the PDF.
@@ -102,8 +161,7 @@ export function validateAndNormalizeExtraction(
       continue;
     }
 
-    const effectiveStatus =
-      candidate.status === "uncertain" ? "uncertain" : "found";
+    const effectiveStatus = rawStatus === "uncertain" ? "uncertain" : "found";
     normalizedFields[def.key] = {
       status: effectiveStatus,
       value: cleanVal,
@@ -118,8 +176,14 @@ export function validateAndNormalizeExtraction(
   }
 
   return {
-    productName: sanitizeFieldValue(parsed.data.productName ?? "", 160),
-    modelCode: sanitizeFieldValue(parsed.data.modelCode ?? "", 80),
+    productName: sanitizeFieldValue(
+      coercePrimitiveToString(rawObj.productName),
+      160,
+    ),
+    modelCode: sanitizeFieldValue(
+      coercePrimitiveToString(rawObj.modelCode),
+      80,
+    ),
     fields: normalizedFields,
     summary: {
       found,

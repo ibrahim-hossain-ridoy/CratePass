@@ -6,7 +6,10 @@ import {
 } from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
 import { checkDailyExtractionEntitlement } from "@/lib/entitlements";
-import { extractBatteryFieldsFromText } from "@/lib/extractor";
+import {
+  extractBatteryFieldsFromText,
+  resolveExtractionProvider,
+} from "@/lib/extractor";
 import { normalizeFieldValues } from "@/lib/passport-projection";
 import { computeSha256Hex, extractPdfText, validatePdfUpload } from "@/lib/pdf";
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -22,6 +25,8 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import { slugifyPassportName } from "@/lib/workspace/helpers";
+
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   const ctx = await getWorkspaceContext();
@@ -253,15 +258,41 @@ export async function POST(request: Request) {
     );
   }
 
+  const providerSelection = resolveExtractionProvider();
+
   try {
-    const parsedPdf = await extractPdfText(bytes);
-    const lowTextWarning = parsedPdf.characterCount < 40;
+    let parsedPdf = {
+      text: "",
+      totalPages: 0,
+      characterCount: 0,
+      truncated: false,
+    };
+    let textExtractFailed = false;
+    try {
+      parsedPdf = await extractPdfText(bytes);
+    } catch (pdfErr) {
+      textExtractFailed = true;
+      console.error("[extract] unpdf text extraction failed:", {
+        uploadId,
+        orgId: ctx.org.orgId,
+        provider: providerSelection.provider,
+        fileSizeBytes: bytes.byteLength,
+        error: pdfErr instanceof Error ? pdfErr.message : String(pdfErr),
+      });
+      if (providerSelection.provider !== "gemini") {
+        throw pdfErr;
+      }
+    }
 
     const extraction = await extractBatteryFieldsFromText(
       parsedPdf.text,
       safeFilename,
       { pdfBytes: bytes },
     );
+    const lowTextWarning =
+      !textExtractFailed &&
+      parsedPdf.characterCount < 40 &&
+      extraction.summary.found === 0;
 
     const workingFields: Record<string, string> = {};
     for (const [key, item] of Object.entries(extraction.fields)) {
@@ -385,6 +416,17 @@ export async function POST(request: Request) {
       workingFields: cleanWorkingFields,
     });
   } catch (err) {
+    console.error("[extract] PDF extraction failed:", {
+      uploadId,
+      orgId: ctx.org.orgId,
+      provider: providerSelection.provider,
+      model: providerSelection.model,
+      fileSizeBytes: bytes.byteLength,
+      errorName: err instanceof Error ? err.name : "Error",
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
+
     await supabase
       .from("uploads")
       .update({ extraction_status: "failed" })
