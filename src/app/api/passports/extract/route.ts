@@ -5,6 +5,7 @@ import {
   type BatteryCategory,
 } from "@/config/battery-fields";
 import { siteConfig } from "@/config/site";
+import { checkDailyExtractionEntitlement } from "@/lib/entitlements";
 import { extractBatteryFieldsFromText } from "@/lib/extractor";
 import { normalizeFieldValues } from "@/lib/passport-projection";
 import { computeSha256Hex, extractPdfText, validatePdfUpload } from "@/lib/pdf";
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
     );
   }
 
-  // Per-organization daily cap (default 5/day in siteConfig)
+  // Per-organization daily cap (Free: 5/day, Pro: unlimited)
   const { data: dailyCountRaw, error: dailyErr } = await supabase.rpc(
     "get_org_daily_extraction_count",
     { p_org_id: ctx.org.orgId },
@@ -64,10 +65,16 @@ export async function POST(request: Request) {
     );
   }
   const dailyCount = typeof dailyCountRaw === "number" ? dailyCountRaw : 0;
-  if (dailyCount >= siteConfig.dailyExtractionLimitPerOrg) {
+  const extractionEntitlement = checkDailyExtractionEntitlement({
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+    dailyUsed: dailyCount,
+  });
+  if (!extractionEntitlement.allowed) {
     return NextResponse.json(
       {
-        error: `Daily extraction limit reached (${siteConfig.dailyExtractionLimitPerOrg} PDFs per day per organization). Edit existing drafts or try again tomorrow.`,
+        error: `Daily AI PDF limit reached (${extractionEntitlement.limit ?? siteConfig.dailyExtractionLimitPerOrg} PDFs/day on Free plan). Upgrade to Pro (€79/mo) for unlimited PDF checks, use Blank Draft mode, or try again tomorrow.`,
+        code: "PLAN_LIMIT_REACHED",
       },
       { status: 429 },
     );
@@ -167,6 +174,7 @@ export async function POST(request: Request) {
     const extraction = await extractBatteryFieldsFromText(
       parsedPdf.text,
       safeFilename,
+      { pdfBytes: bytes },
     );
 
     const workingFields: Record<string, string> = {};

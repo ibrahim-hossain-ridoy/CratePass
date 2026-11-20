@@ -20,7 +20,7 @@ const STEPS: StepItem[] = [
     title: "First, drop your OEM spec PDF",
     summary:
       "Send an existing cell or battery pack technical datasheet without converting tables into custom spreadsheets.",
-    metric: "51 static fields parsed",
+    metric: "50 static fields parsed",
   },
   {
     id: "check",
@@ -228,7 +228,7 @@ export function PipelineScrollScene() {
                     <div>
                       <dt className="text-[14px] text-[#c4c8d0]">Schema target</dt>
                       <dd className="num mt-0.5 text-[17px] font-semibold text-white">
-                        51 static + 21 BMS fields
+                        50 static · 21 dynamic BMS (71 points)
                       </dd>
                     </div>
                     <div>
@@ -256,9 +256,9 @@ export function PipelineScrollScene() {
                     <div className="inline-flex rounded-[10px] bg-[#20242a] p-1">
                       {(
                         [
-                          { id: "public", label: "Public (30)" },
-                          { id: "legit", label: "Legitimate (27)" },
-                          { id: "auth", label: "Authorities (14)" },
+                          { id: "public", label: "Public (45)" },
+                          { id: "legit", label: "Legitimate (25)" },
+                          { id: "auth", label: "Authorities (1)" },
                         ] as const
                       ).map((tier) => (
                         <button

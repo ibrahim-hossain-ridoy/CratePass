@@ -5,6 +5,8 @@ import {
   type BatteryCategory,
 } from "@/config/battery-fields";
 import { isBillingEnabled } from "@/config/site";
+import { checkPublishEntitlement } from "@/lib/entitlements";
+import { computeCanonicalSnapshotSha256 } from "@/lib/export/jsonld";
 import {
   ACCURACY_DECLARATION_TEXT,
   canOrgPublish,
@@ -68,18 +70,45 @@ export async function POST(
     return NextResponse.json({ error: "Passport not found." }, { status: 404 });
   }
 
-  // Enforce Free vs. Brand Hosting billing gate across publish, publish_new_version, and unpublish
-  const billingAllowed = canOrgPublish({
-    billingEnabled: isBillingEnabled(),
+  const { count: publishedCountRaw } = await supabase
+    .from("passports")
+    .select("id", { count: "exact", head: true })
+    .eq("org_id", ctx.org.orgId)
+    .eq("status", "published");
+
+  const publishedPassportsCount = publishedCountRaw ?? 0;
+  const isAlreadyPublished = passportRow.status === "published";
+
+  // Enforce Free (3 live published passports) vs. Pro (unlimited) server-side entitlement gate
+  const entitlement = checkPublishEntitlement({
     billingStatus: ctx.org.billingStatus,
     compEnabled: ctx.org.compEnabled,
+    publishedPassportsCount,
+    isAlreadyPublished,
+    action: parsed.data.action,
   });
+
+  const billingAllowed =
+    entitlement.allowed &&
+    canOrgPublish({
+      billingEnabled: isBillingEnabled(),
+      billingStatus: ctx.org.billingStatus,
+      compEnabled: ctx.org.compEnabled,
+      publishedPassportsCount,
+      isAlreadyPublished,
+      action: parsed.data.action,
+    });
+
   if (!billingAllowed) {
     return NextResponse.json(
       {
         error:
-          "Brand Hosting (€49/mo) is required to publish live QR passports or manage published versions.",
-        code: "BILLING_REQUIRED",
+          entitlement.reason ??
+          "Free plan includes up to 3 live published battery passports. Upgrade to Pro (€79/mo) for unlimited live passports.",
+        code: entitlement.code ?? "PLAN_LIMIT_REACHED",
+        limitType: "published_passports",
+        limit: entitlement.limit,
+        current: entitlement.current,
       },
       { status: 402 },
     );
@@ -146,6 +175,9 @@ export async function POST(
       : 1;
 
   const declaredAt = new Date().toISOString();
+  const snapshotSha256 = computeCanonicalSnapshotSha256(
+    snapshots.snapshotPublicFields,
+  );
 
   let versionInsert = await supabase
     .from("passport_versions")
@@ -154,6 +186,7 @@ export async function POST(
       org_id: ctx.org.orgId,
       version_number: nextVersionNumber,
       battery_category: resolvedCategory,
+      snapshot_sha256: snapshotSha256,
       snapshot_all_fields: snapshots.snapshotAllFields,
       snapshot_public_fields: snapshots.snapshotPublicFields,
       snapshot_legitimate_interest_fields:
@@ -165,6 +198,27 @@ export async function POST(
     })
     .select("id, version_number, declared_at, created_at")
     .single();
+
+  if (versionInsert.error) {
+    versionInsert = await supabase
+      .from("passport_versions")
+      .insert({
+        passport_id: id,
+        org_id: ctx.org.orgId,
+        version_number: nextVersionNumber,
+        battery_category: resolvedCategory,
+        snapshot_all_fields: snapshots.snapshotAllFields,
+        snapshot_public_fields: snapshots.snapshotPublicFields,
+        snapshot_legitimate_interest_fields:
+          snapshots.snapshotLegitimateInterestFields,
+        snapshot_authorities_only_fields:
+          snapshots.snapshotAuthoritiesOnlyFields,
+        declared_accurate_by: ctx.user.id,
+        declared_at: declaredAt,
+      })
+      .select("id, version_number, declared_at, created_at")
+      .single();
+  }
 
   if (versionInsert.error) {
     versionInsert = await supabase

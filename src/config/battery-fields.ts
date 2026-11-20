@@ -1091,6 +1091,10 @@ export const BATTERY_FIELDS: readonly BatteryFieldDefinition[] =
 export const OFFICIAL_71_FIELDS: readonly BatteryFieldDefinition[] =
   BATTERY_FIELDS.filter((f) => typeof f.pointNumber === "number");
 
+/** Official 50 static numbered points (Points 1–50, excluding private catch-all). */
+export const OFFICIAL_STATIC_FIELDS: readonly BatteryFieldDefinition[] =
+  OFFICIAL_71_FIELDS.filter((f) => f.source === "static");
+
 /** Static fields (Points 1–50 + additional_information) eligible for PDF extraction & manual input. */
 export const STATIC_BATTERY_FIELDS: readonly BatteryFieldDefinition[] =
   BATTERY_FIELDS.filter((f) => f.source === "static");

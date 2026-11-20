@@ -7,8 +7,11 @@ import {
   PassportDashboard,
   type DashboardPassportItem,
 } from "@/components/workspace/PassportDashboard";
-import { STATIC_BATTERY_FIELDS } from "@/config/battery-fields";
-import { siteConfig } from "@/config/site";
+import { OFFICIAL_STATIC_FIELDS } from "@/config/battery-fields";
+import { FREE_PLAN_LIMITS } from "@/config/plans";
+import { isBillingEnabled, siteConfig } from "@/config/site";
+import { describeOrgBillingState } from "@/lib/billing";
+import { resolveWorkspacePlan } from "@/lib/entitlements";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import WorkspaceLoading from "./loading";
@@ -114,7 +117,7 @@ async function DashboardLoader() {
           row.working_fields && typeof row.working_fields === "object"
             ? (row.working_fields as Record<string, unknown>)
             : {};
-        const populatedCount = STATIC_BATTERY_FIELDS.filter(
+        const populatedCount = OFFICIAL_STATIC_FIELDS.filter(
           (f) => typeof fields[f.key] === "string" && String(fields[f.key]).trim().length > 0,
         ).length;
 
@@ -128,27 +131,37 @@ async function DashboardLoader() {
             ? (versionNumberMap.get(String(row.current_version_id)) ?? null)
             : null,
           populatedCount,
-          totalFieldCount: STATIC_BATTERY_FIELDS.length,
+          totalFieldCount: OFFICIAL_STATIC_FIELDS.length,
           updatedAt: String(row.updated_at),
         };
       });
     }
   }
 
-  const billingLabel = ctx.org.compEnabled
-    ? "Pilot plan (comped)"
-    : `Plan: ${ctx.org.billingStatus}`;
+  const plan = resolveWorkspacePlan({
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
+  const billingState = describeOrgBillingState({
+    billingEnabled: isBillingEnabled(),
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
 
   return (
     <AppShell
       orgName={ctx.org.orgName}
       userEmail={ctx.user.email}
-      billingLabel={billingLabel}
+      billingLabel={billingState.badgeLabel}
     >
       <PassportDashboard
         orgName={ctx.org.orgName}
         dailyExtractionsUsed={dailyUsed}
-        dailyExtractionLimit={siteConfig.dailyExtractionLimitPerOrg}
+        dailyExtractionLimit={
+          plan === "pro"
+            ? 999
+            : (FREE_PLAN_LIMITS.dailyPdfExtractions ?? siteConfig.dailyExtractionLimitPerOrg)
+        }
         passports={items}
         queryError={queryError}
       />

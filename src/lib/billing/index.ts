@@ -20,23 +20,31 @@ export function getBillingProvider(): PaddleBillingProvider {
 }
 
 /**
- * Strictly gated local/test-only billing simulation flag.
- * Enabled ONLY when PADDLE_API_KEY is NOT set AND (NODE_ENV !== "production"
- * OR ALLOW_TEST_BILLING_SIMULATION === "true"). Never active in real production
- * once Paddle keys are configured.
+ * Strictly gated local/dev-mode billing simulation flag.
+ * NEVER active on Vercel production (`VERCEL_ENV === "production"`).
+ * Disabled in `NODE_ENV === "production"` unless `ALLOW_TEST_BILLING_SIMULATION === "true"`
+ * and live Paddle billing is not active.
+ * Enabled locally (`NODE_ENV !== "production"`) when `BILLING_ENABLED !== "true"` or `PADDLE_API_KEY` is blank.
  */
-export function isTestBillingSimulationAllowed(): boolean {
-  if (typeof process === "undefined" || !process.env) return false;
-  const hasPaddleKey = Boolean(process.env.PADDLE_API_KEY?.trim());
-  if (hasPaddleKey) return false;
-  return (
-    process.env.NODE_ENV !== "production" ||
-    process.env.ALLOW_TEST_BILLING_SIMULATION === "true"
-  );
+export function isTestBillingSimulationAllowed(
+  env: Record<string, string | undefined> = typeof process !== "undefined"
+    ? process.env
+    : {},
+): boolean {
+  if (!env) return false;
+  if (env.VERCEL_ENV === "production") return false;
+  const billingEnabled = env.BILLING_ENABLED === "true";
+  const hasPaddleKey = Boolean(env.PADDLE_API_KEY?.trim());
+  if (billingEnabled && hasPaddleKey) return false;
+  if (env.NODE_ENV === "production") {
+    return env.ALLOW_TEST_BILLING_SIMULATION === "true";
+  }
+  return true;
 }
 
 export interface BillingDisplayState {
   canPublish: boolean;
+  plan: "free" | "pro";
   badgeLabel: string;
   headline: string;
   detail: string;
@@ -54,48 +62,46 @@ export function describeOrgBillingState({
   if (billingStatus === "active") {
     return {
       canPublish: true,
-      badgeLabel: "Brand Hosting Active",
-      headline: "Your Brand Hosting plan is active",
+      plan: "pro",
+      badgeLabel: "Pro Active",
+      headline: "Your CratePass Pro plan is active",
       detail:
-        "You can publish live /p/[slug] QR passports, download print-ready SVG and PNG QR labels, and issue versioned updates.",
+        "Unlimited live passports, unlimited bulk CSV serialized QR codes, 5-language supplier magic links, custom branding, and dealer SoH updates are unlocked.",
     };
   }
 
   if (compEnabled) {
     return {
       canPublish: true,
-      badgeLabel: "Pilot Grant Active",
-      headline: "Publishing unlocked through pilot access",
+      plan: "pro",
+      badgeLabel: "Pro (Pilot Grant)",
+      headline: "Pro workspace unlocked via pilot access",
       detail:
-        "Your workspace includes full publishing access for live /p/[slug] QR passports, SVG/PNG downloads, and versioned updates.",
-    };
-  }
-
-  if (!billingEnabled) {
-    return {
-      canPublish: true,
-      badgeLabel: "Free Pilot Open",
-      headline: "Publishing is currently open during free pilot",
-      detail:
-        "Upload OEM spec PDFs, run 71-point completeness checks, and publish live QR passports while pilot evaluation is open.",
+        "Your workspace includes unlimited live battery passports, serialized unit QR sheets, supplier magic links, and API access.",
     };
   }
 
   if (billingStatus === "past_due") {
     return {
-      canPublish: false,
-      badgeLabel: "Payment Past Due",
-      headline: "Payment update needed to publish new versions",
+      canPublish: true,
+      plan: "free",
+      badgeLabel: "Free (Payment Past Due)",
+      headline: "Payment update needed to restore Pro limits",
       detail:
-        "Your recent renewal could not be processed. Draft editing remains open; update your plan to resume publishing.",
+        "Free plan limits apply (up to 3 live published passports and 25 serialized unit QR codes). Update your billing plan to restore unlimited Pro access.",
     };
   }
 
   return {
-    canPublish: false,
-    badgeLabel: billingStatus === "canceled" ? "Plan Canceled" : "Free Plan",
-    headline: "Upgrade to Brand Hosting to publish live QR passports",
+    canPublish: true,
+    plan: "free",
+    badgeLabel: !billingEnabled
+      ? "Free Plan (Dev Mode)"
+      : billingStatus === "canceled"
+        ? "Free Plan (Canceled)"
+        : "Free Plan",
+    headline: "Free Plan — up to 3 live battery passports included",
     detail:
-      "Your Free Plan includes PDF uploads, blank drafts, and 71-point completeness checks. Upgrade to Brand Hosting (€49/month) to publish live /p/[slug] pages and download QR labels.",
+      "Publish up to 3 live products, generate up to 25 serialized unit QR codes, and run 5 daily AI PDF checks. Upgrade to Pro (€79/mo) for unlimited scale.",
   };
 }

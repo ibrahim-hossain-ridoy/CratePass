@@ -2,6 +2,8 @@ export type BillingStatus = "free" | "active" | "past_due" | "canceled";
 
 export type PassportStatus = "draft" | "published";
 
+export type RecordMode = "full_passport" | "simple_qr";
+
 export type BatteryCategory = "LMT" | "EV" | "industrial";
 
 export type FieldCheckStatus = "found" | "missing" | "uncertain";

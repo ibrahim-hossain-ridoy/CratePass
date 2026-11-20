@@ -118,7 +118,7 @@ export function HeroPassportStage({ title, badgeLabel }: HeroPassportStageProps)
               {badgeLabel}
             </span>
             <span className="num text-[15px] text-[#c4c8d0]">
-              71 Annex XIII points · 49 / 51 static fields populated · 3 access tiers
+              50 static · 21 dynamic BMS (71 Annex XIII points) · 3 access tiers
             </span>
           </div>
 

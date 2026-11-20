@@ -7,6 +7,7 @@ import {
   projectTieredPassportSnapshots,
   type FieldValueMap,
 } from "./passport-projection.ts";
+import { checkPublishEntitlement } from "./entitlements.ts";
 import type { BillingStatus } from "../types/database.ts";
 
 export const ACCURACY_DECLARATION_TEXT =
@@ -16,16 +17,25 @@ export interface BillingGateInput {
   billingEnabled: boolean;
   billingStatus: BillingStatus;
   compEnabled: boolean;
+  publishedPassportsCount?: number;
+  isAlreadyPublished?: boolean;
+  action?: "publish" | "publish_new_version" | "unpublish";
 }
 
 export function canOrgPublish({
-  billingEnabled,
   billingStatus,
   compEnabled,
+  publishedPassportsCount = 0,
+  isAlreadyPublished = false,
+  action = "publish",
 }: BillingGateInput): boolean {
-  if (!billingEnabled) return true;
-  if (compEnabled) return true;
-  return billingStatus === "active";
+  return checkPublishEntitlement({
+    billingStatus,
+    compEnabled,
+    publishedPassportsCount,
+    isAlreadyPublished,
+    action,
+  }).allowed;
 }
 
 export interface PreparePublishInput {

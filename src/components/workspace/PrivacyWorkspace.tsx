@@ -55,11 +55,11 @@ export function PrivacyWorkspace({
     <div data-ui className="space-y-6">
       <div className="pb-2">
         <h1 className="font-display text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
-          Privacy, GDPR Export &amp; Legal Drafts
+          Privacy, GDPR Export &amp; Policies
         </h1>
         <p className="mt-1 text-[13.5px] text-[#505660]">
-          Export your workspace records in JSON or remove unpublished draft PDFs and
-          records.
+          Export your workspace records in JSON, review active legal policies,
+          or delete passport records and source PDFs.
         </p>
       </div>
 
@@ -92,18 +92,23 @@ export function PrivacyWorkspace({
           </div>
         </section>
 
-        {/* Draft legal documents summary */}
+        {/* Legal & policy documents summary */}
         <section className="flex flex-col justify-between rounded-[18px] bg-[#f4f4f2] p-5 sm:p-6 lg:col-span-6">
           <div>
             <h2 className="font-display text-[17px] font-semibold text-[#0f1114]">
-              Legal &amp; EU data-processing drafts
+              Legal &amp; EU data-processing policies
             </h2>
             <p className="mt-2 text-[13.5px] leading-relaxed text-[#505660]">
-              Review the placeholder policies published on the public site (marked{" "}
-              <strong className="font-semibold text-[#0f1114]">
-                TODO: lawyer review
-              </strong>
-              ):
+              Review active Terms, Privacy, Refund, and Regulatory Disclaimer
+              policies (effective {siteConfig.legal.effectiveDate}). Formal DPA
+              &amp; EU Art. 27 inquiries:{" "}
+              <a
+                href={`mailto:${siteConfig.contactEmail}`}
+                className="font-semibold text-[#145b6e] underline underline-offset-4"
+              >
+                {siteConfig.contactEmail}
+              </a>
+              .
             </p>
           </div>
           <div className="mt-5 flex flex-wrap gap-2.5">
@@ -111,19 +116,25 @@ export function PrivacyWorkspace({
               href="/terms"
               className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
             >
-              Terms (Draft)
+              Terms of Service
             </Link>
             <Link
               href="/privacy"
               className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
             >
-              Privacy &amp; GDPR (Draft)
+              Privacy Policy
+            </Link>
+            <Link
+              href="/refund"
+              className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
+            >
+              Refund Policy
             </Link>
             <Link
               href="/disclaimer"
               className="pressable inline-flex min-h-[40px] items-center rounded-[10px] border border-[#dad9d3] bg-white px-3.5 text-[13px] font-semibold text-[#0f1114] hover:border-[#0f1114]"
             >
-              Disclaimer (Draft)
+              Disclaimer
             </Link>
           </div>
         </section>

@@ -4,7 +4,10 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { AppShell } from "@/components/workspace/AppShell";
 import { NewPassportFlow } from "@/components/workspace/NewPassportFlow";
-import { siteConfig } from "@/config/site";
+import { FREE_PLAN_LIMITS } from "@/config/plans";
+import { isBillingEnabled, siteConfig } from "@/config/site";
+import { describeOrgBillingState } from "@/lib/billing";
+import { resolveWorkspacePlan } from "@/lib/entitlements";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import WorkspaceLoading from "../loading";
@@ -59,19 +62,29 @@ async function NewPassportLoader() {
     dailyUsed = typeof data === "number" ? data : 0;
   }
 
-  const billingLabel = ctx.org.compEnabled
-    ? "Pilot plan (comped)"
-    : `Plan: ${ctx.org.billingStatus}`;
+  const plan = resolveWorkspacePlan({
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
+  const billingState = describeOrgBillingState({
+    billingEnabled: isBillingEnabled(),
+    billingStatus: ctx.org.billingStatus,
+    compEnabled: ctx.org.compEnabled,
+  });
 
   return (
     <AppShell
       orgName={ctx.org.orgName}
       userEmail={ctx.user.email}
-      billingLabel={billingLabel}
+      billingLabel={billingState.badgeLabel}
     >
       <NewPassportFlow
         dailyUsed={dailyUsed}
-        dailyLimit={siteConfig.dailyExtractionLimitPerOrg}
+        dailyLimit={
+          plan === "pro"
+            ? 999
+            : (FREE_PLAN_LIMITS.dailyPdfExtractions ?? siteConfig.dailyExtractionLimitPerOrg)
+        }
         maxUploadMb={Math.round(siteConfig.maxUploadBytes / (1024 * 1024))}
       />
     </AppShell>

@@ -153,6 +153,18 @@ export function LandingNav() {
             Preview
           </a>
           <Link
+            href="/pricing"
+            className={`whitespace-nowrap transition-colors duration-150 ${current.navLink}`}
+          >
+            Pricing
+          </Link>
+          <Link
+            href="/checker"
+            className={`whitespace-nowrap transition-colors duration-150 ${current.navLink}`}
+          >
+            Eligibility checker
+          </Link>
+          <Link
             href="/demo"
             className={`whitespace-nowrap transition-colors duration-150 ${current.navLink}`}
           >

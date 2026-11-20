@@ -165,9 +165,10 @@ test("Hard copy guardrail across all workspace and public passport components", 
 
   for (const file of files) {
     const content = fs.readFileSync(file, "utf8");
-    // Strip allowed negated disclaimer phrase ("Not verified by us") and official Point 61 name ("State of certified energy") before checking forbidden claim words
+    // Strip allowed negated disclaimer phrases and official Point 61 name ("State of certified energy") before checking forbidden claim words
     const stripped = content
       .replace(/not verified by us/gi, "")
+      .replace(/not verified by cratepass/gi, "")
       .replace(/state of certified energy/gi, "")
       .replace(/certified copy/gi, "");
     assert.doesNotMatch(

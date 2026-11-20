@@ -152,7 +152,7 @@ export function InkFillSection() {
 
             <div>
               <p className="font-display whitespace-nowrap text-[32px] font-semibold leading-none tracking-tight text-white sm:text-[42px]">
-                <RollingNumber value={51} suffix=" static" />
+                <RollingNumber value={50} suffix=" static" />
               </p>
               <p className="mt-2.5 text-[17px] font-medium text-white">
                 Datasheet specification fields

@@ -135,7 +135,7 @@ export async function DELETE(
 
   const { data: passportRow, error: passportErr } = await supabase
     .from("passports")
-    .select("id, org_id, product_id, slug, status")
+    .select("id, org_id, product_id, slug, status, simple_qr_doc_path")
     .eq("id", id)
     .eq("org_id", ctx.org.orgId)
     .single();
@@ -145,24 +145,36 @@ export async function DELETE(
   }
 
   // Count any published snapshots in passport_versions for audit metadata
-  const { data: versions } = await supabase
-    .from("passport_versions")
-    .select("id")
-    .eq("passport_id", id)
-    .eq("org_id", ctx.org.orgId);
+  const [{ data: versions }, { data: uploads }, { data: supplierDocs }] =
+    await Promise.all([
+      supabase
+        .from("passport_versions")
+        .select("id")
+        .eq("passport_id", id)
+        .eq("org_id", ctx.org.orgId),
+      supabase
+        .from("uploads")
+        .select("storage_path")
+        .eq("passport_id", id)
+        .eq("org_id", ctx.org.orgId),
+      supabase
+        .from("supplier_requests")
+        .select("uploaded_doc_path")
+        .eq("passport_id", id)
+        .eq("workspace_id", ctx.org.orgId),
+    ]);
 
   const versionCount = versions?.length ?? 0;
 
-  // Clean up any associated PDF objects in the private spec-pdfs bucket
-  const { data: uploads } = await supabase
-    .from("uploads")
-    .select("storage_path")
-    .eq("passport_id", id)
-    .eq("org_id", ctx.org.orgId);
+  const candidatePaths = [
+    ...(uploads ?? []).map((u) => String(u.storage_path || "").trim()),
+    ...(supplierDocs ?? []).map((s) => String(s.uploaded_doc_path || "").trim()),
+    String(passportRow.simple_qr_doc_path || "").trim(),
+  ];
 
-  const storagePaths = (uploads ?? [])
-    .map((u) => String(u.storage_path || "").trim())
-    .filter((p) => p.startsWith(`${ctx.org.orgId}/`));
+  const storagePaths = [...new Set(candidatePaths)].filter((p) =>
+    p.startsWith(`${ctx.org.orgId}/`),
+  );
 
   if (storagePaths.length > 0) {
     await supabase.storage.from("spec-pdfs").remove(storagePaths);

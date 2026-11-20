@@ -7,6 +7,7 @@ import {
   DYNAMIC_BMS_NOTICE,
   FIELD_GROUP_META,
   OFFICIAL_71_FIELDS,
+  OFFICIAL_STATIC_FIELDS,
   RESTRICTED_TIER_NOTICE,
   STATIC_BATTERY_FIELDS,
   WORKING_FIELD_LIST_NOTICE,
@@ -110,7 +111,7 @@ export function PassportFieldEditor({
     let populatedRequiredStatic = 0;
     let totalRequiredStatic = 0;
 
-    for (const def of STATIC_BATTERY_FIELDS) {
+    for (const def of OFFICIAL_STATIC_FIELDS) {
       const currentVal = (values[def.key] ?? "").trim();
       const extractedStatus: FieldCheckStatus | undefined =
         extractionFields?.[def.key]?.status;
@@ -163,7 +164,7 @@ export function PassportFieldEditor({
       missingRequiredStatic,
       populatedRequiredStatic,
       totalRequiredStatic,
-      totalStatic: STATIC_BATTERY_FIELDS.length,
+      totalStatic: OFFICIAL_STATIC_FIELDS.length,
       mandatoryTotal71: mandatoryOfficialForCategory.length,
       mandatoryPublicForCategory,
       mandatoryLegitForCategory,

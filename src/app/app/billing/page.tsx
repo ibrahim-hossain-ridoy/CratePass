@@ -9,6 +9,7 @@ import {
   getBillingProvider,
   isTestBillingSimulationAllowed,
 } from "@/lib/billing";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import WorkspaceLoading from "../loading";
 
@@ -58,6 +59,33 @@ async function BillingLoader({
     compEnabled: ctx.org.compEnabled,
   });
 
+  let publishedPassportsCount = 0;
+  let serializedUnitsCount = 0;
+  let dailyExtractionsUsed = 0;
+
+  const supabase = await createServerSupabaseClient();
+  if (supabase) {
+    const [pubRes, dailyRes, unitsRes] = await Promise.all([
+      supabase
+        .from("passports")
+        .select("id", { count: "exact", head: true })
+        .eq("org_id", ctx.org.orgId)
+        .eq("status", "published"),
+      supabase.rpc("get_org_daily_extraction_count", {
+        p_org_id: ctx.org.orgId,
+      }),
+      supabase
+        .from("passport_units")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", ctx.org.orgId),
+    ]);
+
+    publishedPassportsCount = pubRes.count ?? 0;
+    dailyExtractionsUsed = typeof dailyRes.data === "number" ? dailyRes.data : 0;
+    // passport_units table is added in M11; default gracefully to 0 if not yet migrated
+    serializedUnitsCount = unitsRes.error ? 0 : (unitsRes.count ?? 0);
+  }
+
   const checkoutNotice =
     sp.checkout === "success"
       ? "success"
@@ -76,11 +104,17 @@ async function BillingLoader({
         role={ctx.org.role}
         billingStatus={ctx.org.billingStatus}
         compEnabled={ctx.org.compEnabled}
+        billingEnabled={billingEnabled}
         paddleEnv={getPaddleEnv()}
         checkoutConfigured={provider.isCheckoutConfigured()}
         testSimulationEnabled={isTestBillingSimulationAllowed()}
         displayState={displayState}
         checkoutNotice={checkoutNotice}
+        usage={{
+          publishedPassportsCount,
+          serializedUnitsCount,
+          dailyExtractionsUsed,
+        }}
       />
     </AppShell>
   );

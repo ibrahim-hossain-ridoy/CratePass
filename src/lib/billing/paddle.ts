@@ -56,6 +56,7 @@ export interface PaddleProviderConfig {
   apiKey: string;
   webhookSecret: string;
   priceId: string;
+  yearlyPriceId?: string;
   env: "sandbox" | "production";
 }
 
@@ -142,6 +143,11 @@ export class PaddleBillingProvider implements BillingProvider {
         process.env.NEXT_PUBLIC_PADDLE_PRICE_ID ??
         ""
       ).trim(),
+      yearlyPriceId: (
+        config?.yearlyPriceId ??
+        process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_YEARLY ??
+        ""
+      ).trim(),
       env: envRaw,
     };
   }
@@ -222,6 +228,11 @@ export class PaddleBillingProvider implements BillingProvider {
       );
     }
 
+    const selectedPriceId =
+      input.interval === "yearly" && this.config.yearlyPriceId
+        ? this.config.yearlyPriceId
+        : this.config.priceId;
+
     const response = await fetch(
       `${getPaddleApiBaseUrl(this.config.env)}/transactions`,
       {
@@ -231,10 +242,11 @@ export class PaddleBillingProvider implements BillingProvider {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          items: [{ price_id: this.config.priceId, quantity: 1 }],
+          items: [{ price_id: selectedPriceId, quantity: 1 }],
           custom_data: {
             org_id: input.orgId,
             org_slug: input.orgSlug,
+            billing_interval: input.interval ?? "monthly",
           },
           checkout: {
             url: input.successUrl,

@@ -42,6 +42,12 @@ async function PublicPassportLoader({
       versionNumber={Number(row.version_number ?? 1)}
       declaredAt={String(row.declared_at ?? row.published_at ?? "")}
       publicFields={safePublicFields}
+      recordMode={row.record_mode === "simple_qr" ? "simple_qr" : "full_passport"}
+      hasUploadedDoc={Boolean(row.simple_qr_doc_path)}
+      branding={{
+        logoUrl: row.brand_logo_url ? String(row.brand_logo_url) : null,
+        accentHex: row.brand_accent_hex ? String(row.brand_accent_hex) : null,
+      }}
     />
   );
 }

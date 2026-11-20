@@ -5,6 +5,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PassportFieldEditor } from "./PassportFieldEditor";
+import {
+  SupplierRequestsPanel,
+  type SupplierRequestSummary,
+} from "./SupplierRequestsPanel";
+import {
+  SerializedUnitsPanel,
+  type SerializedUnitSummary,
+} from "./SerializedUnitsPanel";
+import { UpgradeModal } from "./UpgradeModal";
+import { FREE_PLAN_LIMITS, type PlanId } from "@/config/plans";
 import { ACCURACY_DECLARATION_TEXT } from "@/lib/publish";
 import { buildPublicPassportUrl, generateQrAssets, type QrAssets } from "@/lib/qr";
 import { formatShortUtcDate } from "@/lib/workspace/helpers";
@@ -13,6 +23,7 @@ import type {
   BatteryCategory,
   ExtractionResultMap,
   PassportStatus,
+  RecordMode,
 } from "@/types/database";
 
 export interface VersionHistoryItem {
@@ -26,13 +37,19 @@ interface PassportReviewWorkspaceProps {
   passportId: string;
   slug: string;
   initialStatus: PassportStatus;
+  recordMode?: RecordMode;
   initialBatteryCategory?: BatteryCategory;
   initialProductName: string;
   initialModelCode: string;
   initialFields: Record<string, string>;
   extractionFields?: ExtractionResultMap;
   initialVersions: VersionHistoryItem[];
+  initialSupplierRequests?: SupplierRequestSummary[];
+  initialSerializedUnits?: SerializedUnitSummary[];
+  initialWorkspaceUnitsCount?: number;
   canPublish?: boolean;
+  workspacePlan?: PlanId;
+  publishedPassportsCount?: number;
   siteUrlConfigured?: string;
 }
 
@@ -40,13 +57,19 @@ export function PassportReviewWorkspace({
   passportId,
   slug,
   initialStatus,
+  recordMode = "full_passport",
   initialBatteryCategory,
   initialProductName,
   initialModelCode,
   initialFields,
   extractionFields,
   initialVersions,
+  initialSupplierRequests = [],
+  initialSerializedUnits = [],
+  initialWorkspaceUnitsCount = 0,
   canPublish = true,
+  workspacePlan = "free",
+  publishedPassportsCount = 0,
   siteUrlConfigured,
 }: PassportReviewWorkspaceProps) {
   const router = useRouter();
@@ -64,10 +87,13 @@ export function PassportReviewWorkspace({
   const [submittingAction, setSubmittingAction] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [billingRequiredError, setBillingRequiredError] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeModalDetail, setUpgradeModalDetail] = useState<string | undefined>(undefined);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<"review" | "units">("review");
   const [qrAssets, setQrAssets] = useState<QrAssets | null>(null);
   const [publicUrl, setPublicUrl] = useState<string>(() =>
     buildPublicPassportUrl(slug, undefined, siteUrlConfigured),
@@ -110,11 +136,17 @@ export function PassportReviewWorkspace({
     setBillingRequiredError(false);
     setActionNotice(null);
 
-    if (!canPublish) {
-      setBillingRequiredError(true);
-      setActionError(
-        "Brand Hosting (€49/mo) is required to publish live QR passports.",
+    const maxFreeLive = FREE_PLAN_LIMITS.maxPublishedPassports ?? 3;
+    const blockedByFreeCap =
+      action !== "unpublish" &&
+      status !== "published" &&
+      (!canPublish || (workspacePlan === "free" && publishedPassportsCount >= maxFreeLive));
+
+    if (blockedByFreeCap) {
+      setUpgradeModalDetail(
+        `Free plan includes up to ${maxFreeLive} live published battery products (${publishedPassportsCount}/${maxFreeLive} currently live). Unpublish an existing product or upgrade to Pro (€79/mo).`,
       );
+      setUpgradeModalOpen(true);
       return;
     }
 
@@ -145,8 +177,17 @@ export function PassportReviewWorkspace({
       };
 
       if (!res.ok) {
-        if (res.status === 402 || json.code === "BILLING_REQUIRED") {
+        if (
+          res.status === 402 ||
+          json.code === "BILLING_REQUIRED" ||
+          json.code === "PLAN_LIMIT_REACHED"
+        ) {
           setBillingRequiredError(true);
+          setUpgradeModalDetail(
+            json.error ||
+              `Free plan includes up to ${maxFreeLive} live published battery products.`,
+          );
+          setUpgradeModalOpen(true);
         }
         setActionError(json.error || "Action failed. Try again.");
         return;
@@ -196,7 +237,7 @@ export function PassportReviewWorkspace({
   }
 
   function downloadSvg() {
-    if (!canPublish || !qrAssets) return;
+    if (!qrAssets) return;
     const blob = new Blob([qrAssets.svg], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -207,7 +248,7 @@ export function PassportReviewWorkspace({
   }
 
   function downloadPng() {
-    if (!canPublish || !qrAssets) return;
+    if (!qrAssets) return;
     const link = document.createElement("a");
     link.href = qrAssets.pngDataUrl;
     link.download = `${slug}-qr.png`;
@@ -233,7 +274,9 @@ export function PassportReviewWorkspace({
               {slug}
             </code>
             <span className="rounded bg-[#e8f3f6] px-2 py-0.5 text-[11.5px] font-semibold text-[#0b3c49]">
-              {batteryCategory}
+              {recordMode === "simple_qr"
+                ? "Simple QR Mode (Art. 13(6))"
+                : batteryCategory}
             </span>
           </div>
           <h1 className="font-display mt-2 text-[24px] font-bold tracking-tight text-[#0f1114] sm:text-[28px]">
@@ -290,22 +333,77 @@ export function PassportReviewWorkspace({
         </div>
       </div>
 
-      {/* Free Plan Upgrade Notice Banner */}
-      {!canPublish && (
+      {/* Workspace Sub-Tab Bar: Passport Review vs Serialized Units */}
+      <div
+        role="tablist"
+        aria-label="Passport workspace sections"
+        className="inline-flex rounded-[11px] bg-[#e8e7e3] p-1"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeSection === "review"}
+          onClick={() => setActiveSection("review")}
+          className={`pressable cursor-pointer rounded-[8px] px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+            activeSection === "review"
+              ? "bg-white text-[#0f1114]"
+              : "text-[#4b4f57] hover:text-[#0f1114]"
+          }`}
+        >
+          Passport Review &amp; Fields
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeSection === "units"}
+          onClick={() => setActiveSection("units")}
+          className={`pressable inline-flex cursor-pointer items-center gap-2 rounded-[8px] px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+            activeSection === "units"
+              ? "bg-white text-[#0f1114]"
+              : "text-[#4b4f57] hover:text-[#0f1114]"
+          }`}
+        >
+          <span>Serialized Units</span>
+          <span className="num rounded bg-[#e6f2f5] px-1.5 py-0.5 text-[11.5px] font-bold text-[#0b3c49]">
+            {initialSerializedUnits.length}
+          </span>
+        </button>
+      </div>
+
+      {activeSection === "units" ? (
+        <SerializedUnitsPanel
+          passportId={passportId}
+          slug={slug}
+          workspacePlan={workspacePlan}
+          initialUnits={initialSerializedUnits}
+          initialWorkspaceUnitsCount={initialWorkspaceUnitsCount}
+          siteOrigin={publicUrl.replace(/\/p\/[^/]+$/, "")}
+        />
+      ) : (
+        <>
+      {/* Free Plan Live Slot Notice Banner (only when Free workspace is already at 3/3 live & editing a draft) */}
+      {!canPublish && !isPublished && (
         <div
           role="note"
           className="flex flex-col justify-between gap-3 rounded-[16px] border border-[#ebd0a8] bg-[#fdf6ec] p-4 text-[#7c380b] sm:flex-row sm:items-center sm:px-5"
         >
           <p className="text-[14px] font-semibold leading-snug">
-            Brand Hosting (€49/mo) is required to publish live QR passports —
-            upgrade to publish /p/{slug} and download SVG/PNG QR labels.
+            Free plan live limit reached ({publishedPassportsCount} /{" "}
+            {FREE_PLAN_LIMITS.maxPublishedPassports ?? 3} live published passports).
+            Upgrade to Pro (€79/mo) to publish additional models without unpublishing existing ones.
           </p>
-          <Link
-            href="/app/billing"
-            className="pressable inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-[10px] bg-[#145b6e] px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-[#0e4656]"
+          <button
+            type="button"
+            onClick={() => {
+              setUpgradeModalDetail(
+                `You currently have ${publishedPassportsCount} live passports on the Free plan (limit: ${FREE_PLAN_LIMITS.maxPublishedPassports ?? 3}).`,
+              );
+              setUpgradeModalOpen(true);
+            }}
+            className="pressable inline-flex min-h-[40px] shrink-0 cursor-pointer items-center justify-center rounded-[10px] bg-[#145b6e] px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-[#0e4656]"
           >
-            Upgrade in Plan &amp; Billing →
-          </Link>
+            Upgrade to Pro →
+          </button>
         </div>
       )}
 
@@ -332,19 +430,16 @@ export function PassportReviewWorkspace({
 
           <label
             className={`mt-4 flex items-start gap-3 rounded-[12px] border p-4 text-[13.5px] text-[#0f1114] transition-colors duration-150 ${
-              !canPublish
-                ? "cursor-not-allowed border-[#e4e3dd] bg-white/60 opacity-65"
-                : declarationChecked
-                  ? "cursor-pointer border-[#145b6e] bg-[#e8f3f6]/75"
-                  : "cursor-pointer border-[#dad9d3] bg-white hover:border-[#0f1114]/40"
+              declarationChecked
+                ? "cursor-pointer border-[#145b6e] bg-[#e8f3f6]/75"
+                : "cursor-pointer border-[#dad9d3] bg-white hover:border-[#0f1114]/40"
             }`}
           >
             <input
               type="checkbox"
-              disabled={!canPublish}
               checked={declarationChecked}
               onChange={(e) => setDeclarationChecked(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-[#145b6e] disabled:cursor-not-allowed"
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[#145b6e]"
             />
             <span className="font-medium leading-snug text-[#0f1114]">
               {ACCURACY_DECLARATION_TEXT}
@@ -381,7 +476,7 @@ export function PassportReviewWorkspace({
             {!isPublished ? (
               <button
                 type="button"
-                disabled={!canPublish || submittingAction !== null}
+                disabled={submittingAction !== null}
                 onClick={() =>
                   handlePublishAction(
                     versions.length > 0 ? "publish_new_version" : "publish",
@@ -400,7 +495,7 @@ export function PassportReviewWorkspace({
               <>
                 <button
                   type="button"
-                  disabled={!canPublish || submittingAction !== null}
+                  disabled={submittingAction !== null}
                   onClick={() => handlePublishAction("publish_new_version")}
                   className="pressable group inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-[#145b6e] px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-[#0e4250] disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -415,7 +510,7 @@ export function PassportReviewWorkspace({
                 </button>
                 <button
                   type="button"
-                  disabled={!canPublish || submittingAction !== null}
+                  disabled={submittingAction !== null}
                   onClick={() => handlePublishAction("unpublish")}
                   className="pressable inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-[10px] border border-[#dad9d3] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#0f1114] hover:border-[#0f1114] disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -511,31 +606,18 @@ export function PassportReviewWorkspace({
               </p>
             </div>
 
-            {!canPublish ? (
+            {!isPublished && (
               <p className="mt-3 text-[12.5px] leading-relaxed text-[#fbbf24]">
-                Brand Hosting (€49/mo) is required to download print-ready SVG
-                and PNG QR labels.{" "}
-                <Link
-                  href="/app/billing"
-                  className="font-semibold text-[#7ce3f4] underline underline-offset-4"
-                >
-                  Upgrade in Plan &amp; Billing →
-                </Link>
+                Approve &amp; Publish before printing so scanners resolve the
+                live page instead of 404.
               </p>
-            ) : (
-              !isPublished && (
-                <p className="mt-3 text-[12.5px] leading-relaxed text-[#fbbf24]">
-                  Approve &amp; Publish before printing so scanners resolve the
-                  live page instead of 404.
-                </p>
-              )
             )}
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-2.5">
             <button
               type="button"
-              disabled={!canPublish || !qrAssets}
+              disabled={!qrAssets}
               onClick={downloadSvg}
               className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#145b6e] px-3 text-[13.5px] font-semibold text-white hover:bg-[#1a748b] disabled:cursor-not-allowed disabled:opacity-45"
             >
@@ -543,18 +625,57 @@ export function PassportReviewWorkspace({
             </button>
             <button
               type="button"
-              disabled={!canPublish || !qrAssets}
+              disabled={!qrAssets}
               onClick={downloadPng}
               className="pressable inline-flex min-h-[42px] cursor-pointer items-center justify-center rounded-[10px] bg-[#242830] px-3 text-[13.5px] font-semibold text-white hover:bg-[#303540] disabled:cursor-not-allowed disabled:opacity-45"
             >
               Download PNG
             </button>
           </div>
+
+          <div className="mt-3 grid grid-cols-1 gap-2 border-t border-[#22262e] pt-3 sm:grid-cols-2">
+            <a
+              href={`/api/passports/${passportId}/export?format=jsonld`}
+              className="pressable inline-flex min-h-[38px] items-center justify-center rounded-[9px] bg-[#171a1e] px-3 text-[12.5px] font-semibold text-[#7dd3e8] hover:bg-[#1f242c]"
+            >
+              Export EU Registry JSON-LD
+            </a>
+            <a
+              href={`/api/passports/${passportId}/export?format=audit_pdf`}
+              className="pressable inline-flex min-h-[38px] items-center justify-center rounded-[9px] bg-[#171a1e] px-3 text-[12.5px] font-semibold text-[#e2e5ea] hover:bg-[#1f242c]"
+            >
+              Download Audit Package (PDF)
+            </a>
+          </div>
+          {isPublished && (
+            <div className="mt-2">
+              <Link
+                href={`/service/${slug}`}
+                target="_blank"
+                className="inline-flex min-h-[34px] w-full items-center justify-center rounded-[9px] bg-[#171a1e] px-3 text-[12px] font-semibold text-[#b6bac2] hover:bg-[#1f242c] hover:text-white"
+              >
+                Open Dealer / Repairer SoH Portal (/service/{slug}) ↗
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
+      {/* Bilingual Chinese <-> English No-Login Supplier Magic Links & Diff Review */}
+      <SupplierRequestsPanel
+        passportId={passportId}
+        batteryCategory={batteryCategory}
+        workingFields={workingFields}
+        initialRequests={initialSupplierRequests}
+        onMerged={(mergedFields) => {
+          setWorkingFields(mergedFields);
+          router.refresh();
+        }}
+      />
+
       {/* Full editable fields grid (always enabled on Free and Pro plans) */}
       <PassportFieldEditor
+        key={Object.entries(workingFields).length}
         passportId={passportId}
         initialBatteryCategory={batteryCategory}
         initialProductName={productName}
@@ -568,6 +689,17 @@ export function PassportReviewWorkspace({
           setModelCode(updated.modelCode);
           setWorkingFields(updated.workingFields);
         }}
+      />
+        </>
+      )}
+
+      {/* Non-destructive Free Plan Upgrade Modal */}
+      <UpgradeModal
+        open={upgradeModalOpen}
+        onClose={() => setUpgradeModalOpen(false)}
+        title="Free plan limit reached (3 live passports)"
+        description="Upgrade to CratePass Pro to publish unlimited battery models, bulk CSV GS1 QR sheets, custom subdomain branding, and dealer SoH updates."
+        limitDetail={upgradeModalDetail}
       />
 
       {/* Delete Confirmation Dialog */}

@@ -5,7 +5,7 @@
   - **Act 1 (`putty` `#e8e7e3`)**: Hardware Studio Hero with masked display line-rise, Image Shutter opening on the brushed aluminum QR casing macro (`casing-qr-macro.jpg`), pointer-tracked 3D tilt, interactive 3-stage pipeline switcher, and scroll-linked receding depth.
   - **Scene 1 (`obsidian` `#101214`)**: Held `100svh` Sticky Pipeline Scene (`hold: 2.2`) with a live vertical scrub spine (`scaleY`), `"Step 1 of 3"` beat counter, and 3-tier Annex XIII inspector.
   - **Act 3 (`chalk` `#ffffff`)**: Asymmetric 5/7 sticky editorial audience index with scroll-rising headings and parallaxing studio pack photography (`battery-pack-studio.jpg`).
-  - **Act 3.5 (`obsidian` `#101214`)**: Word-by-word scroll-scrubbed `Ink fill` statement (`44% -> 100%` white ink) + rolling odometer figures (`71`, `51`, `21`), followed by **Scene 2 (`Opening window`)** where an inset hardware window (`clip-path: inset(14% 16% round 24px)`) opens to a full-bleed `100svh` showcase.
+  - **Act 3.5 (`obsidian` `#101214`)**: Word-by-word scroll-scrubbed `Ink fill` statement (`44% -> 100%` white ink) + rolling odometer figures (`71`, `50`, `21`), followed by **Scene 2 (`Opening window`)** where an inset hardware window (`clip-path: inset(14% 16% round 24px)`) opens to a full-bleed `100svh` showcase.
   - **Act 4 (`putty` `#e8e7e3`)**: Interactive 4-tab specimen preview (`Passport data`, `Interactive repair`, `Supply journey`, `Authenticity & recycling`) with clickable tabs on `/`.
   - **Act 5 & 6 (`petrol` `#0c262e` -> `#0d0f12`)**: Deep Baltic Petrol closing invitation and calm single-baseline legal footer.
 - **Interactive Specifier (`/demo`) & Workspace (`/app/*`, `/login`) — `Operate`**: `framed-sheet` precision workspace architecture (`#e8e7e3` mineral frame surrounding `#ffffff` crisp sheets with `16px` sheet corners, zero rest shadows, and `#145b6e` Petrol active indicator).
@@ -41,6 +41,6 @@
 - **Hero Load & Receding Exit**: Masked vertical line-rise (`840ms var(--ease-expo)`), Image Shutter reveal (`clip-path: inset(0 0 100% 0) -> inset(0)` + `scale(1.09 -> 1)`), pointer-tracked 3D tilt, and scroll-linked receding depth (`yPercent: 5, scale: 0.968`).
 - **Two Held Scroll Scenes + Quiet Interlude**:
   1. **Scene 1 (`PipelineScrollScene.tsx`)**: Sticky `100svh` 3-beat hardware/schema pipeline with live scrub progress spine.
-  2. **Ink-Fill Interlude & Rolling Odometer Figures (`InkFillSection.tsx` + `RollingNumber.tsx`)**: Word-by-word scroll opacity scrub (`44% -> 100%`) and rolling digit columns (`71`, `51`, `21`).
+  2. **Ink-Fill Interlude & Rolling Odometer Figures (`InkFillSection.tsx` + `RollingNumber.tsx`)**: Word-by-word scroll opacity scrub (`44% -> 100%`) and rolling digit columns (`71`, `50`, `21`).
   3. **Scene 2 (`Opening window` in `InkFillSection.tsx`)**: Sticky `100svh` window expanding from `inset(14% 16% round 24px)` to full-bleed `inset(0% 0% round 0px)`.
 - **Cross-Document View Transitions & Reduced Motion**: Native `@view-transition { navigation: auto; }` (`180ms` leave / `340ms` arrive). `prefers-reduced-motion: reduce` disables GSAP scrubbing, Lenis smoothing, view transitions, and keyframes immediately. `/p/[slug]` imports zero animation libraries.

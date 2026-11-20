@@ -110,7 +110,7 @@ export function PassportDashboard({
             <div className="flex items-center justify-between gap-4">
               <span className="font-medium text-[#4b4f57]">Daily PDF checks</span>
               <span className="num font-semibold text-[#0f1114]">
-                {dailyExtractionsUsed} / {dailyExtractionLimit}
+                {dailyExtractionsUsed} / {dailyExtractionLimit >= 999 ? "Unlimited" : dailyExtractionLimit}
               </span>
             </div>
             <div className="mt-1.5 h-1.5 w-36 overflow-hidden rounded-full bg-[#dcdad4]">
@@ -264,6 +264,8 @@ export function PassportDashboard({
             </div>
 
             <input
+              id="passport-ledger-search"
+              name="passportSearch"
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

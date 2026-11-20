@@ -16,6 +16,7 @@ interface AppShellProps {
 
 const NAV_ITEMS = [
   { href: "/app", label: "Passports", tag: "Ledger" },
+  { href: "/app/settings/branding", label: "Branding & Service", tag: "Pro" },
   { href: "/app/billing", label: "Plan & billing", tag: "Plans" },
   { href: "/app/privacy", label: "Privacy & GDPR", tag: "JSON" },
 ] as const;
@@ -52,11 +53,13 @@ export function AppShell({
         ? "New battery passport"
         : pathname.startsWith("/app/passports")
           ? "Review & publish"
-          : pathname.startsWith("/app/billing")
-            ? "Plan & billing"
-            : pathname.startsWith("/app/privacy")
-              ? "Privacy & GDPR"
-              : "Workspace";
+          : pathname.startsWith("/app/settings/branding")
+            ? "Branding & Service"
+            : pathname.startsWith("/app/billing")
+              ? "Plan & billing"
+              : pathname.startsWith("/app/privacy")
+                ? "Privacy & GDPR"
+                : "Workspace";
 
   const avatarInitial = (userEmail?.trim()?.[0] || orgName?.[0] || "B").toUpperCase();
 

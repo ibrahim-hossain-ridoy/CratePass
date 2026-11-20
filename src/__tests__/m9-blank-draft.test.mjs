@@ -100,12 +100,24 @@ test("Blank draft uses the exact same downstream publish accuracy declaration an
     });
   }, /Accuracy declaration required/i);
 
-  // Same billing gate enforcement
+  // Same plan cap enforcement (Free allows up to 3 live, blocks 4th; Pro unlimited)
   assert.equal(
     canOrgPublish({
       billingEnabled: true,
       billingStatus: "free",
       compEnabled: false,
+      publishedPassportsCount: 2,
+      isAlreadyPublished: false,
+    }),
+    true,
+  );
+  assert.equal(
+    canOrgPublish({
+      billingEnabled: true,
+      billingStatus: "free",
+      compEnabled: false,
+      publishedPassportsCount: 3,
+      isAlreadyPublished: false,
     }),
     false,
   );
@@ -114,6 +126,8 @@ test("Blank draft uses the exact same downstream publish accuracy declaration an
       billingEnabled: true,
       billingStatus: "active",
       compEnabled: false,
+      publishedPassportsCount: 10,
+      isAlreadyPublished: false,
     }),
     true,
   );

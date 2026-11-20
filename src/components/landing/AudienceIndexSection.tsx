@@ -33,7 +33,7 @@ const AUDIENCES: AudienceEntry[] = [
     ],
     tag: "LMT & Light EV fleets",
     deliverableTitle: "Brand Supplier Completeness Scorecard",
-    deliverableMetric: "49 / 51 LMT static pts",
+    deliverableMetric: "50 static · 21 dynamic BMS",
     deliverableRows: [
       { label: "Public QR route (/p/urban-36v)", value: "30 public fields ready", tone: "ok" },
       { label: "External fuse & latch SKU", value: "Missing in supplier PDF", tone: "warn" },

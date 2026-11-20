@@ -54,6 +54,19 @@ export async function POST(request: Request) {
   const provider = getBillingProvider();
   const baseUrl = resolveSafeBaseUrl(request);
 
+  let interval: "monthly" | "yearly" = "monthly";
+  try {
+    const raw = await request.text();
+    if (raw.trim()) {
+      const parsed = JSON.parse(raw) as { interval?: string };
+      if (parsed.interval === "yearly") {
+        interval = "yearly";
+      }
+    }
+  } catch {
+    // Default safely to monthly when request body is empty or non-JSON
+  }
+
   try {
     const session = await provider.createCheckoutSession({
       orgId: ctx.org.orgId,
@@ -61,6 +74,7 @@ export async function POST(request: Request) {
       customerEmail: ctx.user.email,
       successUrl: `${baseUrl}/app/billing?checkout=success`,
       cancelUrl: `${baseUrl}/app/billing?checkout=canceled`,
+      interval,
     });
 
     const supabase = await createServerSupabaseClient();

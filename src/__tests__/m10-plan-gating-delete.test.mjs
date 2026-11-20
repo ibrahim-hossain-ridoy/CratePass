@@ -19,22 +19,48 @@ import {
 } from "../lib/passport-projection.ts";
 import { canOrgPublish, preparePublishSnapshots } from "../lib/publish.ts";
 
-test("M10 Free vs. Brand Hosting plan gating strictly blocks free orgs and unlocks active/comp orgs", () => {
-  // Free plan with BILLING_ENABLED=true cannot publish
+test("M10 Free (3 live passports) vs. Pro plan gating enforces cap and unlocks active/comp orgs", () => {
+  // Free plan allows publishing up to 3 live passports, then blocks the 4th
   assert.equal(
     canOrgPublish({
       billingEnabled: true,
       billingStatus: "free",
       compEnabled: false,
+      publishedPassportsCount: 0,
+      isAlreadyPublished: false,
+    }),
+    true,
+  );
+  assert.equal(
+    canOrgPublish({
+      billingEnabled: true,
+      billingStatus: "free",
+      compEnabled: false,
+      publishedPassportsCount: 3,
+      isAlreadyPublished: false,
     }),
     false,
   );
-  // Past due & canceled cannot publish
+  // Updating an already-live passport on Free stays allowed even at 3/3 live
+  assert.equal(
+    canOrgPublish({
+      billingEnabled: true,
+      billingStatus: "free",
+      compEnabled: false,
+      publishedPassportsCount: 3,
+      isAlreadyPublished: true,
+      action: "publish_new_version",
+    }),
+    true,
+  );
+  // Past due & canceled revert to Free cap (blocked at 3/3)
   assert.equal(
     canOrgPublish({
       billingEnabled: true,
       billingStatus: "past_due",
       compEnabled: false,
+      publishedPassportsCount: 3,
+      isAlreadyPublished: false,
     }),
     false,
   );
@@ -43,39 +69,45 @@ test("M10 Free vs. Brand Hosting plan gating strictly blocks free orgs and unloc
       billingEnabled: true,
       billingStatus: "canceled",
       compEnabled: false,
+      publishedPassportsCount: 3,
+      isAlreadyPublished: false,
     }),
     false,
   );
-  // Pro / Brand Hosting active subscription can publish
+  // Pro active subscription can publish unlimited passports
   assert.equal(
     canOrgPublish({
       billingEnabled: true,
       billingStatus: "active",
       compEnabled: false,
+      publishedPassportsCount: 25,
+      isAlreadyPublished: false,
     }),
     true,
   );
-  // Comped pilot org can publish
+  // Comped pilot org can publish unlimited passports
   assert.equal(
     canOrgPublish({
       billingEnabled: true,
       billingStatus: "free",
       compEnabled: true,
+      publishedPassportsCount: 25,
+      isAlreadyPublished: false,
     }),
     true,
   );
 
-  // Server-side publish route enforces billing gate BEFORE unpublish and publish actions
+  // Server-side publish route enforces entitlement & billing gate BEFORE unpublish and publish actions
   const publishRouteSrc = readFileSync(
     resolve("src/app/api/passports/[id]/publish/route.ts"),
     "utf8",
   );
-  const billingGateIndex = publishRouteSrc.indexOf("canOrgPublish(");
+  const billingGateIndex = publishRouteSrc.indexOf("checkPublishEntitlement(");
   const unpublishIndex = publishRouteSrc.indexOf('parsed.data.action === "unpublish"');
-  assert.ok(billingGateIndex > 0, "Publish route must call canOrgPublish()");
+  assert.ok(billingGateIndex > 0, "Publish route must call checkPublishEntitlement()");
   assert.ok(
     billingGateIndex < unpublishIndex,
-    "Billing gate must execute before unpublish handler so Free orgs cannot unpublish",
+    "Entitlement gate must execute before unpublish/publish handlers",
   );
 });
 

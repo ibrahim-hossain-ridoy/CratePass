@@ -100,6 +100,7 @@ test("Slice 1 DPP concept demo data and safety invariants", () => {
 
   const landingSources = [
     readFileSync(resolve("src/app/page.tsx"), "utf8"),
+    readFileSync(resolve("src/components/PublicFooter.tsx"), "utf8"),
     readFileSync(resolve("src/components/landing/PassportPreview.tsx"), "utf8"),
     readFileSync(resolve("src/config/site.ts"), "utf8"),
   ]

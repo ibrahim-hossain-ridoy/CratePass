@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import {
   ArrowRightIcon,
   BrandMark,
@@ -24,6 +25,7 @@ async function AuthFormLoader({
   intent,
   searchParamsPromise,
 }: AuthSplitShellProps) {
+  await connection();
   const configured = isSupabaseConfigured();
   const params = await searchParamsPromise;
 
@@ -194,7 +196,7 @@ export function AuthSplitShell({
                         1. OEM Spec PDF or Blank Draft Intake
                       </p>
                       <p className="text-[13px] text-[#c4c8d0]">
-                        Extracts 51 static fields with source snippets &amp; flags gaps
+                        Extracts 50 static fields with source snippets &amp; flags gaps
                       </p>
                     </div>
                   </div>
@@ -209,16 +211,16 @@ export function AuthSplitShell({
                       2. 71-Point Completeness &amp; 3-Tier Access Check
                     </span>
                     <span className="num font-semibold text-[#34d399]">
-                      49 / 51 static (96%)
+                      50 static · 21 dynamic BMS (71 pts)
                     </span>
                   </div>
                   <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#101214]">
                     <div className="bar-fill-enter h-full w-[94%] rounded-full bg-[#34d399]" />
                   </div>
                   <div className="mt-2 flex flex-wrap justify-between gap-2 text-[12.5px] text-[#c4c8d0]">
-                    <span>Public: 30 pts</span>
-                    <span>Legitimate interest: 27 pts</span>
-                    <span>Authorities only: 14 pts</span>
+                    <span>Public: 45 pts</span>
+                    <span>Legitimate interest: 25 pts</span>
+                    <span>Authorities only: 1 pt</span>
                   </div>
                 </div>
 
@@ -257,6 +259,9 @@ export function AuthSplitShell({
             certification.
           </p>
           <div className="flex flex-wrap items-center gap-6 font-medium text-[#f4f3ef]">
+            <Link href="/pricing" className="hover:text-[#7ce3f4]">
+              Pricing
+            </Link>
             <Link href="/demo" className="hover:text-[#7ce3f4]">
               Live demo
             </Link>
@@ -265,6 +270,9 @@ export function AuthSplitShell({
             </Link>
             <Link href="/privacy" className="hover:text-[#7ce3f4]">
               Privacy
+            </Link>
+            <Link href="/refund" className="hover:text-[#7ce3f4]">
+              Refund Policy
             </Link>
             <Link href="/disclaimer" className="hover:text-[#7ce3f4]">
               Disclaimer

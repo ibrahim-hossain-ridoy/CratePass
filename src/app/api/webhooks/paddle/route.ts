@@ -7,8 +7,19 @@ import {
 } from "@/lib/billing";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
+const MAX_WEBHOOK_BYTES = 256 * 1024;
+
 export async function POST(request: Request) {
+  const contentLength = Number(request.headers.get("content-length") || "0");
+  if (contentLength > MAX_WEBHOOK_BYTES) {
+    return NextResponse.json({ error: "Webhook payload too large." }, { status: 413 });
+  }
+
   const rawBody = await request.text();
+  if (Buffer.byteLength(rawBody, "utf8") > MAX_WEBHOOK_BYTES) {
+    return NextResponse.json({ error: "Webhook payload too large." }, { status: 413 });
+  }
+
   const signatureHeader = request.headers.get("paddle-signature");
   const provider = getBillingProvider();
 

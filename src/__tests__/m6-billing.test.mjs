@@ -140,30 +140,38 @@ test("M6 PaddleBillingProvider parses lifecycle events, validates org UUID, and 
   });
   assert.throws(() => provider.verifyWebhook(badOrgCase.raw, badOrgCase.sig));
 
-  // Display/gate helper honors comp_enabled and BILLING_ENABLED=false
+  // Display/gate helper reflects Pro vs Free (3 live passports included)
   assert.equal(
     billingMod.describeOrgBillingState({
       billingEnabled: false,
       billingStatus: "free",
       compEnabled: false,
-    }).canPublish,
-    true,
+    }).plan,
+    "free",
   );
   assert.equal(
     billingMod.describeOrgBillingState({
       billingEnabled: true,
       billingStatus: "free",
       compEnabled: true,
-    }).canPublish,
-    true,
+    }).plan,
+    "pro",
+  );
+  assert.equal(
+    billingMod.describeOrgBillingState({
+      billingEnabled: true,
+      billingStatus: "active",
+      compEnabled: false,
+    }).plan,
+    "pro",
   );
   assert.equal(
     billingMod.describeOrgBillingState({
       billingEnabled: true,
       billingStatus: "free",
       compEnabled: false,
-    }).canPublish,
-    false,
+    }).plan,
+    "free",
   );
 });
 

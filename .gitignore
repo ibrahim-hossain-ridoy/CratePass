@@ -43,3 +43,14 @@ next-env.d.ts
 
 # local visual audit artifacts
 .taste-skill/
+
+# Local AI agent & skill files
+.agents/
+.aider-desk/
+.claude/
+agent/
+AGENTS.md
+GEMINI.md
+skills-lock.json
+
+

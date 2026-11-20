@@ -1,3 +1,4 @@
+import type { BillingInterval } from "../../config/plans.ts";
 import type { BillingStatus } from "../../types/database.ts";
 
 export interface CheckoutSessionInput {
@@ -6,6 +7,7 @@ export interface CheckoutSessionInput {
   customerEmail: string;
   successUrl: string;
   cancelUrl: string;
+  interval?: BillingInterval;
 }
 
 export interface CheckoutSessionResult {

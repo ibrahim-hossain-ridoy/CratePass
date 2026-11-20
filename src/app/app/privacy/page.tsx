@@ -24,13 +24,17 @@ async function PrivacyWorkspaceLoader() {
             Configure Supabase environment variables to open /app/privacy
           </h1>
           <p className="mt-2">
-            Public legal draft documents remain readable anytime at{" "}
+            Public policies remain readable anytime at{" "}
             <Link href="/privacy" className="font-semibold underline">
               /privacy
             </Link>
             ,{" "}
             <Link href="/terms" className="font-semibold underline">
               /terms
+            </Link>
+            ,{" "}
+            <Link href="/refund" className="font-semibold underline">
+              /refund
             </Link>
             , and{" "}
             <Link href="/disclaimer" className="font-semibold underline">
