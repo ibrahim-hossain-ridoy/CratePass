@@ -1,8 +1,12 @@
+import { siteConfig } from "../../config/site.ts";
 import { buildExtractionPrompt } from "./prompt.ts";
 import {
   validateAndNormalizeExtraction,
   type NormalizedExtractionOutput,
 } from "./schema.ts";
+
+const MIN_USABLE_TEXT_CHARS = 100;
+const GEMINI_TIMEOUT_MS = 55_000;
 
 interface GeminiPart {
   text?: string;
@@ -70,16 +74,22 @@ async function readSafeGeminiErrorDetail(response: Response): Promise<string> {
 
 export async function runGeminiExtractor(params: {
   apiKey: string;
-  model: string;
+  model?: string;
   untrustedText: string;
   pdfBytes?: Uint8Array;
   fetchImpl?: typeof fetch;
 }): Promise<GeminiExtractionOutput> {
   const { apiKey, model, untrustedText, pdfBytes, fetchImpl = fetch } = params;
+  const resolvedModel = model?.trim() || siteConfig.defaultGeminiModel;
+  const trimmedText = untrustedText.trim();
+  const hasUsableText = trimmedText.length >= MIN_USABLE_TEXT_CHARS;
+  const shouldAttachPdfBinary =
+    !hasUsableText && Boolean(pdfBytes && pdfBytes.byteLength > 0);
+
   const effectiveText =
-    untrustedText.trim().length > 0
+    trimmedText.length > 0
       ? untrustedText
-      : pdfBytes && pdfBytes.byteLength > 0
+      : shouldAttachPdfBinary
         ? "[Local PDF text extraction unavailable or empty; read the attached untrusted PDF document directly.]"
         : "";
   const { systemPrompt, userPrompt } = buildExtractionPrompt(effectiveText);
@@ -101,7 +111,8 @@ export async function runGeminiExtractor(params: {
     | { inlineData: { mimeType: "application/pdf"; data: string } }
   > = [{ text: userPrompt }];
 
-  if (pdfBytes && pdfBytes.byteLength > 0) {
+  // Only attach multi-megabyte PDF binary as a fallback for scanned/image-only PDFs (< 100 chars extracted text)
+  if (shouldAttachPdfBinary && pdfBytes) {
     parts.push({
       inlineData: {
         mimeType: "application/pdf",
@@ -110,7 +121,7 @@ export async function runGeminiExtractor(params: {
     });
   }
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(resolvedModel)}:generateContent`;
 
   const buildRequestBody = (includeThinkingConfig: boolean) =>
     JSON.stringify({
@@ -145,7 +156,7 @@ export async function runGeminiExtractor(params: {
         "x-goog-api-key": apiKey,
       },
       body: buildRequestBody(includeThinkingConfig),
-      signal: AbortSignal.timeout(45_000),
+      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
     });
 
   let response = await postToGemini(true);
@@ -200,7 +211,7 @@ export async function runGeminiExtractor(params: {
     ...validated,
     usage: {
       mode: "gemini",
-      model,
+      model: resolvedModel,
       inputTokens: payload.usageMetadata?.promptTokenCount ?? 0,
       outputTokens: payload.usageMetadata?.candidatesTokenCount ?? 0,
     },

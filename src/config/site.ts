@@ -18,7 +18,7 @@ export const siteConfig = {
   },
   defaultAnthropicModel: "claude-haiku-5-5",
   higherAccuracyAnthropicModel: "claude-sonnet-5-5",
-  defaultGeminiModel: "gemini-2.5-flash",
+  defaultGeminiModel: "gemini-3.8-flash",
   dailyExtractionLimitPerOrg: 5,
   userExtractionRateLimit: {
     maxRequests: 5,
