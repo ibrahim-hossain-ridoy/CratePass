@@ -11,7 +11,13 @@ import {
   resolveExtractionProvider,
 } from "@/lib/extractor";
 import { normalizeFieldValues } from "@/lib/passport-projection";
-import { computeSha256Hex, extractPdfText, validatePdfUpload } from "@/lib/pdf";
+import {
+  MAX_EXTRACTED_TEXT_CHARS,
+  UNPDF_TIMEOUT_MS,
+  computeSha256Hex,
+  extractPdfTextWithTimeout,
+  validatePdfUpload,
+} from "@/lib/pdf";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import {
   SPEC_PDFS_BUCKET,
@@ -28,7 +34,14 @@ import { slugifyPassportName } from "@/lib/workspace/helpers";
 
 export const maxDuration = 60;
 
+const ROUTE_SOFT_DEADLINE_MS = 38_000;
+
+function logExtractTiming(step: string, startedAtMs: number): void {
+  console.info("[extract:timing]", step, Date.now() - startedAtMs);
+}
+
 export async function POST(request: Request) {
+  const routeStartMs = Date.now();
   const ctx = await getWorkspaceContext();
   if (ctx.state === "unconfigured") {
     return NextResponse.json(
@@ -144,6 +157,7 @@ export async function POST(request: Request) {
     }
 
     safeFilename = sanitizePdfFileName(body.fileName, "datasheet.pdf");
+    const storageDownloadStartMs = Date.now();
     try {
       const validated = await downloadAndValidateStoredPdf({
         storageBucket: storageClient.storage.from(SPEC_PDFS_BUCKET),
@@ -160,6 +174,8 @@ export async function POST(request: Request) {
         { error: "Failed to validate uploaded PDF from storage." },
         { status: 400 },
       );
+    } finally {
+      logExtractTiming("storage_download", storageDownloadStartMs);
     }
 
     uploadId = parsedUploadId;
@@ -268,8 +284,9 @@ export async function POST(request: Request) {
       truncated: false,
     };
     let textExtractFailed = false;
+    const unpdfStartMs = Date.now();
     try {
-      parsedPdf = await extractPdfText(bytes);
+      parsedPdf = await extractPdfTextWithTimeout(bytes, UNPDF_TIMEOUT_MS);
     } catch (pdfErr) {
       textExtractFailed = true;
       console.error("[extract] unpdf text extraction failed:", {
@@ -282,13 +299,29 @@ export async function POST(request: Request) {
       if (providerSelection.provider !== "gemini") {
         throw pdfErr;
       }
+    } finally {
+      logExtractTiming("unpdf_extract", unpdfStartMs);
     }
 
-    const extraction = await extractBatteryFieldsFromText(
-      parsedPdf.text,
-      safeFilename,
-      { pdfBytes: bytes },
+    const cappedExtractedText = parsedPdf.text.slice(0, MAX_EXTRACTED_TEXT_CHARS);
+    const remainingBudgetMs = Math.max(
+      8_000,
+      ROUTE_SOFT_DEADLINE_MS - (Date.now() - routeStartMs),
     );
+    const geminiStartMs = Date.now();
+    let extraction;
+    try {
+      extraction = await extractBatteryFieldsFromText(
+        cappedExtractedText,
+        safeFilename,
+        {
+          pdfBytes: bytes,
+          totalBudgetMs: remainingBudgetMs,
+        },
+      );
+    } finally {
+      logExtractTiming("gemini_api", geminiStartMs);
+    }
     const lowTextWarning =
       !textExtractFailed &&
       parsedPdf.characterCount < 40 &&
@@ -315,86 +348,96 @@ export async function POST(request: Request) {
 
     const slug = `${slugifyPassportName(finalProductName)}-${randomBytes(3).toString("hex")}`;
 
-    const { data: productRow, error: productErr } = await supabase
-      .from("products")
-      .insert({
-        org_id: ctx.org.orgId,
-        name: finalProductName,
-        model_code: finalModelCode,
-      })
-      .select("id")
-      .single();
+    const dbInsertStartMs = Date.now();
+    let passportRow: { id: string; slug: string };
+    try {
+      const { data: productRow, error: productErr } = await supabase
+        .from("products")
+        .insert({
+          org_id: ctx.org.orgId,
+          name: finalProductName,
+          model_code: finalModelCode,
+        })
+        .select("id")
+        .single();
 
-    if (productErr || !productRow) {
-      throw new Error("Could not create product record.");
-    }
+      if (productErr || !productRow) {
+        throw new Error("Could not create product record.");
+      }
 
-    let passportInsert = await supabase
-      .from("passports")
-      .insert({
-        org_id: ctx.org.orgId,
-        product_id: productRow.id,
-        slug,
-        status: "draft",
-        battery_category: batteryCategory,
-        working_fields: cleanWorkingFields,
-      })
-      .select("id, slug")
-      .single();
-
-    if (passportInsert.error) {
-      passportInsert = await supabase
+      let passportInsert = await supabase
         .from("passports")
         .insert({
           org_id: ctx.org.orgId,
           product_id: productRow.id,
           slug,
           status: "draft",
+          battery_category: batteryCategory,
           working_fields: cleanWorkingFields,
         })
         .select("id, slug")
         .single();
-    }
 
-    const { data: passportRow, error: passportErr } = passportInsert;
+      if (passportInsert.error) {
+        passportInsert = await supabase
+          .from("passports")
+          .insert({
+            org_id: ctx.org.orgId,
+            product_id: productRow.id,
+            slug,
+            status: "draft",
+            working_fields: cleanWorkingFields,
+          })
+          .select("id, slug")
+          .single();
+      }
 
-    if (passportErr || !passportRow) {
-      throw new Error("Could not create draft battery passport.");
-    }
+      if (passportInsert.error || !passportInsert.data) {
+        throw new Error("Could not create draft battery passport.");
+      }
+      passportRow = {
+        id: String(passportInsert.data.id),
+        slug: String(passportInsert.data.slug),
+      };
 
-    await supabase
-      .from("uploads")
-      .update({
-        passport_id: passportRow.id,
-        extraction_status: "completed",
-        extraction_result: {
-          fields: extraction.fields,
+      await supabase
+        .from("uploads")
+        .update({
+          passport_id: passportRow.id,
+          extraction_status: "completed",
+          extraction_result: {
+            fields: extraction.fields,
+            summary: extraction.summary,
+            usage: extraction.usage,
+            totalPages: parsedPdf.totalPages,
+            characterCount: parsedPdf.characterCount,
+          },
+        })
+        .eq("id", uploadId)
+        .eq("org_id", ctx.org.orgId);
+
+      // Audit log tracks extraction model & token usage per organization
+      await supabase.from("audit_log").insert({
+        org_id: ctx.org.orgId,
+        actor_user_id: ctx.user.id,
+        action: "extraction.completed",
+        target_type: "upload",
+        target_id: uploadId,
+        metadata: {
+          passport_id: passportRow.id,
+          model: extraction.usage.model,
+          mode: extraction.usage.mode,
+          input_tokens: extraction.usage.inputTokens,
+          output_tokens: extraction.usage.outputTokens,
           summary: extraction.summary,
-          usage: extraction.usage,
-          totalPages: parsedPdf.totalPages,
-          characterCount: parsedPdf.characterCount,
+          file_size_bytes: bytes.byteLength,
         },
-      })
-      .eq("id", uploadId)
-      .eq("org_id", ctx.org.orgId);
+      });
+    } finally {
+      logExtractTiming("db_draft_insert", dbInsertStartMs);
+    }
 
-    // Audit log tracks extraction model & token usage per organization
-    await supabase.from("audit_log").insert({
-      org_id: ctx.org.orgId,
-      actor_user_id: ctx.user.id,
-      action: "extraction.completed",
-      target_type: "upload",
-      target_id: uploadId,
-      metadata: {
-        passport_id: passportRow.id,
-        model: extraction.usage.model,
-        mode: extraction.usage.mode,
-        input_tokens: extraction.usage.inputTokens,
-        output_tokens: extraction.usage.outputTokens,
-        summary: extraction.summary,
-        file_size_bytes: bytes.byteLength,
-      },
-    });
+    logExtractTiming("total", routeStartMs);
 
     return NextResponse.json({
       passportId: passportRow.id,

@@ -8,7 +8,8 @@ export interface PdfValidationInput {
   maxBytes: number;
 }
 
-const MAX_EXTRACTED_CHARS = 48_000;
+export const MAX_EXTRACTED_TEXT_CHARS = 30_000;
+export const UNPDF_TIMEOUT_MS = 10_000;
 
 /**
  * Validate uploaded PDF server-side: non-empty, <= maxBytes, .pdf extension,
@@ -75,8 +76,10 @@ export async function extractPdfText(bytes: Uint8Array): Promise<ExtractedPdfTex
     .replace(/\r\n?/g, "\n")
     .trim();
 
-  const truncated = cleaned.length > MAX_EXTRACTED_CHARS;
-  const bounded = truncated ? cleaned.slice(0, MAX_EXTRACTED_CHARS) : cleaned;
+  const truncated = cleaned.length > MAX_EXTRACTED_TEXT_CHARS;
+  const bounded = truncated
+    ? cleaned.slice(0, MAX_EXTRACTED_TEXT_CHARS)
+    : cleaned;
 
   return {
     text: bounded,
@@ -84,4 +87,30 @@ export async function extractPdfText(bytes: Uint8Array): Promise<ExtractedPdfTex
     characterCount: cleaned.length,
     truncated,
   };
+}
+
+/**
+ * Race `extractPdfText` against a strict timeout so complex/malformed PDFs
+ * never stall Vercel serverless invocations.
+ */
+export async function extractPdfTextWithTimeout(
+  bytes: Uint8Array,
+  timeoutMs = UNPDF_TIMEOUT_MS,
+  extractor: (input: Uint8Array) => Promise<ExtractedPdfText> = extractPdfText,
+): Promise<ExtractedPdfText> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      extractor(bytes),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(
+            new Error(`PDF text extraction timed out after ${timeoutMs}ms.`),
+          );
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }

@@ -31,6 +31,9 @@ export interface ExtractBatteryOptions {
   pdfBytes?: Uint8Array;
   fetchImpl?: typeof fetch;
   env?: Record<string, string | undefined>;
+  primaryTimeoutMs?: number;
+  fallbackTimeoutMs?: number;
+  totalBudgetMs?: number;
 }
 
 /**
@@ -99,6 +102,9 @@ export async function extractBatteryFieldsFromText(
       untrustedText,
       pdfBytes: options?.pdfBytes,
       fetchImpl: options?.fetchImpl,
+      primaryTimeoutMs: options?.primaryTimeoutMs,
+      fallbackTimeoutMs: options?.fallbackTimeoutMs,
+      totalBudgetMs: options?.totalBudgetMs,
     });
   }
 

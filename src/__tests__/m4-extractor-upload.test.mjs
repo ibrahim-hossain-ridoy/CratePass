@@ -9,7 +9,18 @@ import {
   extractBatteryFieldsFromText,
   resolveExtractionProvider,
 } from "../lib/extractor/index.ts";
-import { validatePdfUpload } from "../lib/pdf.ts";
+import {
+  GEMINI_FALLBACK_MODEL,
+  GEMINI_FALLBACK_TIMEOUT_MS,
+  GEMINI_PRIMARY_TIMEOUT_MS,
+  MAX_GEMINI_TEXT_CHARS,
+} from "../lib/extractor/gemini.ts";
+import {
+  MAX_EXTRACTED_TEXT_CHARS,
+  UNPDF_TIMEOUT_MS,
+  extractPdfTextWithTimeout,
+  validatePdfUpload,
+} from "../lib/pdf.ts";
 import { STATIC_BATTERY_FIELDS } from "../config/battery-fields.ts";
 
 test("Prompt builder wraps PDF text in <untrusted_datasheet_text> and warns against prompt injection and hallucination", () => {
@@ -513,7 +524,14 @@ test("Gemini extractor retries cleanly without thinkingConfig if model returns H
   assert.equal(result.fields.capacity_ah.value, "14.5");
 });
 
-test("extract/route.ts exports maxDuration = 60, safely falls back when unpdf throws, and logs failures with console.error", () => {
+test("extract/route.ts exports maxDuration = 60, wraps unpdf with 10s timeout, logs per-step [extract:timing], and logs failures with console.error", () => {
+  assert.equal(MAX_EXTRACTED_TEXT_CHARS, 30_000);
+  assert.equal(MAX_GEMINI_TEXT_CHARS, 30_000);
+  assert.equal(UNPDF_TIMEOUT_MS, 10_000);
+  assert.equal(GEMINI_PRIMARY_TIMEOUT_MS, 20_000);
+  assert.equal(GEMINI_FALLBACK_TIMEOUT_MS, 15_000);
+  assert.equal(GEMINI_FALLBACK_MODEL, "gemini-3.5-flash-lite");
+
   const routeSrc = fs.readFileSync(
     path.join(process.cwd(), "src/app/api/passports/extract/route.ts"),
     "utf8",
@@ -523,11 +541,203 @@ test("extract/route.ts exports maxDuration = 60, safely falls back when unpdf th
     "extract route must export maxDuration = 60 for Vercel Fluid Compute",
   );
   assert.ok(
+    routeSrc.includes("extractPdfTextWithTimeout"),
+    "extract route must wrap unpdf in a 10s timeout",
+  );
+  assert.ok(routeSrc.includes('"[extract:timing]"'));
+  for (const step of [
+    '"storage_download"',
+    '"unpdf_extract"',
+    '"gemini_api"',
+    '"db_draft_insert"',
+  ]) {
+    assert.ok(
+      routeSrc.includes(step),
+      `extract route must log [extract:timing] for ${step}`,
+    );
+  }
+  assert.ok(
     routeSrc.includes('console.error("[extract]'),
     "extract route must log diagnostic errors with console.error('[extract] ...')",
   );
   assert.ok(
     routeSrc.includes("resolveExtractionProvider"),
     "extract route should check provider so Gemini can run on raw PDF binary if unpdf throws",
+  );
+});
+
+test("Gemini extractor caps prompt text at 30,000 chars and falls back once to gemini-3.5-flash-lite on timeout or 404/429/503", async () => {
+  // 1. Prompt text cap at 30,000 chars
+  const hugeDatasheet =
+    "Manufacturer: Alpine Battery GmbH\nNominal Voltage: 48 V\n" +
+    "X".repeat(45_000) +
+    "\nTAIL_MARKER_MUST_BE_TRUNCATED";
+  let capturedPromptText = "";
+  const capFetch = async (_url, init) => {
+    const body = JSON.parse(String(init.body));
+    capturedPromptText = body.contents[0].parts[0].text;
+    return new Response(
+      JSON.stringify({
+        candidates: [
+          {
+            finishReason: "STOP",
+            content: {
+              parts: [
+                {
+                  text: JSON.stringify({
+                    productName: "Alpine 48V",
+                    fields: {
+                      manufacturer_name: {
+                        status: "found",
+                        value: "Alpine Battery GmbH",
+                        sourceSnippet: "Manufacturer: Alpine Battery GmbH",
+                      },
+                    },
+                  }),
+                },
+              ],
+            },
+          },
+        ],
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  };
+  await extractBatteryFieldsFromText(hugeDatasheet, "huge.pdf", {
+    env: { ANTHROPIC_API_KEY: "", GEMINI_API_KEY: "AIza-test" },
+    fetchImpl: capFetch,
+  });
+  assert.equal(capturedPromptText.includes("TAIL_MARKER_MUST_BE_TRUNCATED"), false);
+  assert.ok(capturedPromptText.length < 30_400);
+
+  // 2. Fallback to gemini-3.5-flash-lite on HTTP 503 (and 404/429)
+  for (const status of [404, 429, 503]) {
+    const urls = [];
+    const fallbackFetch = async (url) => {
+      urls.push(String(url));
+      if (urls.length === 1) {
+        return new Response(
+          JSON.stringify({ error: { code: status, message: "Temporarily unavailable" } }),
+          { status, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      return new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              finishReason: "STOP",
+              content: {
+                parts: [
+                  {
+                    text: JSON.stringify({
+                      productName: "Fallback Pack",
+                      fields: {
+                        nominal_voltage_v: {
+                          status: "found",
+                          value: "36",
+                          sourceSnippet: "Nominal Voltage: 36 V",
+                        },
+                      },
+                    }),
+                  },
+                ],
+              },
+            },
+          ],
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    };
+
+    const res = await extractBatteryFieldsFromText(
+      "Nominal Voltage: 36 V\n" + "Battery spec detail line. ".repeat(6),
+      "pack.pdf",
+      {
+        env: {
+          ANTHROPIC_API_KEY: "",
+          GEMINI_API_KEY: "AIza-test",
+          GEMINI_MODEL: "gemini-3.8-flash",
+        },
+        fetchImpl: fallbackFetch,
+      },
+    );
+    assert.equal(urls.length, 2, `HTTP ${status} must trigger exactly one fallback call`);
+    assert.match(urls[0], /models\/gemini-3\.8-flash:generateContent/);
+    assert.match(urls[1], /models\/gemini-3\.5-flash-lite:generateContent/);
+    assert.equal(res.usage.model, "gemini-3.5-flash-lite");
+    assert.equal(res.fields.nominal_voltage_v.value, "36");
+  }
+
+  // 3. Fallback to gemini-3.5-flash-lite on TimeoutError (and verifies minimal thinkingLevel on flash-lite)
+  const timeoutCalls = [];
+  const timeoutFetch = async (url, init) => {
+    timeoutCalls.push({ url: String(url), body: JSON.parse(String(init.body)) });
+    if (timeoutCalls.length === 1) {
+      const err = new Error("The operation was aborted due to timeout");
+      err.name = "TimeoutError";
+      throw err;
+    }
+    return new Response(
+      JSON.stringify({
+        candidates: [
+          {
+            finishReason: "STOP",
+            content: {
+              parts: [
+                {
+                  text: JSON.stringify({
+                    productName: "Timeout Fallback Pack",
+                    fields: {
+                      capacity_ah: {
+                        status: "found",
+                        value: "12.8",
+                        sourceSnippet: "Capacity: 12.8 Ah",
+                      },
+                    },
+                  }),
+                },
+              ],
+            },
+          },
+        ],
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  };
+  const timeoutRes = await extractBatteryFieldsFromText(
+    "Capacity: 12.8 Ah\n" + "Battery spec detail line. ".repeat(6),
+    "timeout-pack.pdf",
+    {
+      env: {
+        ANTHROPIC_API_KEY: "",
+        GEMINI_API_KEY: "AIza-test",
+        GEMINI_MODEL: "gemini-3.8-flash",
+      },
+      primaryTimeoutMs: 5_000,
+      fallbackTimeoutMs: 5_000,
+      fetchImpl: timeoutFetch,
+    },
+  );
+  assert.equal(timeoutCalls.length, 2);
+  assert.deepEqual(timeoutCalls[0].body.generationConfig.thinkingConfig, {
+    thinkingBudget: 0,
+  });
+  assert.match(timeoutCalls[1].url, /models\/gemini-3\.5-flash-lite:generateContent/);
+  assert.deepEqual(timeoutCalls[1].body.generationConfig.thinkingConfig, {
+    thinkingLevel: "minimal",
+  });
+  assert.equal(timeoutRes.usage.model, "gemini-3.5-flash-lite");
+  assert.equal(timeoutRes.fields.capacity_ah.value, "12.8");
+});
+
+test("extractPdfTextWithTimeout rejects cleanly when unpdf stalls past timeout", async () => {
+  await assert.rejects(
+    () =>
+      extractPdfTextWithTimeout(
+        new Uint8Array([0x25, 0x50, 0x44, 0x46]),
+        25,
+        () => new Promise(() => {}),
+      ),
+    /timed out after 25ms/i,
   );
 });
